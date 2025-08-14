@@ -10,42 +10,46 @@ const BlogPage = () => {
   const blogPosts = [
     {
       id: 1,
-      title: 'Guía Completa para Migrar tu Sitio Web a un Nuevo Hosting',
-      excerpt: 'Aprende paso a paso cómo migrar tu sitio web sin perder datos ni afectar tu SEO. Incluye checklist y mejores prácticas.',
+      slug: 'optimizacion-servidores-minecraft',
+      title: 'Guía Completa para Optimizar Servidores de Minecraft',
+      excerpt: 'Aprende las mejores técnicas para optimizar el rendimiento de tu servidor de Minecraft y ofrecer la mejor experiencia a tus jugadores.',
       author: 'Carlos Rodríguez',
-      date: '2024-08-10',
+      date: '2025-08-12',
       readTime: '8 min',
-      category: 'Hosting',
-      tags: ['Migración', 'Hosting', 'SEO'],
+      category: 'Gaming',
+      tags: ['Minecraft', 'Optimización', 'Servidores', 'Gaming'],
       featured: true,
-      image: '/src/assets/services-bg.png'
+      image: '/assets/minecraft-server.jpg'
     },
     {
       id: 2,
-      title: 'Optimización de Servidores Minecraft: Mejores Prácticas',
-      excerpt: 'Descubre cómo optimizar tu servidor de Minecraft para obtener el mejor rendimiento y experiencia de juego.',
-      author: 'Miguel Torres',
-      date: '2024-08-08',
+      slug: 'ssl-certificados-hosting',
+      title: 'Cómo Configurar Certificados SSL en tu Hosting',
+      excerpt: 'Guía paso a paso para instalar y configurar certificados SSL/TLS en tu sitio web para mejorar la seguridad y SEO.',
+      author: 'Ana García',
+      date: '2025-08-10',
       readTime: '6 min',
-      category: 'Gaming',
-      tags: ['Minecraft', 'Gaming', 'Optimización'],
+      category: 'Hosting',
+      tags: ['SSL', 'Seguridad', 'Hosting', 'HTTPS'],
       featured: true,
-      image: '/src/assets/hero-bg.png'
+      image: '/assets/ssl-security.jpg'
     },
     {
       id: 3,
-      title: 'Seguridad Web: Protege tu Sitio contra Ataques DDoS',
-      excerpt: 'Conoce las técnicas más efectivas para proteger tu sitio web contra ataques DDoS y mantener tu negocio en línea.',
-      author: 'Sofia Herrera',
-      date: '2024-08-05',
-      readTime: '10 min',
-      category: 'Seguridad',
-      tags: ['Seguridad', 'DDoS', 'Protección'],
+      slug: 'tendencias-hosting-2025',
+      title: 'Tendencias de Hosting Web para 2025',
+      excerpt: 'Descubre las principales tendencias en hosting web que dominarán el 2025, desde edge computing hasta sostenibilidad.',
+      author: 'Miguel Torres',
+      date: '2025-08-08',
+      readTime: '12 min',
+      category: 'Tecnología',
+      tags: ['Hosting', 'Tendencias', '2025', 'Tecnología'],
       featured: false,
-      image: '/src/assets/team-placeholder.png'
+      image: '/assets/hosting-trends.jpg'
     },
     {
       id: 4,
+      slug: 'cloud-hosting-vs-tradicional',
       title: 'Cloud Hosting vs Hosting Tradicional: ¿Cuál Elegir?',
       excerpt: 'Comparamos las ventajas y desventajas del cloud hosting frente al hosting tradicional para ayudarte a decidir.',
       author: 'Ana García',
@@ -245,7 +249,7 @@ const BlogPage = () => {
                     <p className="text-muted-foreground text-sm mb-4 line-clamp-3">
                       {post.excerpt}
                     </p>
-                    <div className="flex items-center justify-between text-xs text-muted-foreground">
+                    <div className="flex items-center justify-between text-xs text-muted-foreground mb-4">
                       <div className="flex items-center gap-1">
                         <User className="w-3 h-3" />
                         {post.author}
@@ -255,7 +259,7 @@ const BlogPage = () => {
                         {new Date(post.date).toLocaleDateString('es-ES')}
                       </div>
                     </div>
-                    <div className="flex flex-wrap gap-1 mt-3">
+                    <div className="flex flex-wrap gap-1 mb-4">
                       {post.tags.map((tag) => (
                         <span
                           key={tag}
@@ -266,6 +270,13 @@ const BlogPage = () => {
                         </span>
                       ))}
                     </div>
+                    <Link 
+                      to={`/blog/${post.slug}`}
+                      className="inline-flex items-center text-primary hover:text-primary/80 transition-colors text-sm font-medium"
+                    >
+                      Leer más
+                      <ArrowRight className="w-4 h-4 ml-1" />
+                    </Link>
                   </CardContent>
                 </Card>
               </motion.div>

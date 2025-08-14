@@ -10,8 +10,14 @@ import HomePage from './pages/HomePage';
 import ServicesPage from './pages/ServicesPage';
 import AboutPage from './pages/AboutPage';
 import BlogPage from './pages/BlogPage';
+import BlogDetailPage from './pages/BlogDetailPage';
 import HostingPage from './pages/HostingPage';
 import ContactPage from './pages/ContactPage';
+import PrivacyPolicyPage from './pages/PrivacyPolicyPage';
+import SystemStatusPage from './pages/SystemStatusPage';
+import APIPage from './pages/APIPage';
+import DocumentationPage from './pages/DocumentationPage';
+import TermsPage from './pages/TermsPage';
 import { ROUTES } from './utils/constants/config';
 import './App.css';
 
@@ -37,8 +43,14 @@ function App() {
               <Route path={ROUTES.SERVICES} element={<ServicesPage />} />
               <Route path={ROUTES.HOSTING} element={<HostingPage />} />
               <Route path={ROUTES.BLOG} element={<BlogPage />} />
+              <Route path="/blog/:slug" element={<BlogDetailPage />} />
               <Route path={ROUTES.ABOUT} element={<AboutPage />} />
               <Route path={ROUTES.CONTACT} element={<ContactPage />} />
+              <Route path="/privacy" element={<PrivacyPolicyPage />} />
+              <Route path="/status" element={<SystemStatusPage />} />
+              <Route path="/api" element={<APIPage />} />
+              <Route path="/docs" element={<DocumentationPage />} />
+              <Route path="/terms" element={<TermsPage />} />
             </Routes>
           </main>
 
