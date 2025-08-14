@@ -90,9 +90,9 @@ Usa Paper en lugar de Vanilla Minecraft para mejor rendimiento:
 ## 4. Monitoreo del Rendimiento
 
 ### Comandos Útiles
-- `/tps` - Verifica los ticks por segundo
-- `/timings` - Análisis detallado de rendimiento
-- `/spark` - Profiling avanzado
+- \`/tps\` - Verifica los ticks por segundo
+- \`/timings\` - Análisis detallado de rendimiento
+- \`/spark\` - Profiling avanzado
 
 ### Métricas Importantes
 - **TPS**: Debe mantenerse en 20
@@ -433,6 +433,165 @@ En Roke Industries, estamos a la vanguardia de estas tecnologías, ofreciendo so
       image: "/assets/hosting-trends.jpg",
       likes: 56,
       comments: 23
+    },
+    {
+      id: 4,
+      slug: "cloud-hosting-vs-tradicional",
+      title: "Cloud Hosting vs Hosting Tradicional: ¿Cuál Elegir?",
+      excerpt: "Comparamos las ventajas y desventajas del cloud hosting frente al hosting tradicional para ayudarte a decidir.",
+      content: `
+# Cloud Hosting vs Hosting Tradicional: ¿Cuál Elegir?
+
+La elección entre cloud hosting y hosting tradicional es crucial para el rendimiento y la escalabilidad de tu sitio web. Analicemos las diferencias clave para ayudarte a tomar la mejor decisión.
+
+## Hosting Tradicional
+
+### Ventajas
+- **Costo predecible**: Pagas una tarifa fija mensual o anual.
+- **Control total**: Acceso completo al servidor físico.
+- **Rendimiento dedicado**: Recursos exclusivos para tu sitio.
+
+### Desventajas
+- **Escalabilidad limitada**: Dificultad para escalar recursos rápidamente.
+- **Punto único de fallo**: Si el servidor falla, tu sitio se cae.
+- **Mantenimiento**: Requiere gestión y mantenimiento manual.
+
+## Cloud Hosting
+
+### Ventajas
+- **Escalabilidad elástica**: Ajusta recursos en tiempo real según la demanda.
+- **Alta disponibilidad**: Distribuido en múltiples servidores, minimizando el tiempo de inactividad.
+- **Pago por uso**: Solo pagas por los recursos que consumes.
+
+### Desventajas
+- **Costo variable**: Puede ser impredecible si el tráfico fluctúa.
+- **Complejidad**: Requiere más conocimientos técnicos para gestionar.
+- **Seguridad compartida**: Dependes del proveedor para la seguridad de la infraestructura.
+
+## ¿Cuál Elegir?
+
+- **Hosting Tradicional**: Ideal para sitios web pequeños o medianos con tráfico estable y presupuestos fijos.
+- **Cloud Hosting**: Perfecto para sitios web de alto tráfico, aplicaciones web dinámicas y empresas en crecimiento que necesitan escalabilidad y alta disponibilidad.
+
+## Conclusión
+
+Ambas opciones tienen sus méritos. La mejor elección depende de tus necesidades específicas, presupuesto y nivel de experiencia técnica. En Roke Industries, ofrecemos soluciones de hosting para ambos modelos, adaptándonos a tus requerimientos.
+      `,
+      author: "Ana García",
+      date: "2024-08-03",
+      readTime: "7 min",
+      category: "Cloud",
+      tags: ["Cloud", "Hosting", "Comparación"],
+      image: "/assets/services-bg.png",
+      likes: 25,
+      comments: 8
+    },
+    {
+      id: 5,
+      slug: "configuracion-ssl-principiantes",
+      title: "Configuración SSL: Guía para Principiantes",
+      excerpt: "Todo lo que necesitas saber sobre certificados SSL y cómo configurarlos correctamente en tu sitio web.",
+      content: `
+# Configuración SSL: Guía para Principiantes
+
+Los certificados SSL son esenciales para la seguridad y la confianza en línea. Si eres nuevo en esto, esta guía te ayudará a entender y configurar SSL en tu sitio web.
+
+## ¿Por qué necesitas SSL?
+
+- **Seguridad**: Cifra los datos entre el navegador y el servidor.
+- **Confianza**: Los usuarios confían en sitios con HTTPS.
+- **SEO**: Google favorece los sitios con SSL.
+
+## Pasos para Configurar SSL
+
+### 1. Obtener un Certificado SSL
+Hay opciones gratuitas (Let's Encrypt) y de pago. Muchos proveedores de hosting ofrecen SSL gratuito.
+
+### 2. Instalar el Certificado
+El proceso varía según tu proveedor de hosting y servidor web (Apache, Nginx, etc.). Generalmente, implica subir los archivos del certificado y configurar el servidor.
+
+### 3. Redirigir HTTP a HTTPS
+Es crucial que todo el tráfico se redirija a la versión HTTPS de tu sitio. Esto se hace a través de la configuración del servidor o el archivo .htaccess.
+
+### 4. Actualizar Enlaces Internos
+Asegúrate de que todos los enlaces internos de tu sitio usen HTTPS para evitar advertencias de contenido mixto.
+
+## Conclusión
+
+Configurar SSL puede parecer complicado al principio, pero es un paso fundamental para proteger tu sitio y tus usuarios. Si necesitas ayuda, Roke Industries ofrece soporte para la configuración de SSL en todos sus planes de hosting.
+      `,
+      author: "David López",
+      date: "2024-08-01",
+      readTime: "5 min",
+      category: "Seguridad",
+      tags: ["SSL", "Seguridad", "HTTPS"],
+      image: "/assets/hero-bg.png",
+      likes: 30,
+      comments: 10
+    },
+    {
+      id: 6,
+      slug: "tendencias-desarrollo-web-2024",
+      title: "Tendencias en Desarrollo Web 2024",
+      excerpt: "Explora las últimas tendencias en desarrollo web que están definiendo el futuro de la industria.",
+      content: `
+# Tendencias en Desarrollo Web 2024
+
+El desarrollo web es un campo en constante evolución. Aquí te presentamos las tendencias más relevantes que están marcando el ritmo en 2024.
+
+## 1. WebAssembly (Wasm)
+
+### ¿Qué es Wasm?
+Permite ejecutar código de bajo nivel (C++, Rust, Go) en el navegador a velocidades casi nativas.
+
+### Beneficios
+- **Rendimiento**: Ejecución más rápida de aplicaciones web complejas.
+- **Reutilización de código**: Usa lenguajes existentes para el desarrollo web.
+
+## 2. Micro-Frontends
+
+### Concepto
+Divide una aplicación frontend monolítica en partes más pequeñas e independientes, desarrolladas y desplegadas por separado.
+
+### Ventajas
+- **Escalabilidad**: Equipos pequeños pueden trabajar de forma autónoma.
+- **Flexibilidad tecnológica**: Usa diferentes frameworks en un mismo proyecto.
+
+## 3. Inteligencia Artificial en el Frontend
+
+### Aplicaciones
+- **Personalización**: Experiencias de usuario adaptadas con IA.
+- **Optimización de rendimiento**: Predicción de carga y optimización de recursos.
+- **Generación de contenido**: Herramientas de IA para crear texto e imágenes.
+
+## 4. Serverless Functions (Funciones sin Servidor)
+
+### Ventajas
+- **Menos gestión de infraestructura**: El proveedor se encarga de los servidores.
+- **Escalado automático**: Se ajusta automáticamente a la demanda.
+- **Pago por uso**: Solo pagas cuando se ejecuta tu código.
+
+## 5. Green Coding (Programación Sostenible)
+
+### Principios
+- **Eficiencia energética**: Escribir código que consume menos recursos.
+- **Optimización de algoritmos**: Reducir el tiempo de procesamiento.
+- **Infraestructura verde**: Elegir proveedores de hosting con energía renovable.
+
+## Conclusión
+
+El desarrollo web en 2024 se enfoca en el rendimiento, la modularidad, la inteligencia artificial y la sostenibilidad. Mantenerse al día con estas tendencias es clave para construir aplicaciones web modernas y eficientes.
+
+En Roke Industries, nuestros desarrolladores están siempre actualizados con las últimas tecnologías para ofrecerte las mejores soluciones web.
+      `,
+      author: "David López",
+      date: "2024-07-28",
+      readTime: "9 min",
+      category: "Desarrollo",
+      tags: ["Desarrollo", "Tendencias", "2024"],
+      image: "/assets/team-placeholder.png",
+      likes: 45,
+      comments: 18
     }
   ];
 
@@ -450,6 +609,38 @@ En Roke Industries, estamos a la vanguardia de estas tecnologías, ofreciendo so
       setRelatedArticles(related);
     }
   }, [slug]);
+
+  // Función para convertir markdown básico a HTML
+  const markdownToHtml = (markdown) => {
+    return markdown
+      // Títulos
+      .replace(/^### (.*$)/gim, '<h3 class="text-xl font-semibold mt-8 mb-4">$1</h3>')
+      .replace(/^## (.*$)/gim, '<h2 class="text-2xl font-bold mt-10 mb-6">$1</h2>')
+      .replace(/^# (.*$)/gim, '<h1 class="text-3xl font-bold mt-12 mb-8">$1</h1>')
+      // Código en bloque
+      .replace(/```(\w+)?\n([\s\S]*?)```/g, '<pre class="bg-muted p-4 rounded-lg overflow-x-auto my-6"><code class="language-$1 text-sm">$2</code></pre>')
+      // Código inline
+      .replace(/`([^`]+)`/g, '<code class="bg-muted px-2 py-1 rounded text-sm">$1</code>')
+      // Texto en negrita
+      .replace(/\*\*(.*?)\*\*/g, '<strong class="font-semibold">$1</strong>')
+      // Texto en cursiva
+      .replace(/\*(.*?)\*/g, '<em class="italic">$1</em>')
+      // Listas con viñetas
+      .replace(/^- (.*$)/gim, '<li class="mb-2">$1</li>')
+      .replace(/(<li.*<\/li>)/s, '<ul class="list-disc list-inside my-4 space-y-2">$1</ul>')
+      // Listas numeradas
+      .replace(/^\d+\. (.*$)/gim, '<li class="mb-2">$1</li>')
+      // Enlaces
+      .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" class="text-primary hover:underline" target="_blank" rel="noopener noreferrer">$1</a>')
+      // Párrafos (doble salto de línea)
+      .replace(/\n\n/g, '</p><p class="mb-4">')
+      // Saltos de línea simples
+      .replace(/\n/g, '<br>')
+      // Envolver en párrafo inicial
+      .replace(/^/, '<p class="mb-4">')
+      // Cerrar párrafo final
+      .replace(/$/, '</p>');
+  };
 
   const handleLike = () => {
     if (!liked) {
@@ -529,87 +720,36 @@ En Roke Industries, estamos a la vanguardia de estas tecnologías, ofreciendo so
               ))}
             </div>
             
-            <h1 className="text-4xl md:text-5xl font-bold mb-6 leading-tight">
+            <h1 className="text-4xl md:text-5xl font-bold text-foreground mb-4">
               {article.title}
             </h1>
-            
-            <p className="text-xl text-muted-foreground mb-8">
-              {article.excerpt}
-            </p>
-
-            {/* Article Meta */}
-            <div className="flex flex-wrap items-center gap-6 text-muted-foreground mb-8">
-              <div className="flex items-center">
-                <User className="w-4 h-4 mr-2" />
-                {article.author}
+            <div className="flex items-center gap-4 text-muted-foreground text-sm">
+              <div className="flex items-center gap-1">
+                <User className="w-4 h-4" />
+                <span>{article.author}</span>
               </div>
-              <div className="flex items-center">
-                <Calendar className="w-4 h-4 mr-2" />
-                {new Date(article.date).toLocaleDateString('es-ES', {
-                  year: 'numeric',
-                  month: 'long',
-                  day: 'numeric'
-                })}
+              <div className="flex items-center gap-1">
+                <Calendar className="w-4 h-4" />
+                <span>{new Date(article.date).toLocaleDateString('es-ES')}</span>
               </div>
-              <div className="flex items-center">
-                <Clock className="w-4 h-4 mr-2" />
-                {article.readTime} de lectura
-              </div>
-            </div>
-
-            {/* Social Actions */}
-            <div className="flex items-center justify-between border-y py-4">
-              <div className="flex items-center gap-4">
-                <button
-                  onClick={handleLike}
-                  className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-colors ${
-                    liked 
-                      ? 'bg-red-100 text-red-600 dark:bg-red-900 dark:text-red-300' 
-                      : 'bg-muted hover:bg-muted/80'
-                  }`}
-                >
-                  <Heart className={`w-4 h-4 ${liked ? 'fill-current' : ''}`} />
-                  {likes}
-                </button>
-                <div className="flex items-center gap-2 text-muted-foreground">
-                  <MessageCircle className="w-4 h-4" />
-                  {article.comments} comentarios
-                </div>
-              </div>
-              
-              <div className="flex items-center gap-2">
-                <span className="text-sm text-muted-foreground mr-2">Compartir:</span>
-                <button
-                  onClick={() => handleShare('facebook')}
-                  className="p-2 hover:bg-muted rounded-lg transition-colors"
-                  title="Compartir en Facebook"
-                >
-                  <Facebook className="w-4 h-4" />
-                </button>
-                <button
-                  onClick={() => handleShare('twitter')}
-                  className="p-2 hover:bg-muted rounded-lg transition-colors"
-                  title="Compartir en Twitter"
-                >
-                  <Twitter className="w-4 h-4" />
-                </button>
-                <button
-                  onClick={() => handleShare('linkedin')}
-                  className="p-2 hover:bg-muted rounded-lg transition-colors"
-                  title="Compartir en LinkedIn"
-                >
-                  <Linkedin className="w-4 h-4" />
-                </button>
-                <button
-                  onClick={() => handleShare('copy')}
-                  className="p-2 hover:bg-muted rounded-lg transition-colors"
-                  title="Copiar enlace"
-                >
-                  {copied ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
-                </button>
+              <div className="flex items-center gap-1">
+                <Clock className="w-4 h-4" />
+                <span>{article.readTime}</span>
               </div>
             </div>
           </div>
+
+          {/* Article Image */}
+          {article.image && (
+            <motion.img
+              src={article.image}
+              alt={article.title}
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.6, delay: 0.2 }}
+              className="w-full h-96 object-cover rounded-lg mb-12 shadow-lg"
+            />
+          )}
 
           {/* Article Content */}
           <motion.div
@@ -618,123 +758,79 @@ En Roke Industries, estamos a la vanguardia de estas tecnologías, ofreciendo so
             transition={{ duration: 0.6, delay: 0.2 }}
             className="prose prose-lg dark:prose-invert max-w-none mb-16"
             dangerouslySetInnerHTML={{ 
-              __html: article.content.replace(/\n/g, '<br>').replace(/```(\w+)?\n([\s\S]*?)```/g, '<pre><code class="language-$1">$2</code></pre>')
+              __html: markdownToHtml(article.content)
             }}
           />
 
+          {/* Social Share and Like */}
+          <div className="flex items-center justify-between mt-12 pt-8 border-t border-border">
+            <button 
+              onClick={handleLike}
+              className={`flex items-center gap-2 text-muted-foreground hover:text-primary transition-colors ${liked ? 'text-primary' : ''}`}
+            >
+              <Heart className={`w-5 h-5 ${liked ? 'fill-primary' : ''}`} />
+              <span>{likes} Me gusta</span>
+            </button>
+            <div className="flex items-center gap-4">
+              <span className="text-muted-foreground">Compartir:</span>
+              <button onClick={() => handleShare('facebook')} className="text-muted-foreground hover:text-blue-600 transition-colors">
+                <Facebook className="w-5 h-5" />
+              </button>
+              <button onClick={() => handleShare('twitter')} className="text-muted-foreground hover:text-blue-400 transition-colors">
+                <Twitter className="w-5 h-5" />
+              </button>
+              <button onClick={() => handleShare('linkedin')} className="text-muted-foreground hover:text-blue-700 transition-colors">
+                <Linkedin className="w-5 h-5" />
+              </button>
+              <button onClick={() => handleShare('copy')} className="text-muted-foreground hover:text-primary transition-colors relative">
+                {copied ? <Check className="w-5 h-5 text-green-500" /> : <Copy className="w-5 h-5" />}
+                {copied && <span className="absolute -top-6 left-1/2 -translate-x-1/2 text-xs text-green-500">Copiado!</span>}
+              </button>
+            </div>
+          </div>
+
           {/* Related Articles */}
           {relatedArticles.length > 0 && (
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.4 }}
-              className="border-t pt-12"
-            >
-              <h3 className="text-2xl font-bold mb-8">Artículos Relacionados</h3>
-              <div className="grid md:grid-cols-3 gap-6">
+            <div className="mt-16 pt-12 border-t border-border">
+              <h2 className="text-2xl font-bold text-foreground mb-8">Artículos Relacionados</h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                 {relatedArticles.map((relatedArticle) => (
-                  <Link
-                    key={relatedArticle.id}
-                    to={`/blog/${relatedArticle.slug}`}
-                    className="group"
-                  >
-                    <div className="bg-card rounded-lg p-6 border hover:shadow-md transition-shadow">
-                      <div className="flex items-center gap-2 mb-3">
-                        <span className="px-2 py-1 bg-primary/10 text-primary rounded text-xs font-medium">
-                          {relatedArticle.category}
-                        </span>
+                  <Link to={`/blog/${relatedArticle.slug}`} key={relatedArticle.id}>
+                    <motion.div
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.6 }}
+                      className="bg-card rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300"
+                    >
+                      <img 
+                        src={relatedArticle.image}
+                        alt={relatedArticle.title}
+                        className="w-full h-48 object-cover"
+                      />
+                      <div className="p-6">
+                        <h3 className="text-lg font-semibold text-foreground mb-2 line-clamp-2">
+                          {relatedArticle.title}
+                        </h3>
+                        <p className="text-muted-foreground text-sm line-clamp-3">
+                          {relatedArticle.excerpt}
+                        </p>
+                        <div className="flex items-center gap-4 text-xs text-muted-foreground mt-4">
+                          <div className="flex items-center gap-1">
+                            <Calendar className="w-3 h-3" />
+                            <span>{new Date(relatedArticle.date).toLocaleDateString('es-ES')}</span>
+                          </div>
+                          <div className="flex items-center gap-1">
+                            <Clock className="w-3 h-3" />
+                            <span>{relatedArticle.readTime}</span>
+                          </div>
+                        </div>
                       </div>
-                      <h4 className="font-semibold mb-2 group-hover:text-primary transition-colors">
-                        {relatedArticle.title}
-                      </h4>
-                      <p className="text-muted-foreground text-sm mb-4 line-clamp-2">
-                        {relatedArticle.excerpt}
-                      </p>
-                      <div className="flex items-center text-xs text-muted-foreground">
-                        <Clock className="w-3 h-3 mr-1" />
-                        {relatedArticle.readTime}
-                      </div>
-                    </div>
+                    </motion.div>
                   </Link>
                 ))}
               </div>
-            </motion.div>
+            </div>
           )}
-
-          {/* Comments Section */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.6 }}
-            className="border-t pt-12 mt-12"
-          >
-            <h3 className="text-2xl font-bold mb-8">Comentarios ({article.comments})</h3>
-            
-            {/* Comment Form */}
-            <div className="bg-card rounded-lg p-6 border mb-8">
-              <h4 className="font-semibold mb-4">Deja un comentario</h4>
-              <form className="space-y-4">
-                <div className="grid md:grid-cols-2 gap-4">
-                  <input
-                    type="text"
-                    placeholder="Tu nombre"
-                    className="px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent bg-background"
-                  />
-                  <input
-                    type="email"
-                    placeholder="Tu email"
-                    className="px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent bg-background"
-                  />
-                </div>
-                <textarea
-                  rows={4}
-                  placeholder="Tu comentario..."
-                  className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent bg-background"
-                />
-                <button
-                  type="submit"
-                  className="px-6 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors"
-                >
-                  Publicar Comentario
-                </button>
-              </form>
-            </div>
-
-            {/* Sample Comments */}
-            <div className="space-y-6">
-              <div className="bg-card rounded-lg p-6 border">
-                <div className="flex items-center mb-4">
-                  <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center mr-3">
-                    <User className="w-5 h-5" />
-                  </div>
-                  <div>
-                    <div className="font-semibold">Juan Pérez</div>
-                    <div className="text-sm text-muted-foreground">Hace 2 días</div>
-                  </div>
-                </div>
-                <p className="text-muted-foreground">
-                  Excelente artículo! Me ayudó mucho a optimizar mi servidor de Minecraft. 
-                  Los parámetros de JVM que mencionas funcionaron perfectamente.
-                </p>
-              </div>
-
-              <div className="bg-card rounded-lg p-6 border">
-                <div className="flex items-center mb-4">
-                  <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center mr-3">
-                    <User className="w-5 h-5" />
-                  </div>
-                  <div>
-                    <div className="font-semibold">María González</div>
-                    <div className="text-sm text-muted-foreground">Hace 1 semana</div>
-                  </div>
-                </div>
-                <p className="text-muted-foreground">
-                  ¿Podrían hacer un tutorial sobre optimización para servidores con mods? 
-                  Tengo problemas de rendimiento con modpacks grandes.
-                </p>
-              </div>
-            </div>
-          </motion.div>
         </motion.div>
       </Container>
     </div>

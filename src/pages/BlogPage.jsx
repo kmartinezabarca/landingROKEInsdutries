@@ -58,10 +58,11 @@ const BlogPage = () => {
       category: 'Cloud',
       tags: ['Cloud', 'Hosting', 'Comparación'],
       featured: false,
-      image: '/src/assets/services-bg.png'
+      image: '/assets/services-bg.png'
     },
     {
       id: 5,
+      slug: 'configuracion-ssl-principiantes',
       title: 'Configuración SSL: Guía para Principiantes',
       excerpt: 'Todo lo que necesitas saber sobre certificados SSL y cómo configurarlos correctamente en tu sitio web.',
       author: 'David López',
@@ -70,10 +71,11 @@ const BlogPage = () => {
       category: 'Seguridad',
       tags: ['SSL', 'Seguridad', 'HTTPS'],
       featured: false,
-      image: '/src/assets/hero-bg.png'
+      image: '/assets/hero-bg.png'
     },
     {
       id: 6,
+      slug: 'tendencias-desarrollo-web-2024',
       title: 'Tendencias en Desarrollo Web 2024',
       excerpt: 'Explora las últimas tendencias en desarrollo web que están definiendo el futuro de la industria.',
       author: 'David López',
@@ -82,7 +84,7 @@ const BlogPage = () => {
       category: 'Desarrollo',
       tags: ['Desarrollo', 'Tendencias', '2024'],
       featured: false,
-      image: '/src/assets/team-placeholder.png'
+      image: '/assets/team-placeholder.png'
     }
   ];
 
