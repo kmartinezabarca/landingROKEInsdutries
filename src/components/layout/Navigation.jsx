@@ -38,12 +38,7 @@ const Navigation = () => {
               whileTap={{ scale: 0.95 }}
               className="flex items-center space-x-2"
             >
-              <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
-                <span className="text-primary-foreground font-bold text-lg">R</span>
-              </div>
-              <span className="font-bold text-xl text-foreground">
-                {CONFIG.COMPANY_NAME}
-              </span>
+              <img src="/ROKEIndustriesFusionLogo.png" alt="ROKE Industries Logo" className="h-8 w-auto" />
             </motion.div>
           </Link>
 
@@ -127,4 +122,5 @@ const Navigation = () => {
 };
 
 export default Navigation;
+
 
