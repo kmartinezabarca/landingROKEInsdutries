@@ -1,37 +1,40 @@
-import React from 'react';
-import { motion } from 'framer-motion';
-import { ArrowRight, Server, Shield, Zap } from 'lucide-react';
-import { Link } from 'react-router-dom';
-import Container from '../common/Container';
-import Button from '../common/Button';
-import { ROUTES, CONFIG } from '../../utils/constants/config';
+import React from "react";
+import { motion } from "framer-motion";
+import { ArrowRight, ServerCog, ShieldCheck, Rabbit } from "lucide-react";
+import { Link } from "react-router-dom";
+import Container from "../common/Container";
+import Button from "../common/Button";
+import { ROUTES, CONFIG } from "../../utils/constants/config";
 
 const Hero = () => {
   const features = [
     {
-      icon: Server,
-      title: 'Hosting Confiable',
-      description: 'Servidores de alta disponibilidad'
+      icon: ServerCog, // Representa infraestructura gestionada y de precisión
+      title: "Infraestructura de Alta Disponibilidad",
+      description:
+        "Operamos sobre una arquitectura redundante para garantizar un uptime del 99.9%. Tu negocio se mantiene en línea, siempre.",
     },
     {
-      icon: Shield,
-      title: 'Seguridad Total',
-      description: 'Protección avanzada 24/7'
+      icon: ShieldCheck, // El check añade una capa de "garantía" y "verificación"
+      title: "Seguridad de Grado Empresarial",
+      description:
+        "Protección proactiva 24/7 con firewalls de aplicaciones web (WAF) y monitoreo constante contra amenazas.",
     },
     {
-      icon: Zap,
-      title: 'Rendimiento Óptimo',
-      description: 'Velocidad y eficiencia garantizada'
-    }
+      icon: Rabbit, // Un conejo es un símbolo universal de velocidad y agilidad
+      title: "Rendimiento Acelerado",
+      description:
+        "Tus aplicaciones y sitios web corren sobre almacenamiento NVMe ultrarrápido y una red optimizada para la mínima latencia.",
+    },
   ];
 
   return (
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
       {/* Background Image */}
-      <div 
+      <div
         className="absolute inset-0 bg-cover bg-center bg-no-repeat"
         style={{
-          backgroundImage: 'url(/assets/hero-bg.png)',
+          backgroundImage: "url(/assets/hero-bg.png)",
         }}
       >
         <div className="absolute inset-0 bg-background/80 dark:bg-background/90" />
@@ -47,13 +50,14 @@ const Hero = () => {
             transition={{ duration: 0.8 }}
           >
             <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold text-foreground mb-6">
-              <span className="bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
+              <span className="bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">
                 {CONFIG.COMPANY_NAME}
               </span>
             </h1>
             <p className="text-xl md:text-2xl text-muted-foreground mb-8 max-w-3xl mx-auto">
-              {CONFIG.COMPANY_TAGLINE}. Potenciamos tu presencia digital con 
-              soluciones de hosting, servidores gaming y servicios tecnológicos de vanguardia.
+              {CONFIG.COMPANY_TAGLINE}. Somos constructores de corazón.
+              Diseñamos y fabricamos las soluciones tecnológicas que potencian
+              tu visión, desde la nube más grande hasta el circuito más pequeño.
             </p>
           </motion.div>
 
@@ -64,25 +68,19 @@ const Hero = () => {
             transition={{ duration: 0.8, delay: 0.2 }}
             className="flex flex-col sm:flex-row gap-4 justify-center mb-16"
           >
-            <Button
-              size="lg"
-              className="text-lg px-8 py-4"
-              asChild
-            >
-              <Link to={ROUTES.SERVICES}>
+            <Button size="lg" className="text-lg px-8 py-4" asChild>
+              <Link to={ROUTES.SERVICES} className="flex items-center">
                 Explorar Servicios
-                <ArrowRight className="ml-2 w-5 h-5" />
+                <ArrowRight className="ml-2 h-5 w-5" />{" "}
               </Link>
-            </Button>
+            </Button>{" "}
             <Button
               variant="outline"
               size="lg"
               className="text-lg px-8 py-4"
               asChild
             >
-              <Link to={ROUTES.CONTACT}>
-                Contactar Ahora
-              </Link>
+              <Link to={ROUTES.CONTACT}>Contactar Ahora</Link>
             </Button>
           </motion.div>
 
@@ -109,9 +107,7 @@ const Hero = () => {
                   <h3 className="text-lg font-semibold text-foreground mb-2">
                     {feature.title}
                   </h3>
-                  <p className="text-muted-foreground">
-                    {feature.description}
-                  </p>
+                  <p className="text-muted-foreground">{feature.description}</p>
                 </motion.div>
               );
             })}
@@ -143,4 +139,3 @@ const Hero = () => {
 };
 
 export default Hero;
-

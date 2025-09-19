@@ -1,87 +1,34 @@
-import React from 'react';
-import { motion } from 'framer-motion';
-import { Linkedin, Twitter, Github, Mail } from 'lucide-react';
-import Container from '../common/Container';
-import { Card, CardContent } from '../common/Card';
+import React from "react";
+import { motion } from "framer-motion";
+import { Linkedin, Twitter, Github, Mail } from "lucide-react";
+import Container from "../common/Container";
+import { Card, CardContent } from "../common/Card";
+import { FaLinkedin, FaXTwitter } from "react-icons/fa6";
 
 const Team = () => {
   const teamMembers = [
     {
-      name: 'Carlos Rodríguez',
-      position: 'CEO & Fundador',
-      description: 'Ingeniero en Sistemas con más de 10 años de experiencia en infraestructura cloud y desarrollo de software.',
-      image: '/src/assets/team-placeholder.png',
+      name: "Kevin Martinez",
+      position: "CEO & Fundador",
+      description:
+        "Arquitecto de soluciones con experiencia en todo el espectro tecnológico: desde hardware y robótica hasta software y DevOps. Como CEO y Fundador, lidero ROKE con una obsesión por la excelencia técnica. Soy un constructor en el corazón, dedicado a crear sistemas confiables y escalables, desde el circuito más pequeño hasta la nube más grande.",
+      image: "/assets/team-ceo.png",
       social: {
-        linkedin: '#',
-        twitter: '#',
-        email: 'carlos@rokeindustries.com'
-      }
+        linkedin: "https://www.linkedin.com/in/kevmartinezabarca",
+      },
     },
     {
-      name: 'Ana García',
-      position: 'CTO',
-      description: 'Especialista en arquitectura de sistemas y seguridad informática. Lidera nuestro equipo técnico con innovación.',
-      image: '/src/assets/team-placeholder.png',
+      name: "Rocio Salazar",
+      position: "CTO",
+      description:
+        "Co-Fundadora y CTO de ROKE Industries. Rocío es la mente estratégica que transforma la visión de negocio en arquitectura de sistemas robusta y segura. Como Ingeniera de Datos, lidera nuestras iniciativas de Business Intelligence y la excelencia operativa, asegurando que cada producto ROKE se construya sobre una base de datos inteligente y seguridad de nivel empresarial.",
+      image: "/assets/team-cto.png",
       social: {
-        linkedin: '#',
-        github: '#',
-        email: 'ana@rokeindustries.com'
-      }
+        linkedin:
+          "https://www.linkedin.com/in/roc%C3%ADo-salazar-parra-92984720a",
+      },
     },
-    {
-      name: 'Miguel Torres',
-      position: 'Director de Operaciones',
-      description: 'Experto en gestión de servidores y optimización de rendimiento. Garantiza la máxima disponibilidad de nuestros servicios.',
-      image: '/src/assets/team-placeholder.png',
-      social: {
-        linkedin: '#',
-        twitter: '#',
-        email: 'miguel@rokeindustries.com'
-      }
-    },
-    {
-      name: 'Laura Martínez',
-      position: 'Gerente de Atención al Cliente',
-      description: 'Psicóloga especializada en experiencia del usuario. Lidera nuestro equipo de soporte 24/7 con excelencia.',
-      image: '/src/assets/team-placeholder.png',
-      social: {
-        linkedin: '#',
-        email: 'laura@rokeindustries.com'
-      }
-    },
-    {
-      name: 'David López',
-      position: 'Desarrollador Senior',
-      description: 'Full-stack developer con expertise en React, Node.js y tecnologías cloud. Impulsa nuestras soluciones web.',
-      image: '/src/assets/team-placeholder.png',
-      social: {
-        github: '#',
-        linkedin: '#',
-        email: 'david@rokeindustries.com'
-      }
-    },
-    {
-      name: 'Sofia Herrera',
-      position: 'Especialista en Seguridad',
-      description: 'Certificada en ciberseguridad con experiencia en protección de infraestructuras críticas y análisis de vulnerabilidades.',
-      image: '/src/assets/team-placeholder.png',
-      social: {
-        linkedin: '#',
-        twitter: '#',
-        email: 'sofia@rokeindustries.com'
-      }
-    }
   ];
-
-  const getSocialIcon = (platform) => {
-    const icons = {
-      linkedin: Linkedin,
-      twitter: Twitter,
-      github: Github,
-      email: Mail
-    };
-    return icons[platform];
-  };
 
   return (
     <section className="py-20 bg-muted/30">
@@ -98,13 +45,13 @@ const Team = () => {
             Nuestro Equipo
           </h2>
           <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-            Conoce a los profesionales apasionados que hacen posible nuestros 
+            Conoce a los profesionales apasionados que hacen posible nuestros
             servicios de excelencia y están comprometidos con tu éxito.
           </p>
         </motion.div>
 
         {/* Team Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div className=" grid gap-8 [grid-template-columns:repeat(auto-fit,minmax(280px,1fr))] justify-items-center" >
           {teamMembers.map((member, index) => (
             <motion.div
               key={member.name}
@@ -112,53 +59,69 @@ const Team = () => {
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.1 * index }}
               viewport={{ once: true }}
+              className="h-full w-full max-w-sm" // Asegura que el contenedor ocupe toda la altura
             >
-              <Card className="h-full group hover:shadow-lg transition-all duration-300">
-                <CardContent className="p-6 text-center">
-                  {/* Profile Image */}
-                  <div className="relative mb-6">
-                    <div className="w-24 h-24 mx-auto rounded-full overflow-hidden bg-muted">
-                      <img
-                        src={member.image}
-                        alt={member.name}
-                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
-                      />
+              <Card className="h-full flex flex-col group transition-all duration-300">
+                <CardContent className="p-8 text-center flex flex-col flex-grow">
+                  <div className="relative mb-10">
+                    <img
+                      src={member.image}
+                      alt={member.name}
+                      className="w-32 h-32 rounded-full mx-auto object-cover shadow-lg
+                         group-hover:scale-105 transition-transform duration-300"
+                    />
+                    <div
+                      className="absolute -bottom-3 left-1/2 transform -translate-x-1/2
+                         bg-primary text-primary-foreground
+                         px-4 py-1.5 rounded-full text-sm font-semibold shadow-md"
+                    >
+                      {member.position}
                     </div>
-                    <div className="absolute inset-0 rounded-full bg-primary/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                   </div>
 
-                  {/* Member Info */}
-                  <h3 className="text-xl font-bold text-foreground mb-1">
+                  {/* INFORMACIÓN DEL MIEMBRO */}
+                  <h3 className="text-2xl font-bold text-foreground mb-2">
                     {member.name}
                   </h3>
-                  <p className="text-primary font-medium mb-4">
-                    {member.position}
-                  </p>
-                  <p className="text-muted-foreground text-sm mb-6 leading-relaxed">
+                  <p className="text-muted-foreground text-base mb-6 leading-relaxed flex-grow">
                     {member.description}
                   </p>
 
-                  {/* Social Links */}
-                  <div className="flex justify-center space-x-3">
-                    {Object.entries(member.social).map(([platform, url]) => {
-                      const Icon = getSocialIcon(platform);
-                      return (
-                        <motion.a
-                          key={platform}
-                          href={platform === 'email' ? `mailto:${url}` : url}
-                          target={platform !== 'email' ? '_blank' : undefined}
-                          rel={platform !== 'email' ? 'noopener noreferrer' : undefined}
-                          className="w-10 h-10 bg-muted hover:bg-primary hover:text-primary-foreground rounded-full flex items-center justify-center transition-all duration-200"
-                          whileHover={{ scale: 1.1 }}
-                          whileTap={{ scale: 0.95 }}
-                        >
-                          <Icon className="w-4 h-4" />
-                        </motion.a>
-                      );
-                    })}
+                  {/* ICONOS SOCIALES (estilo del diseño 1) */}
+                  <div className="flex justify-center gap-4 mt-auto">
+                    {/* Ejemplo para LinkedIn */}
+                    {member.social.linkedin && (
+                      <a
+                        href={member.social.linkedin}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="w-11 h-11 bg-blue-500/10 text-blue-400 rounded-full flex items-center justify-center
+                           hover:bg-blue-500/20 hover:text-blue-300 transition-all duration-200
+                           hover:scale-110"
+                        aria-label={`LinkedIn de ${member.name}`}
+                      >
+                        <FaLinkedin className="w-5 h-5" />
+                      </a>
+                    )}
+                    {/* Ejemplo para Twitter/X */}
+                    {member.social.twitter && (
+                      <a
+                        href={member.social.twitter}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="w-11 h-11 bg-foreground/5 text-foreground/80 rounded-full flex items-center justify-center
+                           hover:bg-foreground/10 hover:text-foreground
+                           transition-all duration-200 hover:scale-110"
+                        aria-label={`Twitter de ${member.name}`}
+                      >
+                        <FaXTwitter className="w-5 h-5" />
+                      </a>
+                    )}
+                    {/* Puedes añadir más redes sociales siguiendo este patrón */}
                   </div>
                 </CardContent>
               </Card>
+              {/* --- FIN DE LA FUSIÓN DE DISEÑOS --- */}
             </motion.div>
           ))}
         </div>
@@ -175,8 +138,9 @@ const Team = () => {
             ¿Quieres unirte a nuestro equipo?
           </h3>
           <p className="text-muted-foreground mb-6 max-w-2xl mx-auto">
-            Estamos siempre buscando talento excepcional para fortalecer nuestro equipo. 
-            Si compartes nuestra pasión por la tecnología y la excelencia, nos encantaría conocerte.
+            Estamos siempre buscando talento excepcional para fortalecer nuestro
+            equipo. Si compartes nuestra pasión por la tecnología y la
+            excelencia, nos encantaría conocerte.
           </p>
           <motion.a
             href="mailto:careers@rokeindustries.com"
@@ -194,4 +158,3 @@ const Team = () => {
 };
 
 export default Team;
-

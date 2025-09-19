@@ -1,6 +1,13 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Facebook, Twitter, Linkedin, Instagram, Mail, Phone, MapPin } from 'lucide-react';
+import { Mail, Phone, MapPin } from 'lucide-react';
+import {
+  FaFacebook,
+  FaXTwitter,
+  FaLinkedin,
+  FaInstagram,
+  FaYoutube
+} from 'react-icons/fa6';
 import { CONFIG, ROUTES } from '../../utils/constants/config';
 import Container from '../common/Container';
 
@@ -40,28 +47,34 @@ const Footer = () => {
   const socialLinks = [
     { 
       name: 'Facebook', 
-      icon: Facebook, 
+      icon: FaFacebook, 
       href: CONFIG.SOCIAL.FACEBOOK,
       color: 'hover:text-blue-600' 
     },
     { 
       name: 'Twitter', 
-      icon: Twitter, 
+      icon: FaXTwitter, 
       href: CONFIG.SOCIAL.TWITTER,
       color: 'hover:text-blue-400' 
     },
     { 
       name: 'LinkedIn', 
-      icon: Linkedin, 
+      icon: FaLinkedin, 
       href: CONFIG.SOCIAL.LINKEDIN,
       color: 'hover:text-blue-700' 
     },
     { 
       name: 'Instagram', 
-      icon: Instagram, 
+      icon: FaInstagram, 
       href: CONFIG.SOCIAL.INSTAGRAM,
       color: 'hover:text-pink-600' 
     },
+    {
+      name: 'YouTube',
+      icon: FaYoutube,
+      href: CONFIG.SOCIAL.YOUTUBE,
+      color: 'hover:text-red-600' 
+    }
   ];
 
   return (

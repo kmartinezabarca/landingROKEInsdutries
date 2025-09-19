@@ -202,24 +202,47 @@ const ServicesPage = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Hero Section */}
-      <section className="relative py-20 bg-gradient-to-br from-primary/10 via-background to-secondary/10">
-        <Container>
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-            className="text-center max-w-4xl mx-auto"
-          >
-            <h1 className="text-4xl md:text-6xl font-bold text-foreground mb-6">
-              Nuestros <span className="bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">Servicios</span>
-            </h1>
-            <p className="text-xl text-muted-foreground mb-8">
-              Ofrecemos una amplia gama de servicios tecnológicos diseñados para impulsar tu presencia digital y optimizar tu infraestructura.
-            </p>
-          </motion.div>
-        </Container>
-      </section>
+    {/* HERO profesional y legible */}
+<section className="relative py-16 md:py-24">
+  {/* Fondo sutil (sin imágenes) */}
+  <div className="absolute inset-0 -z-10 overflow-hidden">
+    {/* radiales suaves que respetan el tema */}
+    <div className="
+      absolute -inset-x-20 -top-40 h-[420px]
+      bg-[radial-gradient(60%_60%_at_50%_10%,theme(colors.primary/12),transparent_60%)]
+      dark:bg-[radial-gradient(60%_60%_at_50%_10%,theme(colors.primary/20),transparent_60%)]
+    " />
+    {/* fade hacia el contenido */}
+    <div className="absolute inset-0 bg-gradient-to-b from-background/0 via-background/30 to-background" />
+  </div>
+
+  <Container>
+    <div className="text-center max-w-5xl mx-auto px-6">
+      <h1 className="text-4xl md:text-6xl font-extrabold tracking-tight text-foreground mb-5">
+        Nuestros{" "}
+        <span className="relative inline-block">
+          <span>Servicios</span>
+          {/* subrayado degradado (garantiza contraste SIEMPRE) */}
+          <span
+            aria-hidden
+            className="
+              absolute inset-x-0 bottom-1 -z-10 h-3 rounded-md
+              bg-gradient-to-r from-primary/40 via-primary/30 to-secondary/40
+              dark:from-primary/55 dark:via-primary/45 dark:to-secondary/55
+            "
+          />
+        </span>
+      </h1>
+
+      <p className="text-lg md:text-xl text-muted-foreground max-w-3xl mx-auto">
+        Ofrecemos una amplia gama de servicios tecnológicos diseñados para impulsar tu
+        presencia digital y optimizar tu infraestructura.
+      </p>
+    </div>
+  </Container>
+</section>
+
+
 
       {/* Services Navigation */}
       <section className="py-12 bg-card/50">

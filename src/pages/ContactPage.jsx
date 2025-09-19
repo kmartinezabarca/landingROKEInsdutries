@@ -14,6 +14,7 @@ import Container from '../components/common/Container';
 import { Card, CardContent, CardHeader, CardTitle } from '../components/common/Card';
 import Button from '../components/common/Button';
 import WhatsAppService from '../services/whatsapp/whatsappService';
+import { CONFIG, ROUTES } from '../utils/constants/config';
 
 const ContactPage = () => {
   const [formData, setFormData] = useState({
@@ -42,19 +43,19 @@ const ContactPage = () => {
     {
       icon: Mail,
       title: 'Email',
-      value: 'contact@rokeindustries.com',
+      value: CONFIG.CONTACT.EMAIL,
       description: 'Respuesta en menos de 24 horas'
     },
     {
       icon: Phone,
       title: 'Teléfono',
-      value: '+1 (234) 567-8900',
+      value: CONFIG.CONTACT.PHONE,
       description: 'Lunes a Viernes 9:00 - 18:00'
     },
     {
       icon: MapPin,
       title: 'Oficina',
-      value: '123 Tech Street, City, Country',
+      value: CONFIG.CONTACT.ADDRESS,
       description: 'Visitas con cita previa'
     },
     {
@@ -269,7 +270,7 @@ const ContactPage = () => {
                         className={`w-full px-4 py-2 border rounded-lg bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary ${
                           errors.phone ? 'border-red-500' : 'border-border'
                         }`}
-                        placeholder="+1 (234) 567-8900"
+                        placeholder="+52 (234) 567-8900"
                       />
                       {errors.phone && (
                         <p className="text-red-500 text-sm mt-1">{errors.phone}</p>

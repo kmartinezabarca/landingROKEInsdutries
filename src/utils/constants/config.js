@@ -26,6 +26,7 @@ export const CONFIG = {
     TWITTER: import.meta.env.VITE_TWITTER_URL || '',
     LINKEDIN: import.meta.env.VITE_LINKEDIN_URL || '',
     INSTAGRAM: import.meta.env.VITE_INSTAGRAM_URL || '',
+    YOUTUBE: import.meta.env.VITE_YOUTUBE_URL || '',
   },
 
   // WhatsApp
