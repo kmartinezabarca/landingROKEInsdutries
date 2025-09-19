@@ -154,18 +154,26 @@ const ContactPage = () => {
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
-      <section className="py-20 bg-muted/30">
-        <Container>
+      <section className="relative h-[400px] md:h-[450px] flex items-center justify-center text-center text-white overflow-hidden">
+        <div
+          className="absolute inset-0 bg-contain bg-center z-0 bg-fixed"
+          style={{
+            backgroundImage:
+              "url('/assets/images/banners/banner-contact-us.jpg')",
+          }}
+        />
+        <div className="absolute inset-0 bg-black/60 dark:bg-black/70 z-10" />
+        <Container className="relative z-20">
           <motion.div
-            initial={{ opacity: 0, y: 30 }}
+            initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
+            transition={{ duration: 0.6, delay: 0.1 }}
             className="text-center"
           >
-            <h1 className="text-4xl md:text-5xl font-bold text-foreground mb-4">
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-extrabold tracking-tight mb-4">
               Contáctanos
             </h1>
-            <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
+            <p className="text-lg md:text-xl text-white/80 max-w-3xl mx-auto">
               Estamos aquí para ayudarte. Ponte en contacto con nuestro equipo 
               de expertos y descubre cómo podemos impulsar tu proyecto.
             </p>

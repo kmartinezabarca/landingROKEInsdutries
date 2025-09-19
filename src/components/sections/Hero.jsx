@@ -45,9 +45,9 @@ const Hero = () => {
         <div className="text-center max-w-4xl mx-auto">
           {/* Main Title */}
           <motion.div
-            initial={{ opacity: 0, y: 30 }}
+            initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
+            transition={{ duration: 0.6, delay: 0.1 }}
           >
             <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold text-foreground mb-6">
               <span className="bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">

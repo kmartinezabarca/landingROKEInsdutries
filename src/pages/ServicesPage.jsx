@@ -1,253 +1,463 @@
-import React, { useState } from 'react';
-import { motion } from 'framer-motion';
-import { 
-  Server, 
-  Gamepad2, 
-  Cloud, 
-  Shield, 
-  Database, 
-  Code, 
-  CheckCircle, 
+import React, { useState } from "react";
+import { motion } from "framer-motion";
+import {
+  Server,
+  Gamepad2,
+  Cloud,
+  Shield,
+  CheckCircle,
   ArrowRight,
-  Users,
-  Clock,
-  Zap,
-  Globe,
-  Lock,
-  Settings
-} from 'lucide-react';
-import Container from '../components/common/Container';
-import { Card } from '../components/common/Card';
-import Button from '../components/common/Button';
-import { CONFIG } from '../utils/constants/config';
+  CircuitBoard,
+  Printer,
+  Bot,
+  DatabaseZap,
+  Code2,
+  ShieldCheck,
+  Route,
+  LifeBuoy,
+} from "lucide-react";
+import Container from "../components/common/Container";
+import { Card } from "../components/common/Card";
+import Button from "../components/common/Button";
+import { CONFIG } from "../utils/constants/config";
 
 const ServicesPage = () => {
-  const [activeService, setActiveService] = useState('hosting');
+  const [activeService, setActiveService] = useState("hosting");
 
   const services = [
     {
-      id: 'hosting',
-      title: 'Hosting Web',
-      subtitle: 'Hosting confiable y rápido',
-      description: 'Hosting profesional para sitios web y aplicaciones con garantía de uptime del 99.9%. Servidores optimizados con tecnología SSD y panel de control intuitivo.',
-      image: '/assets/hosting-web.png',
+      id: "hosting",
+      title: "Hosting Web",
+      subtitle: "Hosting confiable y rápido",
+      description:
+        "Hosting profesional para sitios web y aplicaciones con garantía de uptime del 99.9%. Servidores optimizados con tecnología SSD y panel de control intuitivo.",
+      image: "/assets/hosting-web.png",
       icon: Server,
-      color: 'from-blue-500 to-blue-600',
+      color: "from-blue-500 to-blue-600",
       features: [
-        'SSD Storage de alta velocidad',
-        'SSL Gratuito incluido',
-        'Backup diario automático',
-        'Panel cPanel intuitivo',
-        'Soporte PHP, MySQL, WordPress',
-        'CDN global incluido',
-        'Migración gratuita',
-        'Uptime garantizado 99.9%'
+        "SSD Storage de alta velocidad",
+        "SSL Gratuito incluido",
+        "Backup diario automático",
+        "Panel cPanel intuitivo",
+        "Soporte PHP, MySQL, WordPress",
+        "CDN global incluido",
+        "Migración gratuita",
+        "Uptime garantizado 99.9%",
       ],
       plans: [
         {
-          name: 'Básico',
-          price: '$9.99',
-          period: '/mes',
-          features: ['10 GB SSD', '1 Sitio Web', '100 GB Transferencia', 'SSL Gratuito', 'Soporte 24/7']
+          name: "Básico",
+          price: "$9.99",
+          period: "/mes",
+          specs: {
+            ram: "2 GB",
+            cpu: "2 Cores",
+            storage: "10 GB SSD",
+            slots: "20",
+          },
+          features: [
+            "10 GB SSD",
+            "1 Sitio Web",
+            "100 GB Transferencia",
+            "SSL Gratuito",
+            "Soporte 24/7",
+          ],
         },
         {
-          name: 'Profesional',
-          price: '$19.99',
-          period: '/mes',
-          features: ['50 GB SSD', '5 Sitios Web', '500 GB Transferencia', 'SSL Gratuito', 'Backup Diario', 'CDN Global']
+          name: "Profesional",
+          price: "$19.99",
+          period: "/mes",
+          specs: {
+            ram: "2 GB",
+            cpu: "2 Cores",
+            storage: "10 GB SSD",
+            slots: "20",
+          },
+          features: [
+            "50 GB SSD",
+            "5 Sitios Web",
+            "500 GB Transferencia",
+            "SSL Gratuito",
+            "Backup Diario",
+            "CDN Global",
+          ],
         },
         {
-          name: 'Empresarial',
-          price: '$39.99',
-          period: '/mes',
-          features: ['200 GB SSD', 'Sitios Ilimitados', '2 TB Transferencia', 'SSL Wildcard', 'Backup Diario', 'CDN Global', 'Soporte Prioritario']
-        }
-      ]
+          name: "Empresarial",
+          price: "$39.99",
+          period: "/mes",
+          specs: {
+            ram: "2 GB",
+            cpu: "2 Cores",
+            storage: "10 GB SSD",
+            slots: "20",
+          },
+          features: [
+            "200 GB SSD",
+            "Sitios Ilimitados",
+            "2 TB Transferencia",
+            "SSL Wildcard",
+            "Backup Diario",
+            "CDN Global",
+            "Soporte Prioritario",
+          ],
+        },
+      ],
     },
     {
-      id: 'gaming',
-      title: 'Servidores Gaming',
-      subtitle: 'Servidores optimizados para gaming',
-      description: 'Servidores especializados para Minecraft, CS:GO, Rust y otros juegos populares. Hardware de última generación con protección anti-DDoS incluida.',
-      image: '/assets/gaming-servers.png',
+      id: "gaming",
+      title: "Servidores Gaming",
+      subtitle: "Servidores optimizados para gaming",
+      description:
+        "Servidores especializados para Minecraft, CS:GO, Rust y otros juegos populares. Hardware de última generación con protección anti-DDoS incluida.",
+      image: "/assets/gaming-servers.png",
       icon: Gamepad2,
-      color: 'from-purple-500 to-pink-600',
+      color: "from-purple-500 to-pink-600",
       features: [
-        'Hardware de última generación',
-        'Protección Anti-DDoS avanzada',
-        'Instalación 1-Click de juegos',
-        'Mods y plugins personalizados',
-        'Panel de control gaming',
-        'Soporte 24/7 especializado',
-        'Backups automáticos',
-        'Latencia ultra baja'
+        "Hardware de última generación",
+        "Protección Anti-DDoS avanzada",
+        "Instalación 1-Click de juegos",
+        "Mods y plugins personalizados",
+        "Panel de control gaming",
+        "Soporte 24/7 especializado",
+        "Backups automáticos",
+        "Latencia ultra baja",
       ],
       plans: [
         {
-          name: 'Starter',
-          price: '$14.99',
-          period: '/mes',
-          features: ['2 GB RAM', '20 Slots', 'SSD 10 GB', 'Anti-DDoS', 'Soporte 24/7']
+          name: "Starter",
+          price: "$14.99",
+          period: "/mes",
+          specs: {
+            ram: "2 GB",
+            cpu: "2 Cores",
+            storage: "10 GB SSD",
+            slots: "20",
+          },
+          features: [
+            "2 GB RAM",
+            "20 Slots",
+            "SSD 10 GB",
+            "Anti-DDoS",
+            "Soporte 24/7",
+          ],
         },
         {
-          name: 'Pro Gamer',
-          price: '$29.99',
-          period: '/mes',
-          features: ['6 GB RAM', '50 Slots', 'SSD 50 GB', 'Anti-DDoS Pro', 'Mods Ilimitados', 'Backup Diario']
+          name: "Pro Gamer",
+          price: "$29.99",
+          period: "/mes",
+          specs: {
+            ram: "2 GB",
+            cpu: "2 Cores",
+            storage: "10 GB SSD",
+            slots: "20",
+          },
+          features: [
+            "6 GB RAM",
+            "50 Slots",
+            "SSD 50 GB",
+            "Anti-DDoS Pro",
+            "Mods Ilimitados",
+            "Backup Diario",
+          ],
         },
         {
-          name: 'Elite',
-          price: '$59.99',
-          period: '/mes',
-          features: ['16 GB RAM', '100 Slots', 'SSD 200 GB', 'Anti-DDoS Elite', 'CPU Dedicado', 'Soporte Prioritario']
-        }
-      ]
+          name: "Elite",
+          price: "$59.99",
+          period: "/mes",
+          specs: {
+            ram: "2 GB",
+            cpu: "2 Cores",
+            storage: "10 GB SSD",
+            slots: "20",
+          },
+          features: [
+            "16 GB RAM",
+            "100 Slots",
+            "SSD 200 GB",
+            "Anti-DDoS Elite",
+            "CPU Dedicado",
+            "Soporte Prioritario",
+          ],
+        },
+      ],
     },
     {
-      id: 'cloud',
-      title: 'Cloud Hosting',
-      subtitle: 'Soluciones cloud escalables',
-      description: 'Infraestructura cloud moderna con recursos dedicados y alta disponibilidad. Escalabilidad automática y balanceador de carga incluido.',
-      image: '/assets/cloud-hosting.png',
+      id: "cloud",
+      title: "Cloud Hosting",
+      subtitle: "Soluciones cloud escalables",
+      description:
+        "Infraestructura cloud moderna con recursos dedicados y alta disponibilidad. Escalabilidad automática y balanceador de carga incluido.",
+      image: "/assets/cloud-hosting.png",
       icon: Cloud,
-      color: 'from-cyan-500 to-blue-600',
+      color: "from-cyan-500 to-blue-600",
       features: [
-        'Auto-scaling inteligente',
-        'Load Balancer incluido',
-        'CDN global distribuido',
-        'API de gestión completa',
-        'Monitoreo en tiempo real',
-        'Backup automático',
-        'Seguridad avanzada',
-        'SLA 99.99% uptime'
+        "Auto-scaling inteligente",
+        "Load Balancer incluido",
+        "CDN global distribuido",
+        "API de gestión completa",
+        "Monitoreo en tiempo real",
+        "Backup automático",
+        "Seguridad avanzada",
+        "SLA 99.99% uptime",
       ],
       plans: [
         {
-          name: 'Cloud Start',
-          price: '$24.99',
-          period: '/mes',
-          features: ['2 vCPU', '4 GB RAM', '50 GB SSD', 'Load Balancer', 'CDN Global']
+          name: "Cloud Start",
+          price: "$24.99",
+          period: "/mes",
+          specs: {
+            ram: "2 GB",
+            cpu: "2 Cores",
+            storage: "10 GB SSD",
+            slots: "20",
+          },
+          features: [
+            "2 vCPU",
+            "4 GB RAM",
+            "50 GB SSD",
+            "Load Balancer",
+            "CDN Global",
+          ],
         },
         {
-          name: 'Cloud Pro',
-          price: '$49.99',
-          period: '/mes',
-          features: ['4 vCPU', '8 GB RAM', '200 GB SSD', 'Auto-scaling', 'API Management', 'Monitoreo 24/7']
+          name: "Cloud Pro",
+          price: "$49.99",
+          period: "/mes",
+          specs: {
+            ram: "2 GB",
+            cpu: "2 Cores",
+            storage: "10 GB SSD",
+            slots: "20",
+          },
+          features: [
+            "4 vCPU",
+            "8 GB RAM",
+            "200 GB SSD",
+            "Auto-scaling",
+            "API Management",
+            "Monitoreo 24/7",
+          ],
         },
         {
-          name: 'Cloud Enterprise',
-          price: '$99.99',
-          period: '/mes',
-          features: ['8 vCPU', '32 GB RAM', '1 TB SSD', 'Recursos Dedicados', 'Soporte Dedicado', 'SLA Premium']
-        }
-      ]
+          name: "Cloud Enterprise",
+          price: "$99.99",
+          period: "/mes",
+          specs: {
+            ram: "2 GB",
+            cpu: "2 Cores",
+            storage: "10 GB SSD",
+            slots: "20",
+          },
+          features: [
+            "8 vCPU",
+            "32 GB RAM",
+            "1 TB SSD",
+            "Recursos Dedicados",
+            "Soporte Dedicado",
+            "SLA Premium",
+          ],
+        },
+      ],
     },
     {
-      id: 'security',
-      title: 'Seguridad Web',
-      subtitle: 'Protección avanzada 24/7',
-      description: 'Servicios de seguridad web completos con protección contra malware, DDoS y vulnerabilidades. Monitoreo continuo y respuesta rápida.',
-      image: '/assets/security-web.png',
+      id: "security",
+      title: "Seguridad Web",
+      subtitle: "Protección avanzada 24/7",
+      description:
+        "Servicios de seguridad web completos con protección contra malware, DDoS y vulnerabilidades. Monitoreo continuo y respuesta rápida.",
+      image: "/assets/security-web.png",
       icon: Shield,
-      color: 'from-green-500 to-emerald-600',
+      color: "from-green-500 to-emerald-600",
       features: [
-        'Firewall WAF avanzado',
-        'Monitoreo de malware 24/7',
-        'Certificados SSL/TLS',
-        'Auditorías de seguridad',
-        'Protección DDoS',
-        'Análisis de vulnerabilidades',
-        'Respuesta a incidentes',
-        'Informes detallados'
+        "Firewall WAF avanzado",
+        "Monitoreo de malware 24/7",
+        "Certificados SSL/TLS",
+        "Auditorías de seguridad",
+        "Protección DDoS",
+        "Análisis de vulnerabilidades",
+        "Respuesta a incidentes",
+        "Informes detallados",
       ],
       plans: [
         {
-          name: 'Básico',
-          price: '$19.99',
-          period: '/mes',
-          features: ['SSL Básico', 'Firewall WAF', 'Monitoreo Malware', 'Soporte Email']
+          name: "Básico",
+          price: "$19.99",
+          period: "/mes",
+          specs: {
+            ram: "2 GB",
+            cpu: "2 Cores",
+            storage: "10 GB SSD",
+            slots: "20",
+          },
+          features: [
+            "SSL Básico",
+            "Firewall WAF",
+            "Monitoreo Malware",
+            "Soporte Email",
+          ],
         },
         {
-          name: 'Avanzado',
-          price: '$39.99',
-          period: '/mes',
-          features: ['SSL Wildcard', 'WAF Avanzado', 'Anti-DDoS', 'Auditorías Mensuales', 'Soporte 24/7']
+          name: "Avanzado",
+          price: "$39.99",
+          period: "/mes",
+          specs: {
+            ram: "2 GB",
+            cpu: "2 Cores",
+            storage: "10 GB SSD",
+            slots: "20",
+          },
+          features: [
+            "SSL Wildcard",
+            "WAF Avanzado",
+            "Anti-DDoS",
+            "Auditorías Mensuales",
+            "Soporte 24/7",
+          ],
         },
         {
-          name: 'Enterprise',
-          price: '$79.99',
-          period: '/mes',
-          features: ['SSL EV', 'WAF Enterprise', 'DDoS Protection Pro', 'Auditorías Semanales', 'Respuesta Incidentes', 'Soporte Dedicado']
-        }
-      ]
-    }
+          name: "Enterprise",
+          price: "$79.99",
+          period: "/mes",
+          specs: {
+            ram: "2 GB",
+            cpu: "2 Cores",
+            storage: "10 GB SSD",
+            slots: "20",
+          },
+          features: [
+            "SSL EV",
+            "WAF Enterprise",
+            "DDoS Protection Pro",
+            "Auditorías Semanales",
+            "Respuesta Incidentes",
+            "Soporte Dedicado",
+          ],
+        },
+      ],
+    },
   ];
 
-  const additionalServices = [
+  const allConsultingServices = [
     {
-      icon: Database,
-      title: 'Bases de Datos',
-      description: 'Gestión profesional de MySQL, PostgreSQL y MongoDB con backup automático y optimización.',
-      features: ['Backup Automático', 'Replicación', 'Monitoreo 24/7', 'Optimización']
+      icon: DatabaseZap,
+      title: "Arquitectura de Bases de Datos",
+      description:
+        "Diseñamos y gestionamos sistemas de bases de datos de alto rendimiento y alta disponibilidad, optimizados para tus cargas de trabajo específicas.",
+      features: [
+        "Diseño y Modelado de Datos (MySQL, PostgreSQL, MongoDB)",
+        "Configuración de Replicación y Alta Disponibilidad",
+        "Estrategias de Backup y Recuperación de Desastres",
+        "Optimización de Consultas (Query Tuning)",
+      ],
     },
     {
-      icon: Code,
-      title: 'Desarrollo Web',
-      description: 'Desarrollo de sitios web y aplicaciones personalizadas con tecnologías modernas.',
-      features: ['React/Vue.js', 'Node.js/PHP', 'Diseño Responsive', 'SEO Optimizado']
-    }
+      icon: Code2,
+      title: "Desarrollo de Software a Medida",
+      description:
+        "Construimos aplicaciones web y móviles robustas y escalables, desde el concepto hasta el despliegue y más allá.",
+      features: [
+        "Desarrollo Full-Stack (Laravel, React, Vue.js)",
+        "Aplicaciones Móviles Multiplataforma (Flutter)",
+        "Diseño de Arquitectura de Software",
+        "Integración de APIs y Servicios de Terceros",
+      ],
+    },
+    {
+      icon: ShieldCheck,
+      title: "Consultoría de Seguridad y DevOps",
+      description:
+        "Fortalecemos tu infraestructura y automatizamos tus procesos para que puedas innovar con velocidad y confianza.",
+      features: [
+        "Auditorías de Seguridad y Hardening de Servidores",
+        "Diseño e Implementación de Pipelines CI/CD (Jenkins)",
+        "Arquitectura de Red Segura (VLANs, Firewalls)",
+        "Estrategias de Monitoreo y Alertas",
+      ],
+    },
+    {
+      icon: Route,
+      title: "Migración y Modernización",
+      description:
+        "Te ayudamos a mover tus aplicaciones legadas a una infraestructura moderna, optimizando el rendimiento, la seguridad y los costos.",
+      features: [
+        'Migración "White Glove" de Infraestructura Completa',
+        "Refactorización de Código Heredado (Legacy Code)",
+        "Contenerización de Aplicaciones (Docker)",
+        "Optimización de Costos de Infraestructura (FinOps)",
+      ],
+    },
+    {
+      icon: LifeBuoy,
+      title: "Soporte de Misión Crítica 24/7",
+      description:
+        "Nuestro equipo de ingenieros está disponible 24/7 para resolver cualquier inconveniente y asegurar la continuidad de tu operación.",
+      features: [
+        "Acceso a Ingenieros Expertos",
+        "Tiempos de Respuesta Garantizados (SLA)",
+        "Monitoreo Proactivo de Servicios",
+        "Canales de Comunicación Dedicados",
+      ],
+    },
   ];
 
-  const currentService = services.find(service => service.id === activeService);
+  const rokeLabsServices = [
+    {
+      icon: CircuitBoard,
+      title: "Fabricación de PCBs a Medida",
+      description: "Prototipado rápido de placas de circuito impreso (PCBs) de una o dos capas, fresadas con precisión en nuestra maquinaria CNC.",
+      features: ["Fresado de Alta Precisión", "Perforación y Corte a Medida", "Ideal para Prototipos y Lotes Pequeños", "Tiempos de Entrega Rápidos (24-48h)"],
+    },
+    {
+      icon: Printer,
+      title: "Impresión 3D y Prototipado Rápido",
+      description: "Materializa tus diseños. Ofrecemos servicios de impresión 3D de alta resolución para piezas funcionales, carcasas y prototipos.",
+      features: ["Tecnología FDM de Alta Calidad", "Amplia Gama de Materiales (PLA, PETG, ABS)", "Optimización de Diseño para Fabricación (DFM)", "Servicios de Post-Procesado"],
+    },
+    {
+      icon: Bot,
+      title: "Consultoría en Mecatrónica e IoT",
+      description: "Te ayudamos a diseñar y construir tus propios productos de hardware. Desde la elección de componentes hasta la integración de firmware.",
+      features: ["Diseño de Sistemas Embebidos (Arduino/ESP32)", "Integración de Sensores y Actuadores", "Diseño Mecánico para CNC y 3D", "Desarrollo de Firmware a Medida"],
+    },
+  ];
+
+  const currentService = services.find(
+    (service) => service.id === activeService
+  );
 
   return (
     <div className="min-h-screen bg-background">
-    {/* HERO profesional y legible */}
-<section className="relative py-16 md:py-24">
-  {/* Fondo sutil (sin imágenes) */}
-  <div className="absolute inset-0 -z-10 overflow-hidden">
-    {/* radiales suaves que respetan el tema */}
-    <div className="
-      absolute -inset-x-20 -top-40 h-[420px]
-      bg-[radial-gradient(60%_60%_at_50%_10%,theme(colors.primary/12),transparent_60%)]
-      dark:bg-[radial-gradient(60%_60%_at_50%_10%,theme(colors.primary/20),transparent_60%)]
-    " />
-    {/* fade hacia el contenido */}
-    <div className="absolute inset-0 bg-gradient-to-b from-background/0 via-background/30 to-background" />
-  </div>
-
-  <Container>
-    <div className="text-center max-w-5xl mx-auto px-6">
-      <h1 className="text-4xl md:text-6xl font-extrabold tracking-tight text-foreground mb-5">
-        Nuestros{" "}
-        <span className="relative inline-block">
-          <span>Servicios</span>
-          {/* subrayado degradado (garantiza contraste SIEMPRE) */}
-          <span
-            aria-hidden
-            className="
-              absolute inset-x-0 bottom-1 -z-10 h-3 rounded-md
-              bg-gradient-to-r from-primary/40 via-primary/30 to-secondary/40
-              dark:from-primary/55 dark:via-primary/45 dark:to-secondary/55
-            "
-          />
-        </span>
-      </h1>
-
-      <p className="text-lg md:text-xl text-muted-foreground max-w-3xl mx-auto">
-        Ofrecemos una amplia gama de servicios tecnológicos diseñados para impulsar tu
-        presencia digital y optimizar tu infraestructura.
-      </p>
-    </div>
-  </Container>
-</section>
-
-
+      <section className="relative h-[400px] md:h-[450px] flex items-center justify-center text-center text-white overflow-hidden">
+        <div
+          className="absolute inset-0 bg-cover bg-center z-0 bg-fixed"
+          style={{
+            backgroundImage:
+              "url('/assets/images/banners/banner-data-center.jpg')",
+          }}
+        />
+        <div className="absolute inset-0 bg-black/60 dark:bg-black/70 z-10" />
+        <Container className="relative z-20">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.1 }}
+          >
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-extrabold tracking-tight mb-4">
+              Nuestros Servicios
+            </h1>
+            <p className="text-lg md:text-xl text-white/80 max-w-3xl mx-auto">
+              Ofrecemos una amplia gama de servicios tecnológicos diseñados para
+              impulsar tu presencia digital y optimizar tu infraestructura.
+            </p>
+          </motion.div>
+        </Container>
+      </section>
 
       {/* Services Navigation */}
       <section className="py-12 bg-card/50">
         <Container>
-          <div className="flex flex-wrap justify-center gap-4 mb-8">
+          <div className="flex flex-wrap justify-center gap-4">
             {services.map((service, index) => {
               const Icon = service.icon;
               return (
@@ -259,8 +469,8 @@ const ServicesPage = () => {
                   onClick={() => setActiveService(service.id)}
                   className={`flex items-center gap-3 px-6 py-3 rounded-lg font-medium transition-all duration-300 ${
                     activeService === service.id
-                      ? 'bg-primary text-primary-foreground shadow-lg'
-                      : 'bg-background text-muted-foreground hover:bg-primary/10 hover:text-foreground'
+                      ? "bg-primary text-primary-foreground shadow-lg"
+                      : "bg-background text-muted-foreground hover:bg-primary/10 hover:text-foreground"
                   }`}
                 >
                   <Icon className="w-5 h-5" />
@@ -273,7 +483,7 @@ const ServicesPage = () => {
       </section>
 
       {/* Active Service Details */}
-      <section className="py-16">
+      <section className="py-6">
         <Container>
           <motion.div
             key={activeService}
@@ -290,21 +500,25 @@ const ServicesPage = () => {
                   alt={currentService.title}
                   className="w-full h-80 object-cover"
                 />
-                <div className={`absolute inset-0 bg-gradient-to-t ${currentService.color} opacity-20`} />
+                <div
+                  className={`absolute inset-0 bg-gradient-to-t ${currentService.color} opacity-20`}
+                />
               </div>
             </div>
 
             {/* Service Info */}
             <div className="order-1 lg:order-2">
-              <div className={`inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r ${currentService.color} text-white mb-4`}>
+              <div
+                className={`inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r ${currentService.color} text-white mb-4`}
+              >
                 <currentService.icon className="w-5 h-5" />
                 <span className="font-medium">{currentService.subtitle}</span>
               </div>
-              
+
               <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
                 {currentService.title}
               </h2>
-              
+
               <p className="text-lg text-muted-foreground mb-8">
                 {currentService.description}
               </p>
@@ -325,64 +539,164 @@ const ServicesPage = () => {
               </div>
             </div>
           </motion.div>
-
           {/* Pricing Plans */}
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-          >
-            <h3 className="text-2xl font-bold text-center text-foreground mb-8">
-              Planes de {currentService.title}
-            </h3>
-            
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              {currentService.plans.map((plan, index) => (
+          <div className="grid gap-6 md:gap-8 [grid-template-columns:repeat(auto-fit,minmax(280px,1fr))] items-stretch">
+            {currentService.plans.map((plan, idx) => {
+              const featured = plan.featured ?? idx === 1; // ⭐️ destacado (o marca featured en data)
+              const [intPart, decimals] = String(plan.price)
+                .replace(/[^\d.]/g, "")
+                .split(".");
+              const Icon = currentService.icon;
+
+              return (
                 <motion.div
                   key={plan.name}
-                  initial={{ opacity: 0, y: 30 }}
+                  initial={{ opacity: 0, y: 28 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.6, delay: index * 0.1 }}
+                  transition={{ duration: 0.55, delay: idx * 0.08 }}
+                  className="h-full"
                 >
-                  <Card className={`p-8 text-center relative overflow-hidden ${
-                    index === 1 ? 'border-primary shadow-lg scale-105' : ''
-                  }`}>
-                    {index === 1 && (
-                      <div className="absolute top-0 left-0 right-0 bg-primary text-primary-foreground text-sm font-medium py-2">
-                        Más Popular
-                      </div>
+                  <Card
+                    className={[
+                      "relative h-full flex flex-col border bg-card/70 shadow-sm transition-all duration-300",
+                      "hover:shadow-xl hover:-translate-y-0.5",
+                      featured
+                        ? "ring-1 ring-primary/45 border-primary/45 bg-gradient-to-b from-primary/5 to-transparent"
+                        : "border-border/60",
+                    ].join(" ")}
+                  >
+                    {/* Banda superior y badge: no se cortan */}
+                    {featured && (
+                      <>
+                        <div className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-primary/70 via-primary/40 to-secondary/70" />
+                        <span className="mx-auto mt-3 inline-block rounded-full bg-primary text-primary-foreground px-3 py-1 text-xs font-semibold">
+                          Más Popular
+                        </span>
+                      </>
                     )}
-                    
-                    <h4 className="text-xl font-bold text-foreground mb-4 mt-2">
-                      {plan.name}
-                    </h4>
-                    
-                    <div className="mb-6">
-                      <span className="text-4xl font-bold text-foreground">{plan.price}</span>
-                      <span className="text-muted-foreground">{plan.period}</span>
-                    </div>
 
-                    <ul className="space-y-3 mb-8">
-                      {plan.features.map((feature, featureIndex) => (
-                        <li key={featureIndex} className="flex items-center gap-3">
-                          <CheckCircle className="w-4 h-4 text-green-500 flex-shrink-0" />
-                          <span className="text-sm text-muted-foreground">{feature}</span>
-                        </li>
-                      ))}
-                    </ul>
-
-                    <Button 
-                      className="w-full" 
-                      variant={index === 1 ? 'default' : 'outline'}
+                    <div
+                      className={`p-6 md:p-7 ${
+                        featured ? "pt-3" : ""
+                      } flex flex-col text-center`}
                     >
-                      Elegir Plan
-                      <ArrowRight className="ml-2 w-4 h-4" />
-                    </Button>
+                      {/* Icono */}
+                      <div className="mx-auto mb-3">
+                        <div className="size-10 rounded-xl bg-foreground/5 flex items-center justify-center">
+                          <Icon className="size-5 text-foreground/70" />
+                        </div>
+                      </div>
+
+                      {/* Título */}
+                      <h4 className="text-lg font-semibold text-foreground">
+                        {plan.name}
+                      </h4>
+
+                      {/* Precio compacto */}
+                      <div className="mt-2 mb-5 flex items-end justify-center gap-1">
+                        <span className="text-xs text-muted-foreground">$</span>
+                        <span className="text-4xl md:text-5xl font-extrabold leading-none tracking-tight">
+                          {intPart ?? plan.price}
+                        </span>
+                        {decimals && (
+                          <span className="text-lg md:text-2xl -mb-0.5 font-bold">
+                            .{decimals}
+                          </span>
+                        )}
+                        <span className="text-xs text-muted-foreground">
+                          {plan.period || "/mes"}
+                        </span>
+                      </div>
+
+                      {/* Píldoras de specs (opcionales): se muestran solo si existen */}
+                      {plan.specs && (
+                        <div className="grid grid-cols-2 gap-3 mb-5">
+                          {plan.specs.ram && (
+                            <div className="rounded-xl bg-muted/60 px-3 py-2.5">
+                              <div className="text-sm font-semibold">
+                                {plan.specs.ram}
+                              </div>
+                              <div className="text-[11px] text-muted-foreground">
+                                Memoria
+                              </div>
+                            </div>
+                          )}
+                          {plan.specs.cpu && (
+                            <div className="rounded-xl bg-muted/60 px-3 py-2.5">
+                              <div className="text-sm font-semibold">
+                                {plan.specs.cpu}
+                              </div>
+                              <div className="text-[11px] text-muted-foreground">
+                                Procesador
+                              </div>
+                            </div>
+                          )}
+                          {plan.specs.storage && (
+                            <div className="rounded-xl bg-muted/60 px-3 py-2.5">
+                              <div className="text-sm font-semibold">
+                                {plan.specs.storage}
+                              </div>
+                              <div className="text-[11px] text-muted-foreground">
+                                Almacenamiento
+                              </div>
+                            </div>
+                          )}
+                          {plan.specs.slots && (
+                            <div className="rounded-xl bg-muted/60 px-3 py-2.5">
+                              <div className="text-sm font-semibold">
+                                {plan.specs.slots}
+                              </div>
+                              <div className="text-[11px] text-muted-foreground">
+                                Jugadores
+                              </div>
+                            </div>
+                          )}
+                        </div>
+                      )}
+
+                      {/* Features (incluidos / excluidos con "x " al inicio) */}
+                      <ul className="space-y-2.5 mb-5 text-left mx-auto max-w-[22rem]">
+                        {plan.features.map((f, i) => {
+                          const excluded = /^x\s/i.test(f);
+                          return (
+                            <li key={i} className="flex items-start gap-2.5">
+                              <CheckCircle
+                                className={`w-4 h-4 mt-0.5 shrink-0 ${
+                                  excluded
+                                    ? "text-muted-foreground"
+                                    : "text-green-500"
+                                }`}
+                              />
+                              <span
+                                className={`text-sm ${
+                                  excluded
+                                    ? "line-through text-muted-foreground/90"
+                                    : "text-muted-foreground"
+                                }`}
+                              >
+                                {f.replace(/^x\s*/i, "")}
+                              </span>
+                            </li>
+                          );
+                        })}
+                      </ul>
+
+                      {/* CTA */}
+                      <Button
+                        className="w-full"
+                        variant={featured ? "default" : "outline"}
+                      >
+                        {currentService.id === "gaming"
+                          ? "Contratar Servidor"
+                          : "Elegir Plan"}
+                        <ArrowRight className="ml-2 w-4 h-4" />
+                      </Button>
+                    </div>
                   </Card>
                 </motion.div>
-              ))}
-            </div>
-          </motion.div>
+              );
+            })}
+          </div>
         </Container>
       </section>
 
@@ -399,12 +713,13 @@ const ServicesPage = () => {
               Servicios Adicionales
             </h2>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              Complementa tu infraestructura con nuestros servicios especializados
+              Complementa tu infraestructura con nuestros servicios
+              especializados
             </p>
           </motion.div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
-            {additionalServices.map((service, index) => {
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
+            {allConsultingServices.map((service, index) => {
               const Icon = service.icon;
               return (
                 <motion.div
@@ -413,93 +728,99 @@ const ServicesPage = () => {
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.6, delay: index * 0.2 }}
                 >
-                  <Card className="p-8 h-full hover:shadow-lg transition-shadow duration-300">
-                    <div className="flex items-start gap-4">
+                  <Card className="p-6 md:p-8 h-full hover:shadow-xl transition-shadow duration-300 flex flex-col">
+                    <div className="flex items-center gap-4 mb-4">
                       <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center flex-shrink-0">
                         <Icon className="w-6 h-6 text-primary" />
                       </div>
-                      <div className="flex-1">
-                        <h3 className="text-xl font-bold text-foreground mb-3">
-                          {service.title}
-                        </h3>
-                        <p className="text-muted-foreground mb-4">
-                          {service.description}
-                        </p>
-                        <div className="grid grid-cols-2 gap-2">
-                          {service.features.map((feature, featureIndex) => (
-                            <div key={featureIndex} className="flex items-center gap-2">
-                              <CheckCircle className="w-4 h-4 text-green-500" />
-                              <span className="text-sm text-muted-foreground">{feature}</span>
-                            </div>
-                          ))}
-                        </div>
-                      </div>
+                      <h3 className="text-xl font-bold text-foreground">
+                        {service.title}
+                      </h3>
+                    </div>
+                    <div className="flex-grow">
+                      <p className="text-muted-foreground mb-6">
+                        {service.description}
+                      </p>
+                      <ul className="space-y-3">
+                        {service.features.map((feature, featureIndex) => (
+                          <li
+                            key={featureIndex}
+                            className="flex items-start gap-3"
+                          >
+                            <CheckCircle className="w-5 h-5 text-green-500 mt-0.5 flex-shrink-0" />
+                            <span className="text-sm text-muted-foreground">
+                              {feature}
+                            </span>
+                          </li>
+                        ))}
+                      </ul>
                     </div>
                   </Card>
                 </motion.div>
               );
             })}
           </div>
+        </Container>
+      </section>
 
-          {/* Support Services */}
+       <section className="py-6 bg-background">
+        <Container>
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.4 }}
-            className="grid grid-cols-1 md:grid-cols-2 gap-8"
+            transition={{ duration: 0.8 }}
+            className="text-center mb-12"
           >
-            <Card className="p-8 bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-950/50 dark:to-blue-900/50 border-blue-200 dark:border-blue-800">
-              <div className="flex items-start gap-4">
-                <div className="w-12 h-12 bg-blue-500/10 rounded-lg flex items-center justify-center">
-                  <Clock className="w-6 h-6 text-blue-500" />
-                </div>
-                <div>
-                  <h3 className="text-xl font-bold text-foreground mb-2">
-                    Soporte Técnico 24/7
-                  </h3>
-                  <p className="text-muted-foreground mb-4">
-                    Equipo de expertos disponible las 24 horas para resolver cualquier inconveniente.
-                  </p>
-                  <div className="flex items-center gap-4 text-sm text-muted-foreground">
-                    <div className="flex items-center gap-2">
-                      <Users className="w-4 h-4" />
-                      <span>Expertos certificados</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <Zap className="w-4 h-4" />
-                      <span>Respuesta rápida</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </Card>
-
-            <Card className="p-8 bg-gradient-to-br from-green-50 to-green-100 dark:from-green-950/50 dark:to-green-900/50 border-green-200 dark:border-green-800">
-              <div className="flex items-start gap-4">
-                <div className="w-12 h-12 bg-green-500/10 rounded-lg flex items-center justify-center">
-                  <Globe className="w-6 h-6 text-green-500" />
-                </div>
-                <div>
-                  <h3 className="text-xl font-bold text-foreground mb-2">
-                    Migración Gratuita
-                  </h3>
-                  <p className="text-muted-foreground mb-4">
-                    Migramos tu sitio web desde tu proveedor actual sin costo adicional.
-                  </p>
-                  <div className="flex items-center gap-4 text-sm text-muted-foreground">
-                    <div className="flex items-center gap-2">
-                      <Lock className="w-4 h-4" />
-                      <span>Proceso seguro</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <Settings className="w-4 h-4" />
-                      <span>Sin tiempo de inactividad</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </Card>
+            <h2 className="text-3xl font-bold text-foreground mb-4">
+              ROKE Labs: Fabricación Digital y Prototipado
+            </h2>
+            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+              Transformamos tus conceptos en realidades tangibles. Nuestro taller de I+D está equipado para llevar tu proyecto de hardware desde el diseño hasta el prototipo funcional.
+            </p>
           </motion.div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
+            {rokeLabsServices.map((service, index) => {
+              const Icon = service.icon;
+              return (
+                <motion.div
+                  key={service.title}
+                  initial={{ opacity: 0, y: 30 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.6, delay: index * 0.2 }}
+                >
+                  <Card className="p-6 md:p-8 h-full hover:shadow-xl transition-shadow duration-300 flex flex-col">
+                    <div className="flex items-center gap-4 mb-4">
+                      <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center flex-shrink-0">
+                        <Icon className="w-6 h-6 text-primary" />
+                      </div>
+                      <h3 className="text-xl font-bold text-foreground">
+                        {service.title}
+                      </h3>
+                    </div>
+                    <div className="flex-grow">
+                      <p className="text-muted-foreground mb-6">
+                        {service.description}
+                      </p>
+                      <ul className="space-y-3">
+                        {service.features.map((feature, featureIndex) => (
+                          <li
+                            key={featureIndex}
+                            className="flex items-start gap-3"
+                          >
+                            <CheckCircle className="w-5 h-5 text-green-500 mt-0.5 flex-shrink-0" />
+                            <span className="text-sm text-muted-foreground">
+                              {feature}
+                            </span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  </Card>
+                </motion.div>
+              );
+            })}
+          </div>
         </Container>
       </section>
 
@@ -516,14 +837,28 @@ const ServicesPage = () => {
               ¿Necesitas una solución personalizada?
             </h2>
             <p className="text-xl mb-8 opacity-90">
-              Nuestro equipo de expertos está listo para ayudarte a encontrar la solución perfecta para tus necesidades específicas.
+              Nuestro equipo de expertos está listo para ayudarte a encontrar la
+              solución perfecta para tus necesidades específicas.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button size="lg" variant="secondary" className="text-lg px-8 py-4">
+              <Button
+                size="lg"
+                variant="secondary"
+                className="text-lg px-8 py-4"
+              >
                 Solicitar Cotización
                 <ArrowRight className="ml-2 w-5 h-5" />
               </Button>
-              <Button size="lg" variant="outline" className="text-lg px-8 py-4 border-white text-white hover:bg-white hover:text-primary">
+              <Button
+                size="lg"
+                className="
+    text-lg px-8 py-4 transition-colors
+    bg-black text-white border border-black hover:bg-black/90
+    dark:bg-white dark:text-black dark:border-white dark:hover:bg-white/90
+    focus-visible:ring-2 focus-visible:ring-primary/50
+    focus-visible:ring-offset-2 focus-visible:ring-offset-background
+  "
+              >
                 Ver Planes de Hosting
               </Button>
             </div>
@@ -535,4 +870,3 @@ const ServicesPage = () => {
 };
 
 export default ServicesPage;
-

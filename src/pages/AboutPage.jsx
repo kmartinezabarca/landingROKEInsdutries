@@ -115,30 +115,24 @@ const AboutPage = () => {
   return (
     <div className="min-h-screen bg-background">
       {/* Hero Section */}
-      <section className="relative py-20 overflow-hidden">
+      <section className="relative h-[400px] md:h-[450px] flex items-center justify-center text-center text-white overflow-hidden">
         <div
-          className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+          className="absolute inset-0 bg-cover bg-center z-0 bg-fixed"
           style={{
             backgroundImage: "url(/assets/about-hero.png)",
           }}
-        >
-          <div className="absolute inset-0 bg-background/80 dark:bg-background/90" />
-        </div>
-
-        <Container className="relative z-10">
+        />
+        <div className="absolute inset-0 bg-black/60 dark:bg-black/70 z-10" />
+        <Container className="relative z-20">
           <motion.div
-            initial={{ opacity: 0, y: 30 }}
+            initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-            className="text-center max-w-4xl mx-auto"
+            transition={{ duration: 0.6, delay: 0.1 }}
           >
-            <h1 className="text-4xl md:text-6xl font-bold text-foreground mb-6">
-              Sobre{" "}
-              <span className="bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
-                Nosotros
-              </span>
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-extrabold tracking-tight mb-4">
+              Sobre Nosotros
             </h1>
-            <p className="text-xl text-muted-foreground mb-8">
+            <p className="text-lg md:text-xl text-white/80 max-w-3xl mx-auto">
               Somos un equipo apasionado de profesionales tecnológicos
               comprometidos con impulsar el crecimiento digital de nuestros
               clientes a través de soluciones innovadoras y confiables.

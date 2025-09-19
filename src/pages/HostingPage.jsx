@@ -167,19 +167,27 @@ const HostingPage = () => {
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
-      <section className="py-20 bg-muted/30">
-        <Container>
+      <section className="relative h-[400px] md:h-[450px] flex items-center justify-center text-center text-white overflow-hidden">
+        <div
+          className="absolute inset-0 bg-cover bg-center z-0 bg-fixed"
+          style={{
+            backgroundImage:
+              "url('/assets/images/banners/banner-hosting.jpg')",
+          }}
+        />
+        <div className="absolute inset-0 bg-black/60 dark:bg-black/70 z-10" />
+        <Container className="relative z-20">
           <motion.div
-            initial={{ opacity: 0, y: 30 }}
+            initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
+            transition={{ duration: 0.6, delay: 0.1 }}
             className="text-center"
           >
-            <h1 className="text-4xl md:text-5xl font-bold text-foreground mb-4">
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-extrabold tracking-tight mb-4">
               Hosting & Gaming
             </h1>
-            <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-              Planes de hosting web profesional y servidores gaming optimizados 
+            <p className="text-lg md:text-xl text-white/80 max-w-3xl mx-auto">
+              Planes de hosting web profesional y servidores gaming optimizados
               para el mejor rendimiento y experiencia.
             </p>
           </motion.div>
@@ -196,22 +204,22 @@ const HostingPage = () => {
         >
           <div className="bg-muted p-1 rounded-lg">
             <button
-              onClick={() => setActiveTab('hosting')}
+              onClick={() => setActiveTab("hosting")}
               className={`px-8 py-3 rounded-md font-medium transition-all duration-200 ${
-                activeTab === 'hosting'
-                  ? 'bg-primary text-primary-foreground shadow-sm'
-                  : 'text-muted-foreground hover:text-foreground'
+                activeTab === "hosting"
+                  ? "bg-primary text-primary-foreground shadow-sm"
+                  : "text-muted-foreground hover:text-foreground"
               }`}
             >
               <Globe className="w-4 h-4 inline mr-2" />
               Hosting Web
             </button>
             <button
-              onClick={() => setActiveTab('gaming')}
+              onClick={() => setActiveTab("gaming")}
               className={`px-8 py-3 rounded-md font-medium transition-all duration-200 ${
-                activeTab === 'gaming'
-                  ? 'bg-primary text-primary-foreground shadow-sm'
-                  : 'text-muted-foreground hover:text-foreground'
+                activeTab === "gaming"
+                  ? "bg-primary text-primary-foreground shadow-sm"
+                  : "text-muted-foreground hover:text-foreground"
               }`}
             >
               <Gamepad2 className="w-4 h-4 inline mr-2" />
@@ -221,7 +229,7 @@ const HostingPage = () => {
         </motion.div>
 
         {/* Hosting Plans */}
-        {activeTab === 'hosting' && (
+        {activeTab === "hosting" && (
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
@@ -244,12 +252,20 @@ const HostingPage = () => {
                     </span>
                   </div>
                 )}
-                <Card className={`h-full ${plan.popular ? 'border-primary shadow-lg scale-105' : ''}`}>
+                <Card
+                  className={`h-full ${
+                    plan.popular ? "border-primary shadow-lg scale-105" : ""
+                  }`}
+                >
                   <CardHeader className="text-center">
                     <CardTitle className="text-2xl">{plan.name}</CardTitle>
                     <div className="flex items-baseline justify-center gap-1 my-4">
-                      <span className="text-4xl font-bold text-primary">{plan.price}</span>
-                      <span className="text-muted-foreground">{plan.period}</span>
+                      <span className="text-4xl font-bold text-primary">
+                        {plan.price}
+                      </span>
+                      <span className="text-muted-foreground">
+                        {plan.period}
+                      </span>
                     </div>
                     <p className="text-muted-foreground">{plan.description}</p>
                   </CardHeader>
@@ -262,16 +278,22 @@ const HostingPage = () => {
                           ) : (
                             <X className="w-5 h-5 text-muted-foreground flex-shrink-0" />
                           )}
-                          <span className={feature.included ? 'text-foreground' : 'text-muted-foreground'}>
+                          <span
+                            className={
+                              feature.included
+                                ? "text-foreground"
+                                : "text-muted-foreground"
+                            }
+                          >
                             {feature.name}
                           </span>
                         </li>
                       ))}
                     </ul>
-                    <Button 
-                      className="w-full mt-6" 
-                      variant={plan.popular ? 'default' : 'outline'}
-                      onClick={() => handleContactSales(plan.name, 'hosting')}
+                    <Button
+                      className="w-full mt-6"
+                      variant={plan.popular ? "default" : "outline"}
+                      onClick={() => handleContactSales(plan.name, "hosting")}
                     >
                       Contratar Plan
                       <ArrowRight className="w-4 h-4 ml-2" />
@@ -284,7 +306,7 @@ const HostingPage = () => {
         )}
 
         {/* Gaming Plans */}
-        {activeTab === 'gaming' && (
+        {activeTab === "gaming" && (
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
@@ -307,34 +329,54 @@ const HostingPage = () => {
                     </span>
                   </div>
                 )}
-                <Card className={`h-full ${plan.popular ? 'border-primary shadow-lg scale-105' : ''}`}>
+                <Card
+                  className={`h-full ${
+                    plan.popular ? "border-primary shadow-lg scale-105" : ""
+                  }`}
+                >
                   <CardHeader className="text-center">
                     <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mx-auto mb-4">
                       <Gamepad2 className="w-6 h-6 text-primary" />
                     </div>
                     <CardTitle className="text-2xl">{plan.name}</CardTitle>
                     <div className="flex items-baseline justify-center gap-1 my-4">
-                      <span className="text-4xl font-bold text-primary">{plan.price}</span>
-                      <span className="text-muted-foreground">{plan.period}</span>
+                      <span className="text-4xl font-bold text-primary">
+                        {plan.price}
+                      </span>
+                      <span className="text-muted-foreground">
+                        {plan.period}
+                      </span>
                     </div>
-                    <p className="text-muted-foreground mb-4">{plan.description}</p>
-                    
+                    <p className="text-muted-foreground mb-4">
+                      {plan.description}
+                    </p>
+
                     {/* Specs */}
                     <div className="grid grid-cols-2 gap-4 text-sm">
                       <div className="bg-muted/50 rounded-lg p-3">
-                        <div className="font-medium text-foreground">{plan.specs.ram}</div>
+                        <div className="font-medium text-foreground">
+                          {plan.specs.ram}
+                        </div>
                         <div className="text-muted-foreground">Memoria</div>
                       </div>
                       <div className="bg-muted/50 rounded-lg p-3">
-                        <div className="font-medium text-foreground">{plan.specs.cpu}</div>
+                        <div className="font-medium text-foreground">
+                          {plan.specs.cpu}
+                        </div>
                         <div className="text-muted-foreground">Procesador</div>
                       </div>
                       <div className="bg-muted/50 rounded-lg p-3">
-                        <div className="font-medium text-foreground">{plan.specs.storage}</div>
-                        <div className="text-muted-foreground">Almacenamiento</div>
+                        <div className="font-medium text-foreground">
+                          {plan.specs.storage}
+                        </div>
+                        <div className="text-muted-foreground">
+                          Almacenamiento
+                        </div>
                       </div>
                       <div className="bg-muted/50 rounded-lg p-3">
-                        <div className="font-medium text-foreground">{plan.specs.players}</div>
+                        <div className="font-medium text-foreground">
+                          {plan.specs.players}
+                        </div>
                         <div className="text-muted-foreground">Jugadores</div>
                       </div>
                     </div>
@@ -348,16 +390,22 @@ const HostingPage = () => {
                           ) : (
                             <X className="w-5 h-5 text-muted-foreground flex-shrink-0" />
                           )}
-                          <span className={feature.included ? 'text-foreground' : 'text-muted-foreground'}>
+                          <span
+                            className={
+                              feature.included
+                                ? "text-foreground"
+                                : "text-muted-foreground"
+                            }
+                          >
                             {feature.name}
                           </span>
                         </li>
                       ))}
                     </ul>
-                    <Button 
-                      className="w-full mt-6" 
-                      variant={plan.popular ? 'default' : 'outline'}
-                      onClick={() => handleContactSales(plan.name, 'gaming')}
+                    <Button
+                      className="w-full mt-6"
+                      variant={plan.popular ? "default" : "outline"}
+                      onClick={() => handleContactSales(plan.name, "gaming")}
                     >
                       Contratar Servidor
                       <ArrowRight className="w-4 h-4 ml-2" />
@@ -388,8 +436,8 @@ const HostingPage = () => {
                 Seguridad Garantizada
               </h4>
               <p className="text-muted-foreground">
-                Protección DDoS, SSL gratuito y monitoreo 24/7 para mantener 
-                tus datos seguros.
+                Protección DDoS, SSL gratuito y monitoreo 24/7 para mantener tus
+                datos seguros.
               </p>
             </div>
             <div className="text-center">
@@ -400,7 +448,7 @@ const HostingPage = () => {
                 Rendimiento Óptimo
               </h4>
               <p className="text-muted-foreground">
-                Servidores SSD de alta velocidad y CDN global para la mejor 
+                Servidores SSD de alta velocidad y CDN global para la mejor
                 experiencia de usuario.
               </p>
             </div>
@@ -412,7 +460,7 @@ const HostingPage = () => {
                 Soporte Experto
               </h4>
               <p className="text-muted-foreground">
-                Equipo técnico especializado disponible 24/7 para resolver 
+                Equipo técnico especializado disponible 24/7 para resolver
                 cualquier inconveniente.
               </p>
             </div>
