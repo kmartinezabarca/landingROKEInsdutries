@@ -19,140 +19,97 @@ import Container from "../common/Container";
 import { Card, CardContent, CardHeader, CardTitle } from "../common/Card";
 import Button from "../common/Button";
 import { ROUTES } from "../../utils/constants/config";
+import { useServices } from "../../hooks/useServices";
+
+// Mapeo de nombres de íconos a componentes de Lucide React
+const iconMap = {
+  Server,
+  LifeBuoy,
+  Zap,
+  Shield,
+  Code,
+  Database,
+  Gamepad2,
+  Cloud,
+  Cpu,
+  ScanEye,
+};
 
 const Services = () => {
-  const services = [
-    // --- Servicios de Infraestructura Cloud ---
-    {
-      icon: Server,
-      title: "Hosting Web Gestionado",
-      description:
-        "Plataforma de hosting de alto rendimiento para sitios y aplicaciones, con un uptime del 99.9% garantizado y gestión experta.",
-      features: [
-        "Almacenamiento NVMe SSD",
-        "Certificados SSL Gratuitos",
-        "Backups Diarios Automatizados",
-        "Panel de Control Intuitivo",
-      ],
-      color: "text-blue-500",
-      bgColor: "bg-blue-500/10",
-    },
-    {
-      icon: Gamepad2,
-      title: "Servidores Gaming de Baja Latencia",
-      description:
-        "Infraestructura optimizada para la mejor experiencia de juego. Despliega servidores para Minecraft, Rust, y más, con protección Anti-DDoS.",
-      features: [
-        "Protección Anti-DDoS Incluida",
-        "Instalador de Mods 1-Click",
-        "Panel de Control Pterodactyl",
-        "Soporte Técnico 24/7",
-      ],
-      color: "text-purple-500",
-      bgColor: "bg-purple-500/10",
-    },
-    {
-      icon: Cloud,
-      title: "Infraestructura Cloud a Medida (VPS)",
-      description:
-        "Servidores virtuales privados (VPS) con recursos dedicados, escalabilidad instantánea y control total para tus aplicaciones más exigentes.",
-      features: [
-        "Recursos Dedicados (CPU/RAM)",
-        "Escalado Automático (Auto-scaling)",
-        "Red Privada Virtual (VPC)",
-        "Acceso Root Completo",
-      ],
-      color: "text-cyan-500",
-      bgColor: "bg-cyan-500/10",
-    },
-    // --- Servicios de Plataforma y Desarrollo ---
-    {
-      icon: Database,
-      title: "Bases de Datos Gestionadas",
-      description:
-        "Servicios de bases de datos de alto rendimiento (MySQL, PostgreSQL, MongoDB) con replicación, backups y optimización experta.",
-      features: [
-        "Backups Automatizados y Seguros",
-        "Configuración de Replicación",
-        "Monitoreo de Rendimiento 24/7",
-        "Optimización de Consultas",
-      ],
-      color: "text-green-500",
-      bgColor: "bg-green-500/10",
-    },
-    {
-      icon: Shield,
-      title: "Seguridad y Hardening",
-      description:
-        "Protección integral para tu infraestructura digital. Aseguramos tus aplicaciones contra las amenazas más avanzadas.",
-      features: [
-        "Firewall de Aplicaciones Web (WAF)",
-        "Monitoreo Proactivo de Malware",
-        "Auditorías de Seguridad",
-        "Hardening de Servidores",
-      ],
-      color: "text-red-500",
-      bgColor: "bg-red-500/10",
-    },
-    {
-      icon: Code,
-      title: "Desarrollo de Software a Medida",
-      description:
-        "Convertimos tu visión en realidad. Desarrollamos aplicaciones web y móviles personalizadas con las tecnologías más modernas.",
-      features: [
-        "Desarrollo Full-Stack (React, Laravel)",
-        "Aplicaciones Móviles (Flutter)",
-        "Diseño de Experiencia de Usuario (UX/UI)",
-        "Optimización para SEO",
-      ],
-      color: "text-orange-500",
-      bgColor: "bg-orange-500/10",
-    },
-    // --- TUS SERVICIOS ÚNICOS Y DIFERENCIADORES ---
-    {
-      icon: Cpu, // Ícono de un chip/procesador
-      title: "Prototipado de Hardware e IoT",
-      description:
-        "De la idea al prototipo funcional. Diseñamos, fabricamos y programamos dispositivos de hardware a medida para soluciones de IoT.",
-      features: [
-        "Diseño de Circuitos y PCBs",
-        "Fabricación con Impresión 3D y CNC",
-        "Programación de Firmware (Arduino/ESP32)",
-        "Integración con Plataformas Cloud",
-      ],
-      color: "text-amber-500",
-      bgColor: "bg-amber-500/10",
-    },
-    {
-      icon: ScanEye, // Ícono de un ojo escaneando
-      title: "Soluciones de Automatización y Robótica",
-      description:
-        "Implementamos sistemas inteligentes para automatizar tus procesos. Desde la visión por computadora hasta la robótica a medida.",
-      features: [
-        "Integración de Sistemas Robóticos",
-        "Visión por Computadora (NVIDIA Jetson)",
-        "Control de Maquinaria Industrial",
-        "Automatización de Procesos",
-      ],
-      color: "text-teal-500",
-      bgColor: "bg-teal-500/10",
-    },
-  ];
+  const { data, isLoading, isError, error } = useServices();
 
-  const additionalServices = [
-    {
-      icon: LifeBuoy, // Un salvavidas comunica "rescate" y "seguridad" mejor que unos auriculares.
-      title: "Soporte de Misión Crítica 24/7",
-      description:
-        "Nuestro equipo de ingenieros está disponible 24/7 para resolver cualquier inconveniente y asegurar la continuidad de tu operación.",
-    },
-    {
-      icon: Zap, // Un rayo comunica velocidad, facilidad y "magia".
-      title: 'Migración "White Glove" Gratuita',
-      description:
-        "Nos encargamos de todo. Migramos tu sitio web, aplicaciones y bases de datos desde tu proveedor actual a ROKE, sin costo y con tiempo de inactividad mínimo.",
-    },
-  ];
+  if (isLoading) {
+    return (
+      <section className="py-20">
+        <Container>
+          <div className="text-center mb-16">
+            <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
+              Cargando Servicios...
+            </h2>
+            <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
+              Obteniendo la información más reciente para ti.
+            </p>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16">
+            {[...Array(6)].map((_, index) => (
+              <motion.div
+                key={index}
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.1 * index }}
+                viewport={{ once: true }}
+                className="h-full"
+              >
+                <Card className="relative h-full flex flex-col p-6 overflow-hidden bg-gradient-to-br from-card to-card/60 border-border/20 group transition-all duration-300 hover:border-primary/30 animate-pulse">
+                  <CardHeader className="p-0 mb-6 z-10 flex items-center gap-4">
+                    <div className="w-12 h-12 bg-gray-200 rounded-lg flex items-center justify-center shrink-0"></div>
+                    <div className="h-6 bg-gray-200 rounded w-3/4"></div>
+                  </CardHeader>
+                  <CardContent className="p-0 flex-grow flex flex-col z-10">
+                    <div className="h-4 bg-gray-200 rounded w-full mb-2"></div>
+                    <div className="h-4 bg-gray-200 rounded w-5/6 mb-6"></div>
+                    <ul className="space-y-2">
+                      {[...Array(4)].map((_, idx) => (
+                        <li key={idx} className="flex items-start text-sm text-muted-foreground">
+                          <div className="w-4 h-4 bg-gray-200 rounded-full mr-2 mt-0.5 shrink-0"></div>
+                          <div className="h-4 bg-gray-200 rounded w-full"></div>
+                        </li>
+                      ))}
+                    </ul>
+                    <div className="mt-auto pt-6">
+                      <div className="h-8 bg-gray-200 rounded w-1/3"></div>
+                    </div>
+                  </CardContent>
+                </Card>
+              </motion.div>
+            ))}
+          </div>
+        </Container>
+      </section>
+    );
+  }
+
+  if (isError) {
+    return (
+      <section className="py-20">
+        <Container>
+          <div className="text-center mb-16">
+            <h2 className="text-3xl md:text-4xl font-bold text-red-500 mb-4">
+              Error al cargar los servicios
+            </h2>
+            <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
+              Lo sentimos, no pudimos cargar los servicios. Por favor, inténtalo de nuevo más tarde.
+            </p>
+            <p className="text-sm text-red-400 mt-2">Detalles del error: {error.message}</p>
+          </div>
+        </Container>
+      </section>
+    );
+  }
+
+  const mainServices = data?.filter(service => service.type === "main") || [];
+  const additionalServices = data?.filter(service => service.type === "additional") || [];
+
   return (
     <section className="py-20">
       <Container>
@@ -175,11 +132,12 @@ const Services = () => {
 
         {/* Main Services Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16">
-          {services.map((service, index) => {
-            const Icon = service.icon;
+          {mainServices.map((service, index) => {
+            const Icon = iconMap[service.iconName];
+            if (!Icon) return null; // Manejar caso de ícono no encontrado
             return (
               <motion.div
-                key={service.title}
+                key={service.id || service.title}
                 initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: 0.1 * index }}
@@ -220,7 +178,7 @@ const Services = () => {
                     </p>
 
                     <ul className="space-y-2">
-                      {service.features.map((feature, idx) => (
+                      {service.features && service.features.map((feature, idx) => (
                         <li
                           key={idx}
                           className="flex items-start text-sm text-muted-foreground"
@@ -268,10 +226,11 @@ const Services = () => {
           </h3>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             {additionalServices.map((service, index) => {
-              const Icon = service.icon;
+              const Icon = iconMap[service.iconName];
+              if (!Icon) return null; // Manejar caso de ícono no encontrado
               return (
                 <motion.div
-                  key={service.title}
+                  key={service.id || service.title}
                   initial={{ opacity: 0, x: index % 2 === 0 ? -30 : 30 }}
                   whileInView={{ opacity: 1, x: 0 }}
                   transition={{ duration: 0.6, delay: 0.2 * index }}
@@ -328,3 +287,4 @@ const Services = () => {
 };
 
 export default Services;
+
