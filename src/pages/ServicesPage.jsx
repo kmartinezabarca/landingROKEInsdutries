@@ -254,11 +254,52 @@ const ServicesPage = () => {
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                   {filteredPlans.map((plan) => (
                     <Card key={plan.id} className="flex flex-col p-6 border border-border/50 rounded-lg shadow-sm hover:shadow-md transition-all duration-300">
-                      <h4 className="text-2xl font-bold text-primary mb-2">{plan.name}</h4>
-                      <p className="text-4xl font-extrabold text-foreground mb-4">
-                        ${calculatePrice(plan.basePrice)}
+                      {plan.is_popular && (
+                        <div className="absolute top-0 right-0 bg-primary text-primary-foreground text-xs font-bold px-3 py-1 rounded-bl-lg">
+                          Más Popular
+                        </div>
+                      )}
+                      <div className="flex items-center justify-center mb-4">
+                        <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center">
+                          {currentCategory && iconMap[currentCategory.icon] && React.createElement(iconMap[currentCategory.icon], { className: "w-6 h-6 text-primary" })}
+                        </div>
+                      </div>
+                      <h4 className="text-2xl font-bold text-foreground mb-2">{plan.name}</h4>
+                      <p className="text-4xl font-extrabold text-primary mb-4">
+                        ${calculatePrice(plan.price)}
                         <span className="text-lg font-medium text-muted-foreground">/{currentBillingCycle?.name.toLowerCase()}</span>
                       </p>
+
+                      {/* Specs Section */}
+                      {plan.specs && Object.keys(plan.specs).length > 0 && (
+                        <div className="grid grid-cols-2 gap-4 text-sm bg-muted/30 p-4 rounded-md mb-6">
+                          {plan.specs.ram && (
+                            <div>
+                              <p className="font-semibold">{plan.specs.ram}</p>
+                              <p className="text-muted-foreground">Memoria</p>
+                            </div>
+                          )}
+                          {plan.specs.cpu && (
+                            <div>
+                              <p className="font-semibold">{plan.specs.cpu}</p>
+                              <p className="text-muted-foreground">Procesador</p>
+                            </div>
+                          )}
+                          {plan.specs.storage && (
+                            <div>
+                              <p className="font-semibold">{plan.specs.storage}</p>
+                              <p className="text-muted-foreground">Almacenamiento</p>
+                            </div>
+                          )}
+                          {plan.specs.slots && (
+                            <div>
+                              <p className="font-semibold">{plan.specs.slots}</p>
+                              <p className="text-muted-foreground">Jugadores</p>
+                            </div>
+                          )}
+                        </div>
+                      )}
+
                       <ul className="space-y-3 flex-grow mb-6">
                         {plan.features.map((feature, idx) => (
                           <li key={idx} className="flex items-center text-muted-foreground">
