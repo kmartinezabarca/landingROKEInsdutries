@@ -1,14 +1,9 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { 
-  Check, 
-  X, 
-  Server, 
-  Shield, 
-  Zap, 
-  HardDrive, 
-  Globe, 
-  Users,
+import {
+  Check,
+  X,
+  Globe,
   Gamepad2,
   Crown,
   Star,
@@ -18,144 +13,30 @@ import Container from '../components/common/Container';
 import { Card, CardContent, CardHeader, CardTitle } from '../components/common/Card';
 import Button from '../components/common/Button';
 import WhatsAppService from '../services/whatsapp/whatsappService';
+import { useServicePlans } from '../hooks/useServicePlans';
 
 const HostingPage = () => {
   const [activeTab, setActiveTab] = React.useState('hosting');
+  const { data: servicePlans, isLoading, isError, error } = useServicePlans();
 
-  const hostingPlans = [
-    {
-      name: 'Básico',
-      price: '$9.99',
-      period: '/mes',
-      description: 'Perfect para sitios web personales y pequeños proyectos',
-      popular: false,
-      features: [
-        { name: '10 GB SSD Storage', included: true },
-        { name: '100 GB Bandwidth', included: true },
-        { name: '1 Dominio Incluido', included: true },
-        { name: '5 Cuentas de Email', included: true },
-        { name: 'SSL Gratuito', included: true },
-        { name: 'Backup Diario', included: true },
-        { name: 'Soporte 24/7', included: true },
-        { name: 'Panel cPanel', included: true },
-        { name: 'CDN Global', included: false },
-        { name: 'Staging Environment', included: false }
-      ]
-    },
-    {
-      name: 'Profesional',
-      price: '$19.99',
-      period: '/mes',
-      description: 'Ideal para empresas y sitios web con tráfico medio',
-      popular: true,
-      features: [
-        { name: '50 GB SSD Storage', included: true },
-        { name: '500 GB Bandwidth', included: true },
-        { name: '5 Dominios Incluidos', included: true },
-        { name: '25 Cuentas de Email', included: true },
-        { name: 'SSL Gratuito', included: true },
-        { name: 'Backup Diario', included: true },
-        { name: 'Soporte 24/7', included: true },
-        { name: 'Panel cPanel', included: true },
-        { name: 'CDN Global', included: true },
-        { name: 'Staging Environment', included: true }
-      ]
-    },
-    {
-      name: 'Empresarial',
-      price: '$39.99',
-      period: '/mes',
-      description: 'Para sitios web de alto tráfico y aplicaciones críticas',
-      popular: false,
-      features: [
-        { name: '200 GB SSD Storage', included: true },
-        { name: 'Bandwidth Ilimitado', included: true },
-        { name: 'Dominios Ilimitados', included: true },
-        { name: 'Cuentas Email Ilimitadas', included: true },
-        { name: 'SSL Gratuito', included: true },
-        { name: 'Backup Diario', included: true },
-        { name: 'Soporte Prioritario 24/7', included: true },
-        { name: 'Panel cPanel Avanzado', included: true },
-        { name: 'CDN Global Premium', included: true },
-        { name: 'Staging Environment', included: true }
-      ]
-    }
-  ];
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <p className="text-lg text-muted-foreground">Cargando planes de servicio...</p>
+      </div>
+    );
+  }
 
-  const gamingPlans = [
-    {
-      name: 'Minecraft Básico',
-      price: '$12.99',
-      period: '/mes',
-      description: 'Perfecto para servidores pequeños con amigos',
-      game: 'Minecraft',
-      popular: false,
-      specs: {
-        ram: '2 GB RAM',
-        cpu: '2 CPU Cores',
-        storage: '20 GB SSD',
-        players: '10 Jugadores'
-      },
-      features: [
-        { name: 'Instalación 1-Click', included: true },
-        { name: 'Panel de Control Web', included: true },
-        { name: 'Mods y Plugins', included: true },
-        { name: 'Backup Automático', included: true },
-        { name: 'Protección Anti-DDoS', included: true },
-        { name: 'Soporte 24/7', included: true },
-        { name: 'FTP Access', included: true },
-        { name: 'Base de Datos MySQL', included: false }
-      ]
-    },
-    {
-      name: 'Gaming Pro',
-      price: '$24.99',
-      period: '/mes',
-      description: 'Para comunidades gaming medianas',
-      game: 'Multi-Game',
-      popular: true,
-      specs: {
-        ram: '4 GB RAM',
-        cpu: '4 CPU Cores',
-        storage: '50 GB SSD',
-        players: '50 Jugadores'
-      },
-      features: [
-        { name: 'Instalación 1-Click', included: true },
-        { name: 'Panel de Control Avanzado', included: true },
-        { name: 'Mods y Plugins Ilimitados', included: true },
-        { name: 'Backup Automático', included: true },
-        { name: 'Protección Anti-DDoS Premium', included: true },
-        { name: 'Soporte Prioritario 24/7', included: true },
-        { name: 'FTP Access', included: true },
-        { name: 'Base de Datos MySQL', included: true }
-      ]
-    },
-    {
-      name: 'Gaming Elite',
-      price: '$49.99',
-      period: '/mes',
-      description: 'Para grandes comunidades y servidores profesionales',
-      game: 'Multi-Game',
-      popular: false,
-      specs: {
-        ram: '8 GB RAM',
-        cpu: '8 CPU Cores',
-        storage: '100 GB SSD',
-        players: '100+ Jugadores'
-      },
-      features: [
-        { name: 'Instalación 1-Click', included: true },
-        { name: 'Panel de Control Profesional', included: true },
-        { name: 'Mods y Plugins Ilimitados', included: true },
-        { name: 'Backup Automático Múltiple', included: true },
-        { name: 'Protección Anti-DDoS Enterprise', included: true },
-        { name: 'Soporte Dedicado 24/7', included: true },
-        { name: 'FTP/SFTP Access', included: true },
-        { name: 'Bases de Datos Ilimitadas', included: true }
-      ]
-    }
-  ];
+  if (isError) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <p className="text-lg text-red-500">Error al cargar los planes de servicio: {error.message}</p>
+      </div>
+    );
+  }
+
+  const hostingPlans = servicePlans?.filter(plan => plan.type === 'hosting') || [];
+  const gamingPlans = servicePlans?.filter(plan => plan.type === 'gaming') || [];
 
   const handleContactSales = (planName, planType) => {
     const message = WhatsAppService.generateServiceMessage(
@@ -238,7 +119,7 @@ const HostingPage = () => {
           >
             {hostingPlans.map((plan, index) => (
               <motion.div
-                key={plan.name}
+                key={plan.id || plan.name}
                 initial={{ opacity: 0, y: 30 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: 0.1 * index }}
@@ -261,7 +142,7 @@ const HostingPage = () => {
                     <CardTitle className="text-2xl">{plan.name}</CardTitle>
                     <div className="flex items-baseline justify-center gap-1 my-4">
                       <span className="text-4xl font-bold text-primary">
-                        {plan.price}
+                        {plan.currency}{plan.price}
                       </span>
                       <span className="text-muted-foreground">
                         {plan.period}
@@ -271,7 +152,7 @@ const HostingPage = () => {
                   </CardHeader>
                   <CardContent className="space-y-4">
                     <ul className="space-y-3">
-                      {plan.features.map((feature, idx) => (
+                      {plan.features && plan.features.map((feature, idx) => (
                         <li key={idx} className="flex items-center gap-3">
                           {feature.included ? (
                             <Check className="w-5 h-5 text-green-500 flex-shrink-0" />
@@ -315,7 +196,7 @@ const HostingPage = () => {
           >
             {gamingPlans.map((plan, index) => (
               <motion.div
-                key={plan.name}
+                key={plan.id || plan.name}
                 initial={{ opacity: 0, y: 30 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: 0.1 * index }}
@@ -341,7 +222,7 @@ const HostingPage = () => {
                     <CardTitle className="text-2xl">{plan.name}</CardTitle>
                     <div className="flex items-baseline justify-center gap-1 my-4">
                       <span className="text-4xl font-bold text-primary">
-                        {plan.price}
+                        {plan.currency}{plan.price}
                       </span>
                       <span className="text-muted-foreground">
                         {plan.period}
@@ -352,38 +233,40 @@ const HostingPage = () => {
                     </p>
 
                     {/* Specs */}
-                    <div className="grid grid-cols-2 gap-4 text-sm">
-                      <div className="bg-muted/50 rounded-lg p-3">
-                        <div className="font-medium text-foreground">
-                          {plan.specs.ram}
+                    {plan.specs && (
+                      <div className="grid grid-cols-2 gap-4 text-sm">
+                        <div className="bg-muted/50 rounded-lg p-3">
+                          <div className="font-medium text-foreground">
+                            {plan.specs.ram}
+                          </div>
+                          <div className="text-muted-foreground">Memoria</div>
                         </div>
-                        <div className="text-muted-foreground">Memoria</div>
+                        <div className="bg-muted/50 rounded-lg p-3">
+                          <div className="font-medium text-foreground">
+                            {plan.specs.cpu}
+                          </div>
+                          <div className="text-muted-foreground">Procesador</div>
+                        </div>
+                        <div className="bg-muted/50 rounded-lg p-3">
+                          <div className="font-medium text-foreground">
+                            {plan.specs.storage}
+                          </div>
+                          <div className="text-muted-foreground">
+                            Almacenamiento
+                          </div>
+                        </div>
+                        <div className="bg-muted/50 rounded-lg p-3">
+                          <div className="font-medium text-foreground">
+                            {plan.specs.players}
+                          </div>
+                          <div className="text-muted-foreground">Jugadores</div>
+                        </div>
                       </div>
-                      <div className="bg-muted/50 rounded-lg p-3">
-                        <div className="font-medium text-foreground">
-                          {plan.specs.cpu}
-                        </div>
-                        <div className="text-muted-foreground">Procesador</div>
-                      </div>
-                      <div className="bg-muted/50 rounded-lg p-3">
-                        <div className="font-medium text-foreground">
-                          {plan.specs.storage}
-                        </div>
-                        <div className="text-muted-foreground">
-                          Almacenamiento
-                        </div>
-                      </div>
-                      <div className="bg-muted/50 rounded-lg p-3">
-                        <div className="font-medium text-foreground">
-                          {plan.specs.players}
-                        </div>
-                        <div className="text-muted-foreground">Jugadores</div>
-                      </div>
-                    </div>
+                    )}
                   </CardHeader>
                   <CardContent className="space-y-4">
                     <ul className="space-y-3">
-                      {plan.features.map((feature, idx) => (
+                      {plan.features && plan.features.map((feature, idx) => (
                         <li key={idx} className="flex items-center gap-3">
                           {feature.included ? (
                             <Check className="w-5 h-5 text-green-500 flex-shrink-0" />
@@ -417,53 +300,31 @@ const HostingPage = () => {
           </motion.div>
         )}
 
-        {/* Features Section */}
+        {/* CTA Section */}
         <motion.div
           initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.4 }}
-          className="mt-20 bg-muted/30 rounded-2xl p-8"
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, delay: 0.6 }}
+          viewport={{ once: true }}
+          className="text-center mt-16"
         >
-          <h3 className="text-2xl font-bold text-foreground mb-8 text-center">
-            ¿Por qué elegir Roke Industries?
+          <h3 className="text-2xl font-bold text-foreground mb-4">
+            ¿Necesitas una solución personalizada?
           </h3>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div className="text-center">
-              <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
-                <Shield className="w-8 h-8 text-primary" />
-              </div>
-              <h4 className="text-lg font-semibold text-foreground mb-2">
-                Seguridad Garantizada
-              </h4>
-              <p className="text-muted-foreground">
-                Protección DDoS, SSL gratuito y monitoreo 24/7 para mantener tus
-                datos seguros.
-              </p>
-            </div>
-            <div className="text-center">
-              <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
-                <Zap className="w-8 h-8 text-primary" />
-              </div>
-              <h4 className="text-lg font-semibold text-foreground mb-2">
-                Rendimiento Óptimo
-              </h4>
-              <p className="text-muted-foreground">
-                Servidores SSD de alta velocidad y CDN global para la mejor
-                experiencia de usuario.
-              </p>
-            </div>
-            <div className="text-center">
-              <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
-                <Users className="w-8 h-8 text-primary" />
-              </div>
-              <h4 className="text-lg font-semibold text-foreground mb-2">
-                Soporte Experto
-              </h4>
-              <p className="text-muted-foreground">
-                Equipo técnico especializado disponible 24/7 para resolver
-                cualquier inconveniente.
-              </p>
-            </div>
+          <p className="text-muted-foreground mb-8 max-w-2xl mx-auto">
+            Nuestro equipo de expertos está listo para ayudarte a encontrar la
+            solución perfecta para tus necesidades específicas.
+          </p>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <Button size="lg" asChild>
+              <Link to="/contact" className="flex items-center">
+                Solicitar Cotización
+                <ArrowRight className="ml-2 h-4 w-4" />
+              </Link>
+            </Button>
+            <Button variant="outline" size="lg" asChild>
+              <Link to="/hosting">Ver Planes de Hosting</Link>
+            </Button>
           </div>
         </motion.div>
       </Container>
