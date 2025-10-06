@@ -26,7 +26,6 @@ import { useServicePlans } from "../hooks/useServicePlans";
 import { useCategories } from "../hooks/useCategories";
 import { useBillingCycles } from "../hooks/useBillingCycles";
 
-// Mapeo de nombres de íconos a componentes de Lucide React
 const iconMap = {
   Server, Globe, Gamepad2, Cloud, Database, Shield, CheckCircle, ArrowRight, CircuitBoard, Printer, Bot, DatabaseZap, Code2, ShieldCheck, Route, LifeBuoy,
 };
@@ -257,14 +256,14 @@ const ServicesPage = () => {
                     <Card key={plan.id} className="flex flex-col p-6 border border-border/50 rounded-lg shadow-sm hover:shadow-md transition-all duration-300">
                       <h4 className="text-2xl font-bold text-primary mb-2">{plan.name}</h4>
                       <p className="text-4xl font-extrabold text-foreground mb-4">
-                        ${calculatePrice(plan.price)}
-                        <span className="text-lg font-medium text-muted-foreground">/{currentBillingCycle?.name.toLowerCase().slice(0, -2)}</span>
+                        ${calculatePrice(plan.basePrice)}
+                        <span className="text-lg font-medium text-muted-foreground">/{currentBillingCycle?.name.toLowerCase()}</span>
                       </p>
                       <ul className="space-y-3 flex-grow mb-6">
                         {plan.features.map((feature, idx) => (
                           <li key={idx} className="flex items-center text-muted-foreground">
                             <CheckCircle className="w-5 h-5 text-green-500 mr-2 flex-shrink-0" />
-                            <span>{feature.name}</span>
+                            <span>{feature.feature}</span>
                           </li>
                         ))}
                       </ul>

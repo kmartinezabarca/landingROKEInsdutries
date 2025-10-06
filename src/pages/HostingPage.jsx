@@ -7,7 +7,8 @@ import {
   Gamepad2,
   Crown,
   Star,
-  ArrowRight
+  ArrowRight,
+  Link
 } from 'lucide-react';
 import Container from '../components/common/Container';
 import { Card, CardContent, CardHeader, CardTitle } from '../components/common/Card';
