@@ -23,16 +23,7 @@ import { useServices } from "../../hooks/useServices";
 
 // Mapeo de nombres de íconos a componentes de Lucide React
 const iconMap = {
-  Server,
-  LifeBuoy,
-  Zap,
-  Shield,
-  Code,
-  Database,
-  Gamepad2,
-  Cloud,
-  Cpu,
-  ScanEye,
+  Server, LifeBuoy, Zap, Shield, Code, Database, Gamepad2, Cloud, Cpu, ScanEye,
 };
 
 const Services = () => {
@@ -134,7 +125,7 @@ const Services = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16">
           {mainServices.map((service, index) => {
             const Icon = iconMap[service.iconName];
-            if (!Icon) return null; // Manejar caso de ícono no encontrado
+            if (!Icon) return null;
             return (
               <motion.div
                 key={service.id || service.title}

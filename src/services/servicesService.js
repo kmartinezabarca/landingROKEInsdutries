@@ -1,7 +1,7 @@
 import apiClient from "../lib/apiClient";
 
 export const getServices = async () => {
-  const response = await apiClient.get("/services");
+  const response = await apiClient.get("/marketing-services");
   return response.data;
 };
 

@@ -17,13 +17,13 @@ import PrivacyPolicyPage from './pages/PrivacyPolicyPage';
 import SystemStatusPage from './pages/SystemStatusPage';
 import APIPage from './pages/APIPage';
 import DocumentationPage from './pages/DocumentationPage';
+import DocumentationDetailPage from './pages/DocumentationDetailPage'
 import TermsPage from './pages/TermsPage';
 import { ROUTES } from './utils/constants/config';
 import './App.css';
 
 function App() {
   const handleContactClick = () => {
-    // Navegar a la página de contacto usando window.location
     window.location.href = '/contact';
   };
 
@@ -50,6 +50,7 @@ function App() {
               <Route path="/status" element={<SystemStatusPage />} />
               <Route path="/api" element={<APIPage />} />
               <Route path="/docs" element={<DocumentationPage />} />
+              <Route path="/docs/:slug" element={<DocumentationDetailPage />} />
               <Route path="/terms" element={<TermsPage />} />
             </Routes>
           </main>
