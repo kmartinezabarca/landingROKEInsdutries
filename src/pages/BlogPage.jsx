@@ -11,6 +11,7 @@ import {
 } from "../components/common/Card";
 import Button from "../components/common/Button";
 import { getBlogPosts, getBlogCategories } from "../services/blogService";
+import documentationService from "../services/documentationService";
 
 // Logo de ROKE Industries como imagen por defecto
 const DEFAULT_IMAGE = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 300'%3E%3Crect fill='%23f0f0f0' width='400' height='300'/%3E%3Ctext x='50%25' y='50%25' font-size='48' fill='%23999' text-anchor='middle' dominant-baseline='middle' font-family='Arial, sans-serif' font-weight='bold'%3EROKE Industries%3C/text%3E%3C/svg%3E";
@@ -22,6 +23,9 @@ const BlogPage = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [subscriptionEmail, setSubscriptionEmail] = useState("");
+  const [subscriptionLoading, setSubscriptionLoading] = useState(false);
+  const [subscriptionMessage, setSubscriptionMessage] = useState(null);
 
   /**
    * Carga los posts del blog desde la API
@@ -344,6 +348,77 @@ const BlogPage = () => {
             )}
           </motion.div>
         )}
+
+        {/* Newsletter Subscription */}
+        <motion.section
+          initial={{ opacity: 0, y: 40 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, delay: 0.3 }}
+          className="mt-20 bg-gradient-to-r from-primary/10 to-primary/5 rounded-2xl p-12 border border-primary/20"
+        >
+          <div className="max-w-2xl mx-auto text-center">
+            <h2 className="text-3xl md:text-4xl font-bold mb-4">
+              Suscríbete a Nuestro Blog
+            </h2>
+            <p className="text-muted-foreground mb-8 text-lg">
+              Recibe las últimas actualizaciones, artículos exclusivos y noticias sobre tecnología directamente en tu bandeja de entrada.
+            </p>
+            <form
+              onSubmit={async (e) => {
+                e.preventDefault();
+                if (!subscriptionEmail) return;
+                
+                try {
+                  setSubscriptionLoading(true);
+                  await documentationService.subscribeToBlog(subscriptionEmail);
+                  setSubscriptionMessage({
+                    type: "success",
+                    text: "¡Suscripción exitosa! Revisa tu correo para confirmar.",
+                  });
+                  setSubscriptionEmail("");
+                  setTimeout(() => setSubscriptionMessage(null), 5000);
+                } catch (error) {
+                  setSubscriptionMessage({
+                    type: "error",
+                    text: "Error al suscribirse. Por favor, intenta de nuevo.",
+                  });
+                } finally {
+                  setSubscriptionLoading(false);
+                }
+              }}
+              className="flex flex-col sm:flex-row gap-3"
+            >
+              <input
+                type="email"
+                placeholder="tu@email.com"
+                value={subscriptionEmail}
+                onChange={(e) => setSubscriptionEmail(e.target.value)}
+                className="flex-1 px-4 py-3 rounded-lg border border-input bg-background focus:outline-none focus:ring-2 focus:ring-primary"
+                required
+              />
+              <Button
+                type="submit"
+                disabled={subscriptionLoading}
+                className="whitespace-nowrap"
+              >
+                {subscriptionLoading ? "Suscribiendo..." : "Suscribirse"}
+              </Button>
+            </form>
+            {subscriptionMessage && (
+              <motion.div
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                className={`mt-4 p-3 rounded-lg text-sm font-medium ${
+                  subscriptionMessage.type === "success"
+                    ? "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-200"
+                    : "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-200"
+                }`}
+              >
+                {subscriptionMessage.text}
+              </motion.div>
+            )}
+          </div>
+        </motion.section>
       </Container>
     </div>
   );
