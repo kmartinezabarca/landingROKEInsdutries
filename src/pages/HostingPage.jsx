@@ -1,5 +1,5 @@
-import React from 'react';
-import { motion } from 'framer-motion';
+import React, { useState, useMemo } from "react";
+import { motion } from "framer-motion";
 import {
   Check,
   X,
@@ -8,22 +8,45 @@ import {
   Crown,
   Star,
   ArrowRight,
-  Link
-} from 'lucide-react';
-import Container from '../components/common/Container';
-import { Card, CardContent, CardHeader, CardTitle } from '../components/common/Card';
-import Button from '../components/common/Button';
-import WhatsAppService from '../services/whatsapp/whatsappService';
-import { useServicePlans } from '../hooks/useServicePlans';
+  Link,
+  Calculator,
+} from "lucide-react";
+import Container from "../components/common/Container";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "../components/common/Card";
+import Button from "../components/common/Button";
+import WhatsAppService from "../services/whatsapp/whatsappService";
+import { useServicePlans } from "../hooks/useServicePlans";
+import { useBillingCycles } from "../hooks/useBillingCycles";
 
 const HostingPage = () => {
-  const [activeTab, setActiveTab] = React.useState('hosting');
+  const [activeTab, setActiveTab] = React.useState("hosting");
   const { data: servicePlans, isLoading, isError, error } = useServicePlans();
+  const {
+    data: billingCycles,
+    isLoading: isLoadingBillingCycles,
+    isError: isErrorBillingCycles,
+  } = useBillingCycles();
+
+  const [activeBillingCycleSlug, setActiveBillingCycleSlug] =
+    useState("monthly");
+
+  const currentBillingCycle = useMemo(() => {
+    return billingCycles?.find(
+      (cycle) => cycle.slug === activeBillingCycleSlug
+    );
+  }, [billingCycles, activeBillingCycleSlug]);
 
   if (isLoading) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
-        <p className="text-lg text-muted-foreground">Cargando planes de servicio...</p>
+        <p className="text-lg text-muted-foreground">
+          Cargando planes de servicio...
+        </p>
       </div>
     );
   }
@@ -31,19 +54,31 @@ const HostingPage = () => {
   if (isError) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
-        <p className="text-lg text-red-500">Error al cargar los planes de servicio: {error.message}</p>
+        <p className="text-lg text-red-500">
+          Error al cargar los planes de servicio: {error.message}
+        </p>
       </div>
     );
   }
 
-  const hostingPlans = servicePlans?.filter(plan => plan.type === 'hosting') || [];
-  const gamingPlans = servicePlans?.filter(plan => plan.type === 'gaming') || [];
+  const hostingPlans =
+    servicePlans?.filter((plan) => plan.category.slug === "hosting") || [];
+  const gamingPlans =
+    servicePlans?.filter((plan) => plan.category.slug === "gameserver") || [];
 
   const handleContactSales = (planName, planType) => {
-    const message = WhatsAppService.generateServiceMessage(
-      planType === 'hosting' ? 'hosting' : 'gaming'
-    ) + ` Estoy interesado en el plan ${planName}.`;
+    const message =
+      WhatsAppService.generateServiceMessage(
+        planType === "hosting" ? "hosting" : "gameserver"
+      ) + ` Estoy interesado en el plan ${planName}.`;
     WhatsAppService.openWhatsApp(message);
+  };
+
+  const calculatePrice = (basePrice) => {
+    if (!currentBillingCycle) return basePrice;
+    const discount = parseFloat(currentBillingCycle.discount_percentage) / 100;
+    const finalPrice = parseFloat(basePrice) * (1 - discount);
+    return finalPrice.toFixed(2);
   };
 
   return (
@@ -53,8 +88,7 @@ const HostingPage = () => {
         <div
           className="absolute inset-0 bg-cover bg-center z-0 bg-fixed"
           style={{
-            backgroundImage:
-              "url('/assets/images/banners/banner-hosting.jpg')",
+            backgroundImage: "url('/assets/images/banners/banner-hosting.jpg')",
           }}
         />
         <div className="absolute inset-0 bg-black/60 dark:bg-black/70 z-10" />
@@ -97,9 +131,9 @@ const HostingPage = () => {
               Hosting Web
             </button>
             <button
-              onClick={() => setActiveTab("gaming")}
+              onClick={() => setActiveTab("gameserver")}
               className={`px-8 py-3 rounded-md font-medium transition-all duration-200 ${
-                activeTab === "gaming"
+                activeTab === "gameserver"
                   ? "bg-primary text-primary-foreground shadow-sm"
                   : "text-muted-foreground hover:text-foreground"
               }`}
@@ -109,6 +143,24 @@ const HostingPage = () => {
             </button>
           </div>
         </motion.div>
+
+        <div className="flex justify-center mb-10">
+          <div className="bg-muted p-1 rounded-lg flex gap-1">
+            {billingCycles?.map((cycle) => (
+              <button
+                key={cycle.id}
+                onClick={() => setActiveBillingCycleSlug(cycle.slug)}
+                className={`px-4 py-2 text-sm font-medium rounded-md transition-colors ${
+                  activeBillingCycleSlug === cycle.slug
+                    ? "bg-primary text-primary-foreground"
+                    : "text-muted-foreground hover:bg-muted-foreground/10"
+                }`}
+              >
+                {cycle.name}
+              </button>
+            ))}
+          </div>
+        </div>
 
         {/* Hosting Plans */}
         {activeTab === "hosting" && (
@@ -126,7 +178,7 @@ const HostingPage = () => {
                 transition={{ duration: 0.6, delay: 0.1 * index }}
                 className="relative"
               >
-                {plan.popular && (
+                {plan.isPopular && (
                   <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
                     <span className="bg-primary text-primary-foreground px-4 py-1 rounded-full text-sm font-medium flex items-center gap-1">
                       <Star className="w-3 h-3" />
@@ -136,48 +188,49 @@ const HostingPage = () => {
                 )}
                 <Card
                   className={`h-full ${
-                    plan.popular ? "border-primary shadow-lg scale-105" : ""
+                    plan.isPopular ? "border-primary shadow-lg scale-105" : ""
                   }`}
                 >
                   <CardHeader className="text-center">
                     <CardTitle className="text-2xl">{plan.name}</CardTitle>
                     <div className="flex items-baseline justify-center gap-1 my-4">
                       <span className="text-4xl font-bold text-primary">
-                        {plan.currency}{plan.price}
+                        ${calculatePrice(plan.basePrice)}
                       </span>
                       <span className="text-muted-foreground">
-                        {plan.period}
+                        /{currentBillingCycle?.name.toLowerCase()}
                       </span>
                     </div>
                     <p className="text-muted-foreground">{plan.description}</p>
                   </CardHeader>
                   <CardContent className="space-y-4">
                     <ul className="space-y-3">
-                      {plan.features && plan.features.map((feature, idx) => (
-                        <li key={idx} className="flex items-center gap-3">
-                          {feature.included ? (
-                            <Check className="w-5 h-5 text-green-500 flex-shrink-0" />
-                          ) : (
-                            <X className="w-5 h-5 text-muted-foreground flex-shrink-0" />
-                          )}
-                          <span
-                            className={
-                              feature.included
-                                ? "text-foreground"
-                                : "text-muted-foreground"
-                            }
-                          >
-                            {feature.name}
-                          </span>
-                        </li>
-                      ))}
+                      {plan.features &&
+                        plan.features.map((feature, idx) => (
+                          <li key={idx} className="flex items-center gap-3">
+                            {!feature.included ? (
+                              <Check className="w-5 h-5 text-green-500 flex-shrink-0" />
+                            ) : (
+                              <X className="w-5 h-5 text-muted-foreground flex-shrink-0" />
+                            )}
+                            <span
+                              className={
+                                !feature.included
+                                  ? "text-foreground"
+                                  : "text-muted-foreground"
+                              }
+                            >
+                              {feature.feature}
+                            </span>
+                          </li>
+                        ))}
                     </ul>
                     <Button
                       className="w-full mt-6"
-                      variant={plan.popular ? "default" : "outline"}
+                      variant={plan.isPopular ? "default" : "outline"}
                       onClick={() => handleContactSales(plan.name, "hosting")}
                     >
-                      Contratar Plan
+                      Contratar {plan.name}
                       <ArrowRight className="w-4 h-4 ml-2" />
                     </Button>
                   </CardContent>
@@ -188,7 +241,7 @@ const HostingPage = () => {
         )}
 
         {/* Gaming Plans */}
-        {activeTab === "gaming" && (
+        {activeTab === "gameserver" && (
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
@@ -203,17 +256,17 @@ const HostingPage = () => {
                 transition={{ duration: 0.6, delay: 0.1 * index }}
                 className="relative"
               >
-                {plan.popular && (
+                {plan.isPopular && (
                   <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
                     <span className="bg-primary text-primary-foreground px-4 py-1 rounded-full text-sm font-medium flex items-center gap-1">
-                      <Crown className="w-3 h-3" />
-                      Recomendado
+                      <Star className="w-3 h-3" />
+                      Más Popular
                     </span>
                   </div>
                 )}
                 <Card
                   className={`h-full ${
-                    plan.popular ? "border-primary shadow-lg scale-105" : ""
+                    plan.isPopular ? "border-primary shadow-lg scale-105" : ""
                   }`}
                 >
                   <CardHeader className="text-center">
@@ -223,10 +276,10 @@ const HostingPage = () => {
                     <CardTitle className="text-2xl">{plan.name}</CardTitle>
                     <div className="flex items-baseline justify-center gap-1 my-4">
                       <span className="text-4xl font-bold text-primary">
-                        {plan.currency}{plan.price}
+                        ${calculatePrice(plan.basePrice)}
                       </span>
                       <span className="text-muted-foreground">
-                        {plan.period}
+                        /{currentBillingCycle?.name.toLowerCase()}
                       </span>
                     </div>
                     <p className="text-muted-foreground mb-4">
@@ -234,23 +287,25 @@ const HostingPage = () => {
                     </p>
 
                     {/* Specs */}
-                    {plan.specs && (
+                    {plan.specifications && (
                       <div className="grid grid-cols-2 gap-4 text-sm">
                         <div className="bg-muted/50 rounded-lg p-3">
                           <div className="font-medium text-foreground">
-                            {plan.specs.ram}
+                            {plan.specifications.ram}
                           </div>
                           <div className="text-muted-foreground">Memoria</div>
                         </div>
                         <div className="bg-muted/50 rounded-lg p-3">
                           <div className="font-medium text-foreground">
-                            {plan.specs.cpu}
+                            {plan.specifications.cpu}
                           </div>
-                          <div className="text-muted-foreground">Procesador</div>
+                          <div className="text-muted-foreground">
+                            Procesador
+                          </div>
                         </div>
                         <div className="bg-muted/50 rounded-lg p-3">
                           <div className="font-medium text-foreground">
-                            {plan.specs.storage}
+                            {plan.specifications.storage}
                           </div>
                           <div className="text-muted-foreground">
                             Almacenamiento
@@ -258,7 +313,7 @@ const HostingPage = () => {
                         </div>
                         <div className="bg-muted/50 rounded-lg p-3">
                           <div className="font-medium text-foreground">
-                            {plan.specs.players}
+                            {plan.specifications.players}
                           </div>
                           <div className="text-muted-foreground">Jugadores</div>
                         </div>
@@ -267,31 +322,34 @@ const HostingPage = () => {
                   </CardHeader>
                   <CardContent className="space-y-4">
                     <ul className="space-y-3">
-                      {plan.features && plan.features.map((feature, idx) => (
-                        <li key={idx} className="flex items-center gap-3">
-                          {feature.included ? (
-                            <Check className="w-5 h-5 text-green-500 flex-shrink-0" />
-                          ) : (
-                            <X className="w-5 h-5 text-muted-foreground flex-shrink-0" />
-                          )}
-                          <span
-                            className={
-                              feature.included
-                                ? "text-foreground"
-                                : "text-muted-foreground"
-                            }
-                          >
-                            {feature.name}
-                          </span>
-                        </li>
-                      ))}
+                      {plan.features &&
+                        plan.features.map((feature, idx) => (
+                          <li key={idx} className="flex items-center gap-3">
+                            {!feature.included ? (
+                              <Check className="w-5 h-5 text-green-500 flex-shrink-0" />
+                            ) : (
+                              <X className="w-5 h-5 text-muted-foreground flex-shrink-0" />
+                            )}
+                            <span
+                              className={
+                                !feature.included
+                                  ? "text-foreground"
+                                  : "text-muted-foreground"
+                              }
+                            >
+                              {feature.feature}
+                            </span>
+                          </li>
+                        ))}
                     </ul>
                     <Button
                       className="w-full mt-6"
-                      variant={plan.popular ? "default" : "outline"}
-                      onClick={() => handleContactSales(plan.name, "gaming")}
+                      variant={plan.isPopular ? "default" : "outline"}
+                      onClick={() =>
+                        handleContactSales(plan.name, "gameserver")
+                      }
                     >
-                      Contratar Servidor
+                      Contratar {plan.name}
                       <ArrowRight className="w-4 h-4 ml-2" />
                     </Button>
                   </CardContent>
@@ -300,38 +358,35 @@ const HostingPage = () => {
             ))}
           </motion.div>
         )}
-
-        {/* CTA Section */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.6 }}
-          viewport={{ once: true }}
-          className="text-center mt-16"
-        >
-          <h3 className="text-2xl font-bold text-foreground mb-4">
-            ¿Necesitas una solución personalizada?
-          </h3>
-          <p className="text-muted-foreground mb-8 max-w-2xl mx-auto">
-            Nuestro equipo de expertos está listo para ayudarte a encontrar la
-            solución perfecta para tus necesidades específicas.
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button size="lg" asChild>
-              <Link to="/contact" className="flex items-center">
-                Solicitar Cotización
-                <ArrowRight className="ml-2 h-4 w-4" />
-              </Link>
-            </Button>
-            <Button variant="outline" size="lg" asChild>
-              <Link to="/hosting">Ver Planes de Hosting</Link>
-            </Button>
-          </div>
-        </motion.div>
       </Container>
+
+      {/* CTA Section */}
+      <section className="py-16 bg-primary/10">
+        <Container className="text-center">
+            <h3 className="text-2xl font-bold text-foreground mb-4">
+              ¿Necesitas una solución personalizada?
+            </h3>
+
+            <p className="text-muted-foreground mb-8 max-w-2xl mx-auto">
+              Nuestro equipo de expertos está listo para ayudarte a encontrar la
+              solución perfecta para tus necesidades específicas.
+            </p>
+
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <a
+                href="/contact"
+                className="inline-flex items-center gap-2 rounded-md px-4 py-2 text-sm font-medium 
+               bg-black text-white hover:bg-neutral-800 active:bg-neutral-900 
+               shadow-sm hover:shadow-md transition"
+              >
+                <Calculator className="h-5 w-5" />
+                <span>Solicitar Cotización</span>
+              </a>
+            </div>
+        </Container>
+      </section>
     </div>
   );
 };
 
 export default HostingPage;
-
