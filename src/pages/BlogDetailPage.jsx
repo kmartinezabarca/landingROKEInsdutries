@@ -14,11 +14,14 @@ import {
   Copy,
   Check,
   AlertCircle,
-  Loader
+  Loader2,
+  ChevronRight
 } from 'lucide-react';
 import Container from '../components/common/Container';
 import { getBlogPostBySlug, getBlogPosts } from '../services/blogService';
-import ReactMarkdown from 'react-markdown';
+
+// Logo de ROKE Industries como imagen por defecto
+const DEFAULT_IMAGE = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 600'%3E%3Crect fill='%23f0f0f0' width='1200' height='600'/%3E%3Ctext x='50%25' y='50%25' font-size='72' fill='%23999' text-anchor='middle' dominant-baseline='middle' font-family='Arial, sans-serif' font-weight='bold'%3EROKE Industries%3C/text%3E%3C/svg%3E";
 
 const BlogDetailPage = () => {
   const { slug } = useParams();
@@ -53,7 +56,7 @@ const BlogDetailPage = () => {
         const related = allPosts
           .filter(
             (p) =>
-              p.category?.id === post.category?.id &&
+              p.category?.uuid === post.category?.uuid &&
               p.slug !== slug
           )
           .slice(0, 3);
@@ -106,11 +109,52 @@ const BlogDetailPage = () => {
     }
   };
 
+  /**
+   * Renderiza artículos relacionados
+   */
+  const RelatedArticleCard = ({ article }) => {
+    const imageUrl = article.image || DEFAULT_IMAGE;
+    const authorName = article.authorName || article.author?.name || 'ROKE Industries';
+
+    return (
+      <Link
+        to={`/blog/${article.slug}`}
+        className="group block h-full"
+      >
+        <motion.div
+          whileHover={{ y: -4 }}
+          className="h-full rounded-lg overflow-hidden border border-border hover:border-primary/50 transition-all duration-300 bg-card hover:shadow-lg"
+        >
+          <div className="aspect-video bg-gradient-to-br from-slate-200 to-slate-300 overflow-hidden relative">
+            <img
+              src={imageUrl}
+              alt={article.title}
+              onError={(e) => {
+                e.target.src = DEFAULT_IMAGE;
+              }}
+              className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+              loading="lazy"
+            />
+          </div>
+          <div className="p-4">
+            <h4 className="font-semibold text-sm line-clamp-2 group-hover:text-primary transition-colors mb-2">
+              {article.title}
+            </h4>
+            <div className="flex items-center gap-2 text-xs text-muted-foreground">
+              <Clock className="w-3 h-3" />
+              <span>{article.readTime || 5} min</span>
+            </div>
+          </div>
+        </motion.div>
+      </Link>
+    );
+  };
+
   if (loading) {
     return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
-        <div className="flex flex-col items-center gap-4">
-          <Loader className="w-12 h-12 text-primary animate-spin" />
+      <div className="min-h-screen flex items-center justify-center bg-background">
+        <div className="text-center">
+          <Loader2 className="w-12 h-12 animate-spin text-primary mx-auto mb-4" />
           <p className="text-muted-foreground">Cargando artículo...</p>
         </div>
       </div>
@@ -120,241 +164,223 @@ const BlogDetailPage = () => {
   if (error || !article) {
     return (
       <div className="min-h-screen bg-background">
-        <Container className="py-16">
+        <Container className="py-20">
           <motion.div
-            initial={{ opacity: 0, y: -10 }}
+            initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="p-6 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg flex items-start gap-4"
+            className="text-center"
           >
-            <AlertCircle className="w-6 h-6 text-red-600 dark:text-red-400 flex-shrink-0 mt-1" />
-            <div>
-              <h3 className="font-semibold text-red-900 dark:text-red-200 mb-2">Error</h3>
-              <p className="text-red-800 dark:text-red-300 mb-4">
-                {error || 'No se encontró el artículo solicitado.'}
-              </p>
-              <Link
-                to="/blog"
-                className="inline-flex items-center text-red-600 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300"
-              >
-                <ArrowLeft className="w-4 h-4 mr-2" />
-                Volver al blog
-              </Link>
-            </div>
+            <AlertCircle className="w-16 h-16 text-destructive mx-auto mb-4" />
+            <h1 className="text-3xl font-bold mb-2">Artículo no encontrado</h1>
+            <p className="text-muted-foreground mb-6">
+              {error || 'El artículo que buscas no existe o ha sido eliminado.'}
+            </p>
+            <Link
+              to="/blog"
+              className="inline-flex items-center text-primary hover:text-primary/80 transition-colors font-semibold"
+            >
+              <ArrowLeft className="w-4 h-4 mr-2" />
+              Volver al blog
+            </Link>
           </motion.div>
         </Container>
       </div>
     );
   }
 
+  const imageUrl = article.image || DEFAULT_IMAGE;
+  const authorName = article.authorName || article.author?.name || 'ROKE Industries';
+
   return (
     <div className="min-h-screen bg-background">
-      {/* Back Button */}
-      <Container className="pt-8">
-        <Link
-          to="/blog"
-          className="inline-flex items-center text-primary hover:text-primary/80 transition-colors mb-8"
-        >
-          <ArrowLeft className="w-4 h-4 mr-2" />
-          Volver al blog
-        </Link>
-      </Container>
-
-      {/* Article Header */}
+      {/* Featured Image */}
       <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6 }}
-        className="relative h-[300px] md:h-[400px] flex items-center justify-center text-white overflow-hidden"
+        initial={{ opacity: 0, scale: 1.05 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ duration: 0.8 }}
+        className="relative h-[400px] md:h-[500px] w-full overflow-hidden bg-gradient-to-br from-slate-200 to-slate-300"
       >
-        <div
-          className="absolute inset-0 bg-cover bg-center z-0"
-          style={{
-            backgroundImage: `url('${article.image || '/assets/placeholder.jpg'}')`,
+        <img
+          src={imageUrl}
+          alt={article.title}
+          onError={(e) => {
+            e.target.src = DEFAULT_IMAGE;
           }}
+          className="w-full h-full object-cover"
+          loading="lazy"
         />
-        <div className="absolute inset-0 bg-black/60 dark:bg-black/70 z-10" />
-        <Container className="relative z-20 text-center">
-          <div className="mb-4">
-            {article.category && (
-              <span className="bg-primary/80 text-primary-foreground px-4 py-1 rounded-full text-sm font-medium">
-                {article.category.name}
-              </span>
-            )}
-          </div>
-          <h1 className="text-3xl md:text-5xl lg:text-6xl font-extrabold tracking-tight mb-4">
-            {article.title}
-          </h1>
-        </Container>
+        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
       </motion.div>
 
-      {/* Article Meta */}
-      <Container className="py-8">
-        <motion.div
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.1 }}
-          className="flex flex-wrap items-center gap-4 text-sm text-muted-foreground border-b border-border pb-8"
-        >
-          {article.author && (
-            <div className="flex items-center gap-2">
-              <User className="w-4 h-4" />
-              <span>{article.author.name}</span>
-            </div>
-          )}
-          <div className="flex items-center gap-2">
-            <Calendar className="w-4 h-4" />
-            <span>{formatDate(article.publishedAt)}</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <Clock className="w-4 h-4" />
-            <span>{article.readTime ? `${article.readTime} min` : '5 min'} de lectura</span>
-          </div>
-        </motion.div>
-      </Container>
-
-      {/* Article Content */}
-      <Container className="py-12">
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
+      <Container className="py-16 md:py-20">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
           {/* Main Content */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.2 }}
-            className="lg:col-span-3"
+            className="lg:col-span-2"
           >
-            <div className="prose prose-invert dark:prose-invert max-w-none">
-              <ReactMarkdown
-                components={{
-                  h1: ({ node, ...props }) => <h1 className="text-3xl font-bold mt-8 mb-4 text-foreground" {...props} />,
-                  h2: ({ node, ...props }) => <h2 className="text-2xl font-bold mt-6 mb-3 text-foreground" {...props} />,
-                  h3: ({ node, ...props }) => <h3 className="text-xl font-bold mt-4 mb-2 text-foreground" {...props} />,
-                  p: ({ node, ...props }) => <p className="mb-4 text-muted-foreground leading-relaxed" {...props} />,
-                  ul: ({ node, ...props }) => <ul className="list-disc list-inside mb-4 text-muted-foreground" {...props} />,
-                  ol: ({ node, ...props }) => <ol className="list-decimal list-inside mb-4 text-muted-foreground" {...props} />,
-                  li: ({ node, ...props }) => <li className="mb-2" {...props} />,
-                  code: ({ node, inline, ...props }) =>
-                    inline ? (
-                      <code className="bg-muted px-2 py-1 rounded text-sm text-foreground font-mono" {...props} />
-                    ) : (
-                      <code className="block bg-muted p-4 rounded mb-4 overflow-x-auto text-sm text-foreground font-mono" {...props} />
-                    ),
-                  pre: ({ node, ...props }) => <pre className="mb-4" {...props} />,
-                  blockquote: ({ node, ...props }) => (
-                    <blockquote className="border-l-4 border-primary pl-4 my-4 italic text-muted-foreground" {...props} />
-                  ),
-                  a: ({ node, ...props }) => (
-                    <a className="text-primary hover:text-primary/80 underline" {...props} />
-                  ),
-                }}
-              >
-                {article.content}
-              </ReactMarkdown>
+            {/* Breadcrumb */}
+            <div className="flex items-center gap-2 text-sm text-muted-foreground mb-6">
+              <Link to="/blog" className="hover:text-foreground transition-colors">
+                Blog
+              </Link>
+              <ChevronRight className="w-4 h-4" />
+              {article.category && (
+                <>
+                  <span className="text-primary font-medium">
+                    {article.category.name}
+                  </span>
+                  <ChevronRight className="w-4 h-4" />
+                </>
+              )}
+              <span className="text-foreground font-medium truncate">
+                {article.title}
+              </span>
             </div>
 
-            {/* Article Footer */}
-            <motion.div
+            {/* Title */}
+            <motion.h1
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.3 }}
-              className="mt-12 pt-8 border-t border-border"
+              className="text-4xl md:text-5xl font-extrabold mb-6 leading-tight"
             >
-              <div className="flex flex-wrap items-center justify-between gap-6">
-                {/* Actions */}
-                <div className="flex items-center gap-4">
-                  <button
-                    onClick={handleLike}
-                    className="flex items-center gap-2 px-4 py-2 rounded-lg bg-muted hover:bg-muted/80 transition-colors"
-                  >
-                    <Heart
-                      className={`w-5 h-5 ${
-                        liked ? 'fill-red-500 text-red-500' : 'text-muted-foreground'
-                      }`}
-                    />
-                    <span className="text-sm font-medium">{likes}</span>
-                  </button>
-                </div>
+              {article.title}
+            </motion.h1>
 
-                {/* Share */}
-                <div className="flex items-center gap-2">
-                  <span className="text-sm text-muted-foreground">Compartir:</span>
-                  <button
-                    onClick={handleCopyLink}
-                    className="p-2 rounded-lg bg-muted hover:bg-muted/80 transition-colors"
-                    title="Copiar enlace"
-                  >
-                    {copied ? (
-                      <Check className="w-5 h-5 text-green-500" />
-                    ) : (
-                      <Copy className="w-5 h-5 text-muted-foreground" />
-                    )}
-                  </button>
-                  <a
-                    href={`https://www.facebook.com/sharer/sharer.php?u=${window.location.href}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="p-2 rounded-lg bg-muted hover:bg-muted/80 transition-colors"
-                    title="Compartir en Facebook"
-                  >
-                    <Facebook className="w-5 h-5 text-muted-foreground" />
-                  </a>
-                  <a
-                    href={`https://twitter.com/intent/tweet?url=${window.location.href}&text=${article.title}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="p-2 rounded-lg bg-muted hover:bg-muted/80 transition-colors"
-                    title="Compartir en Twitter"
-                  >
-                    <Twitter className="w-5 h-5 text-muted-foreground" />
-                  </a>
-                  <a
-                    href={`https://www.linkedin.com/sharing/share-offsite/?url=${window.location.href}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="p-2 rounded-lg bg-muted hover:bg-muted/80 transition-colors"
-                    title="Compartir en LinkedIn"
-                  >
-                    <Linkedin className="w-5 h-5 text-muted-foreground" />
-                  </a>
-                </div>
+            {/* Meta Information */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.4 }}
+              className="flex flex-wrap items-center gap-6 text-sm text-muted-foreground mb-8 pb-8 border-b border-border"
+            >
+              <div className="flex items-center gap-2">
+                <User className="w-4 h-4" />
+                <span className="font-medium">{authorName}</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <Calendar className="w-4 h-4" />
+                <span>{formatDate(article.publishedAt)}</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <Clock className="w-4 h-4" />
+                <span>{article.readTime || 5} min de lectura</span>
+              </div>
+            </motion.div>
+
+            {/* Article Content */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.5 }}
+              className="prose prose-lg max-w-none mb-12 dark:prose-invert"
+            >
+              <div dangerouslySetInnerHTML={{ __html: article.content }} />
+            </motion.div>
+
+            {/* Share and Like */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.6 }}
+              className="flex flex-wrap items-center gap-4 py-8 border-t border-b border-border"
+            >
+              <button
+                onClick={handleLike}
+                className="flex items-center gap-2 px-4 py-2 rounded-lg border border-border hover:border-primary hover:bg-primary/5 transition-all"
+              >
+                <Heart
+                  className={`w-5 h-5 transition-colors ${
+                    liked ? 'fill-destructive text-destructive' : 'text-muted-foreground'
+                  }`}
+                />
+                <span className="font-medium">{likes}</span>
+              </button>
+
+              <div className="flex items-center gap-2 ml-auto">
+                <span className="text-sm text-muted-foreground">Compartir:</span>
+                <button
+                  onClick={handleCopyLink}
+                  className="p-2 rounded-lg border border-border hover:bg-muted transition-colors"
+                  title="Copiar enlace"
+                >
+                  {copied ? (
+                    <Check className="w-5 h-5 text-green-600" />
+                  ) : (
+                    <Copy className="w-5 h-5 text-muted-foreground" />
+                  )}
+                </button>
+                <a
+                  href={`https://www.facebook.com/sharer/sharer.php?u=${window.location.href}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="p-2 rounded-lg border border-border hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-colors"
+                  title="Compartir en Facebook"
+                >
+                  <Facebook className="w-5 h-5 text-blue-600" />
+                </a>
+                <a
+                  href={`https://twitter.com/intent/tweet?url=${window.location.href}&text=${article.title}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="p-2 rounded-lg border border-border hover:bg-sky-50 dark:hover:bg-sky-900/20 transition-colors"
+                  title="Compartir en Twitter"
+                >
+                  <Twitter className="w-5 h-5 text-sky-500" />
+                </a>
+                <a
+                  href={`https://www.linkedin.com/sharing/share-offsite/?url=${window.location.href}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="p-2 rounded-lg border border-border hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-colors"
+                  title="Compartir en LinkedIn"
+                >
+                  <Linkedin className="w-5 h-5 text-blue-700" />
+                </a>
               </div>
             </motion.div>
           </motion.div>
 
           {/* Sidebar */}
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.6, delay: 0.3 }}
-            className="lg:col-span-1"
+            className="space-y-8"
           >
-            {/* Author Card */}
-            {article.author && (
-              <div className="bg-muted rounded-lg p-6 mb-8">
-                <h3 className="font-bold text-foreground mb-2">Sobre el autor</h3>
-                <p className="text-sm text-muted-foreground">
-                  {article.author.name}
+            {/* Category Badge */}
+            {article.category && (
+              <div className="p-6 rounded-lg bg-gradient-to-br from-primary/10 to-primary/5 border border-primary/20">
+                <p className="text-sm text-muted-foreground mb-2">Categoría</p>
+                <p className="text-lg font-semibold text-primary">
+                  {article.category.name}
                 </p>
               </div>
             )}
 
+            {/* Table of Contents */}
+            <div className="p-6 rounded-lg border border-border bg-card">
+              <h3 className="font-semibold mb-4">Contenido</h3>
+              <div className="space-y-2 text-sm">
+                <p className="text-muted-foreground">
+                  {article.excerpt}
+                </p>
+              </div>
+            </div>
+
             {/* Related Articles */}
             {relatedArticles.length > 0 && (
-              <div className="bg-muted rounded-lg p-6">
-                <h3 className="font-bold text-foreground mb-4">Artículos relacionados</h3>
+              <div className="space-y-4">
+                <h3 className="font-semibold text-lg">Artículos Relacionados</h3>
                 <div className="space-y-4">
-                  {relatedArticles.map((post) => (
-                    <Link
-                      key={post.id}
-                      to={`/blog/${post.slug}`}
-                      className="block p-3 rounded-lg bg-background hover:bg-muted/80 transition-colors"
-                    >
-                      <h4 className="text-sm font-medium text-foreground hover:text-primary line-clamp-2">
-                        {post.title}
-                      </h4>
-                      <p className="text-xs text-muted-foreground mt-1">
-                        {formatDate(post.publishedAt)}
-                      </p>
-                    </Link>
+                  {relatedArticles.map((relatedArticle) => (
+                    <RelatedArticleCard
+                      key={relatedArticle.uuid}
+                      article={relatedArticle}
+                    />
                   ))}
                 </div>
               </div>
@@ -362,6 +388,24 @@ const BlogDetailPage = () => {
           </motion.div>
         </div>
       </Container>
+
+      {/* Back to Blog */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6, delay: 0.7 }}
+        className="border-t border-border bg-muted/30 py-12"
+      >
+        <Container>
+          <Link
+            to="/blog"
+            className="inline-flex items-center text-primary hover:text-primary/80 transition-colors font-semibold group"
+          >
+            <ArrowLeft className="w-5 h-5 mr-2 group-hover:-translate-x-1 transition-transform" />
+            Volver al blog
+          </Link>
+        </Container>
+      </motion.div>
     </div>
   );
 };
