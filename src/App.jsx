@@ -15,7 +15,7 @@ import HostingPage from './pages/HostingPage';
 import ContactPage from './pages/ContactPage';
 import PrivacyPolicyPage from './pages/PrivacyPolicyPage';
 import SystemStatusPage from './pages/SystemStatusPage';
-import APIPage from './pages/APIPage';
+import ApiDocumentationPage from './pages/ApiDocumentationPage';
 import DocumentationPage from './pages/DocumentationPage';
 import DocumentationDetailPage from './pages/DocumentationDetailPage'
 import TermsPage from './pages/TermsPage';
@@ -48,7 +48,7 @@ function App() {
               <Route path={ROUTES.CONTACT} element={<ContactPage />} />
               <Route path="/privacy" element={<PrivacyPolicyPage />} />
               <Route path="/status" element={<SystemStatusPage />} />
-              <Route path="/api" element={<APIPage />} />
+              <Route path="/api" element={<ApiDocumentationPage />} />
               <Route path="/docs" element={<DocumentationPage />} />
               <Route path="/docs/:slug" element={<DocumentationDetailPage />} />
               <Route path="/terms" element={<TermsPage />} />

@@ -1,6 +1,15 @@
 import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { Code, Search, AlertCircle, Loader2, Copy, Check } from "lucide-react";
+import { 
+  Code, 
+  Search, 
+  AlertCircle, 
+  Loader2, 
+  Copy, 
+  Check,
+  MessageSquare,
+  X
+} from "lucide-react";
 import Container from "../components/common/Container";
 import documentationService from "../services/documentationService";
 
@@ -11,6 +20,14 @@ const ApiDocumentationPage = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedEndpoint, setSelectedEndpoint] = useState(null);
   const [copiedCode, setCopiedCode] = useState(null);
+  const [showRequestModal, setShowRequestModal] = useState(false);
+  const [requestForm, setRequestForm] = useState({
+    name: "",
+    email: "",
+    topic: "",
+    description: ""
+  });
+  const [submittingRequest, setSubmittingRequest] = useState(false);
 
   useEffect(() => {
     const loadApiDocumentation = async () => {
@@ -35,7 +52,6 @@ const ApiDocumentationPage = () => {
 
   const filteredEndpoints = apiDocs.filter((doc) =>
     doc.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    doc.endpoint.toLowerCase().includes(searchTerm.toLowerCase()) ||
     doc.content.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
@@ -59,6 +75,40 @@ const ApiDocumentationPage = () => {
         return "bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200";
       default:
         return "bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-200";
+    }
+  };
+
+  const handleRequestSubmit = async (e) => {
+    e.preventDefault();
+    
+    if (!requestForm.name || !requestForm.email || !requestForm.topic) {
+      alert("Por favor completa todos los campos requeridos");
+      return;
+    }
+
+    setSubmittingRequest(true);
+    
+    try {
+      // Aquí se enviaría la solicitud al backend
+      // Por ahora, simulamos el envío
+      console.log("Solicitud de documentación:", requestForm);
+      
+      // Simular envío
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      
+      alert("Solicitud enviada exitosamente. Nos pondremos en contacto pronto.");
+      setRequestForm({
+        name: "",
+        email: "",
+        topic: "",
+        description: ""
+      });
+      setShowRequestModal(false);
+    } catch (err) {
+      console.error("Error sending request:", err);
+      alert("Error al enviar la solicitud. Por favor intenta de nuevo.");
+    } finally {
+      setSubmittingRequest(false);
     }
   };
 
@@ -128,7 +178,7 @@ const ApiDocumentationPage = () => {
                   <Search className="absolute left-3 top-3 text-gray-400" size={20} />
                   <input
                     type="text"
-                    placeholder="Buscar endpoints..."
+                    placeholder="Buscar documentación..."
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
                     className="w-full pl-10 pr-4 py-2 rounded-lg border border-input bg-background focus:outline-none focus:ring-2 focus:ring-primary"
@@ -147,21 +197,31 @@ const ApiDocumentationPage = () => {
                           : "hover:bg-muted text-foreground"
                       }`}
                     >
-                      <div className="flex items-center gap-2">
-                        <span className={`px-2 py-1 rounded text-xs font-bold ${getMethodColor(endpoint.method)}`}>
-                          {endpoint.method?.toUpperCase()}
-                        </span>
-                      </div>
-                      <p className="font-mono text-xs mt-1 truncate">{endpoint.endpoint}</p>
+                      <p className="font-medium text-sm">{endpoint.title}</p>
+                      {endpoint.category && (
+                        <p className="text-xs text-muted-foreground mt-1">{endpoint.category}</p>
+                      )}
                     </motion.button>
                   ))}
                 </div>
 
                 {filteredEndpoints.length === 0 && (
                   <div className="text-center py-8 text-muted-foreground">
-                    No se encontraron endpoints
+                    No se encontraron documentos
                   </div>
                 )}
+
+                {/* Request Documentation Button */}
+                <motion.button
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.6, delay: 0.3 }}
+                  onClick={() => setShowRequestModal(true)}
+                  className="w-full mt-6 flex items-center justify-center gap-2 px-4 py-3 bg-primary/10 text-primary rounded-lg hover:bg-primary/20 transition-colors border border-primary/20"
+                >
+                  <MessageSquare className="w-4 h-4" />
+                  <span className="text-sm font-medium">Solicitar Documentación</span>
+                </motion.button>
               </div>
             </motion.div>
 
@@ -176,74 +236,131 @@ const ApiDocumentationPage = () => {
                 <div className="bg-card rounded-xl p-8 border border-border shadow-sm">
                   {/* Endpoint Header */}
                   <div className="mb-8">
-                    <div className="flex items-center gap-3 mb-4">
-                      <span className={`px-3 py-1 rounded-lg text-sm font-bold ${getMethodColor(selectedEndpoint.method)}`}>
-                        {selectedEndpoint.method?.toUpperCase()}
-                      </span>
-                      <code className="font-mono text-sm bg-muted px-3 py-1 rounded-lg flex-1 overflow-x-auto">
-                        {selectedEndpoint.endpoint}
-                      </code>
-                      <button
-                        onClick={() => copyToClipboard(selectedEndpoint.endpoint, "endpoint")}
-                        className="p-2 hover:bg-muted rounded-lg transition-colors"
-                      >
-                        {copiedCode === "endpoint" ? (
-                          <Check className="w-4 h-4 text-green-600" />
-                        ) : (
-                          <Copy className="w-4 h-4" />
-                        )}
-                      </button>
-                    </div>
                     <h1 className="text-3xl font-bold mb-2">{selectedEndpoint.title}</h1>
+                    {selectedEndpoint.category && (
+                      <p className="text-sm text-muted-foreground mb-4">
+                        Categoría: <span className="font-medium">{selectedEndpoint.category}</span>
+                      </p>
+                    )}
                   </div>
 
                   {/* Description */}
                   <div className="mb-8 pb-8 border-b">
                     <h2 className="text-xl font-semibold mb-4">Descripción</h2>
-                    <p className="text-muted-foreground">{selectedEndpoint.description}</p>
+                    <p className="text-muted-foreground">{selectedEndpoint.content}</p>
                   </div>
 
-                  {/* Content */}
-                  <div className="prose dark:prose-invert max-w-none">
-                    <div
-                      dangerouslySetInnerHTML={{
-                        __html: selectedEndpoint.content.replace(/\n/g, "<br />"),
-                      }}
-                    />
+                  {/* Publication Status */}
+                  <div className="mb-8">
+                    <span
+                      className={`text-xs px-3 py-1 rounded-full font-medium ${
+                        selectedEndpoint.is_published
+                          ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200'
+                          : 'bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-200'
+                      }`}
+                    >
+                      {selectedEndpoint.is_published ? 'Publicado' : 'Borrador'}
+                    </span>
                   </div>
-
-                  {/* Code Example */}
-                  {selectedEndpoint.codeExample && (
-                    <div className="mt-8 pt-8 border-t">
-                      <h2 className="text-xl font-semibold mb-4">Ejemplo de Uso</h2>
-                      <div className="relative">
-                        <pre className="bg-slate-900 text-slate-100 p-4 rounded-lg overflow-x-auto">
-                          <code>{selectedEndpoint.codeExample}</code>
-                        </pre>
-                        <button
-                          onClick={() => copyToClipboard(selectedEndpoint.codeExample, "example")}
-                          className="absolute top-2 right-2 p-2 bg-slate-700 hover:bg-slate-600 rounded-lg transition-colors"
-                        >
-                          {copiedCode === "example" ? (
-                            <Check className="w-4 h-4 text-green-400" />
-                          ) : (
-                            <Copy className="w-4 h-4 text-slate-300" />
-                          )}
-                        </button>
-                      </div>
-                    </div>
-                  )}
                 </div>
               ) : (
                 <div className="text-center py-20">
                   <Code className="w-16 h-16 mx-auto text-muted-foreground/30 mb-4" />
-                  <p className="text-muted-foreground">Selecciona un endpoint para ver su documentación</p>
+                  <p className="text-muted-foreground">Selecciona un documento para ver su contenido</p>
                 </div>
               )}
             </motion.div>
           </div>
         )}
       </Container>
+
+      {/* Request Documentation Modal */}
+      {showRequestModal && (
+        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.95 }}
+            className="bg-card rounded-lg p-8 max-w-md w-full border border-border shadow-lg"
+          >
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-2xl font-bold">Solicitar Documentación</h2>
+              <button
+                onClick={() => setShowRequestModal(false)}
+                className="p-1 hover:bg-muted rounded-lg transition-colors"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <form onSubmit={handleRequestSubmit} className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium mb-2">Nombre *</label>
+                <input
+                  type="text"
+                  value={requestForm.name}
+                  onChange={(e) => setRequestForm({ ...requestForm, name: e.target.value })}
+                  placeholder="Tu nombre"
+                  className="w-full px-4 py-2 rounded-lg border border-input bg-background focus:outline-none focus:ring-2 focus:ring-primary"
+                  required
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium mb-2">Email *</label>
+                <input
+                  type="email"
+                  value={requestForm.email}
+                  onChange={(e) => setRequestForm({ ...requestForm, email: e.target.value })}
+                  placeholder="tu@email.com"
+                  className="w-full px-4 py-2 rounded-lg border border-input bg-background focus:outline-none focus:ring-2 focus:ring-primary"
+                  required
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium mb-2">Tema de Documentación *</label>
+                <input
+                  type="text"
+                  value={requestForm.topic}
+                  onChange={(e) => setRequestForm({ ...requestForm, topic: e.target.value })}
+                  placeholder="Ej: Autenticación OAuth"
+                  className="w-full px-4 py-2 rounded-lg border border-input bg-background focus:outline-none focus:ring-2 focus:ring-primary"
+                  required
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium mb-2">Descripción</label>
+                <textarea
+                  value={requestForm.description}
+                  onChange={(e) => setRequestForm({ ...requestForm, description: e.target.value })}
+                  placeholder="Cuéntanos qué documentación necesitas..."
+                  rows={4}
+                  className="w-full px-4 py-2 rounded-lg border border-input bg-background focus:outline-none focus:ring-2 focus:ring-primary resize-none"
+                />
+              </div>
+
+              <div className="flex gap-3 pt-4">
+                <button
+                  type="button"
+                  onClick={() => setShowRequestModal(false)}
+                  className="flex-1 px-4 py-2 rounded-lg border border-input hover:bg-muted transition-colors font-medium"
+                >
+                  Cancelar
+                </button>
+                <button
+                  type="submit"
+                  disabled={submittingRequest}
+                  className="flex-1 px-4 py-2 rounded-lg bg-primary text-primary-foreground hover:bg-primary/90 transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {submittingRequest ? "Enviando..." : "Enviar Solicitud"}
+                </button>
+              </div>
+            </form>
+          </motion.div>
+        </div>
+      )}
     </div>
   );
 };
