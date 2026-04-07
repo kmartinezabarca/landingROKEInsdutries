@@ -54,26 +54,48 @@ export const documentationService = {
     }
   },
 
-  // Documentation Requests
-  submitDocumentationRequest: async (data) => {
+  // User Requests (Unified)
+  submitUserRequest: async (data) => {
     try {
-      const response = await apiClient.post("/documentation-requests", data);
+      const response = await apiClient.post("/user-requests", data);
       return response.data;
     } catch (error) {
-      console.error("Error submitting documentation request:", error);
+      console.error("Error submitting user request:", error);
       throw error;
     }
   },
 
-  // Blog Subscriptions
-  subscribeToBlog: async (email) => {
-    try {
-      const response = await apiClient.post("/blog/subscribe", { email });
-      return response.data;
-    } catch (error) {
-      console.error("Error subscribing to blog:", error);
-      throw error;
-    }
+  // Documentation Requests (uses unified endpoint)
+  submitDocumentationRequest: async (name, email, topic, description) => {
+    return documentationService.submitUserRequest({
+      name,
+      email,
+      topic,
+      description,
+      kind: "documentation_request",
+    });
+  },
+
+  // API Documentation Requests (uses unified endpoint)
+  submitApiDocumentationRequest: async (name, email, topic, description) => {
+    return documentationService.submitUserRequest({
+      name,
+      email,
+      topic,
+      description,
+      kind: "api_documentation_request",
+    });
+  },
+
+  // Blog Subscriptions (uses unified endpoint)
+  subscribeToBlog: async (name, email) => {
+    return documentationService.submitUserRequest({
+      name: name || "Anónimo",
+      email,
+      kind: "blog_subscription",
+      topic: "Suscripción al Blog",
+      description: "Solicitud de suscripción al blog.",
+    });
   },
 };
 
