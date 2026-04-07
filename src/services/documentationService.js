@@ -54,6 +54,17 @@ export const documentationService = {
     }
   },
 
+  // Documentation Requests
+  submitDocumentationRequest: async (data) => {
+    try {
+      const response = await apiClient.post("/documentation-requests", data);
+      return response.data;
+    } catch (error) {
+      console.error("Error submitting documentation request:", error);
+      throw error;
+    }
+  },
+
   // Blog Subscriptions
   subscribeToBlog: async (email) => {
     try {

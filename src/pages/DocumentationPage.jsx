@@ -8,10 +8,13 @@ import {
   AlertCircle,
   Loader2,
   Star,
-  Clock
+  Clock,
+  MessageSquare,
+  X
 } from 'lucide-react';
 import Container from '../components/common/Container';
 import documentationService from '../services/documentationService';
+import apiClient from '../lib/apiClient';
 
 const DocumentationPage = () => {
   const [documentation, setDocumentation] = useState([]);
@@ -19,6 +22,14 @@ const DocumentationPage = () => {
   const [error, setError] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedDoc, setSelectedDoc] = useState(null);
+  const [showRequestModal, setShowRequestModal] = useState(false);
+  const [requestForm, setRequestForm] = useState({
+    name: "",
+    email: "",
+    topic: "",
+    description: ""
+  });
+  const [submittingRequest, setSubmittingRequest] = useState(false);
 
   useEffect(() => {
     const loadDocumentation = async () => {
@@ -45,6 +56,38 @@ const DocumentationPage = () => {
     doc.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
     doc.content.toLowerCase().includes(searchTerm.toLowerCase())
   );
+
+  const handleRequestSubmit = async (e) => {
+    e.preventDefault();
+    
+    if (!requestForm.name || !requestForm.email || !requestForm.topic) {
+      alert("Por favor completa todos los campos requeridos");
+      return;
+    }
+
+    setSubmittingRequest(true);
+    
+    try {
+      await apiClient.post("/documentation-requests", {
+        ...requestForm,
+        kind: "documentation"
+      });
+      
+      alert("Solicitud enviada exitosamente. Nos pondremos en contacto pronto.");
+      setRequestForm({
+        name: "",
+        email: "",
+        topic: "",
+        description: ""
+      });
+      setShowRequestModal(false);
+    } catch (err) {
+      console.error("Error sending request:", err);
+      alert("Error al enviar la solicitud. Por favor intenta de nuevo.");
+    } finally {
+      setSubmittingRequest(false);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-background">
@@ -119,7 +162,7 @@ const DocumentationPage = () => {
                   />
                 </div>
 
-                <div className="space-y-2">
+                <div className="space-y-2 max-h-[600px] overflow-y-auto">
                   {filteredDocs.map((doc) => (
                     <motion.button
                       key={doc.uuid}
@@ -141,6 +184,18 @@ const DocumentationPage = () => {
                     No se encontraron documentos
                   </div>
                 )}
+
+                {/* Request Documentation Button */}
+                <motion.button
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.6, delay: 0.3 }}
+                  onClick={() => setShowRequestModal(true)}
+                  className="w-full mt-6 flex items-center justify-center gap-2 px-4 py-3 bg-primary/10 text-primary rounded-lg hover:bg-primary/20 transition-colors border border-primary/20"
+                >
+                  <MessageSquare className="w-4 h-4" />
+                  <span className="text-sm font-medium">Solicitar Documentación</span>
+                </motion.button>
               </div>
             </motion.div>
 
@@ -178,6 +233,94 @@ const DocumentationPage = () => {
           </div>
         )}
       </Container>
+
+      {/* Request Documentation Modal */}
+      {showRequestModal && (
+        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.95 }}
+            className="bg-card rounded-lg p-8 max-w-md w-full border border-border shadow-lg"
+          >
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-2xl font-bold">Solicitar Documentación</h2>
+              <button
+                onClick={() => setShowRequestModal(false)}
+                className="p-1 hover:bg-muted rounded-lg transition-colors"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <form onSubmit={handleRequestSubmit} className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium mb-2">Nombre *</label>
+                <input
+                  type="text"
+                  value={requestForm.name}
+                  onChange={(e) => setRequestForm({ ...requestForm, name: e.target.value })}
+                  placeholder="Tu nombre"
+                  className="w-full px-4 py-2 rounded-lg border border-input bg-background focus:outline-none focus:ring-2 focus:ring-primary"
+                  required
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium mb-2">Email *</label>
+                <input
+                  type="email"
+                  value={requestForm.email}
+                  onChange={(e) => setRequestForm({ ...requestForm, email: e.target.value })}
+                  placeholder="tu@email.com"
+                  className="w-full px-4 py-2 rounded-lg border border-input bg-background focus:outline-none focus:ring-2 focus:ring-primary"
+                  required
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium mb-2">Tema de Documentación *</label>
+                <input
+                  type="text"
+                  value={requestForm.topic}
+                  onChange={(e) => setRequestForm({ ...requestForm, topic: e.target.value })}
+                  placeholder="Ej: Configuración de DNS"
+                  className="w-full px-4 py-2 rounded-lg border border-input bg-background focus:outline-none focus:ring-2 focus:ring-primary"
+                  required
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium mb-2">Descripción</label>
+                <textarea
+                  value={requestForm.description}
+                  onChange={(e) => setRequestForm({ ...requestForm, description: e.target.value })}
+                  placeholder="Cuéntanos qué documentación necesitas..."
+                  rows={4}
+                  className="w-full px-4 py-2 rounded-lg border border-input bg-background focus:outline-none focus:ring-2 focus:ring-primary resize-none"
+                />
+              </div>
+
+              <div className="flex gap-3 pt-4">
+                <button
+                  type="button"
+                  onClick={() => setShowRequestModal(false)}
+                  className="flex-1 px-4 py-2 rounded-lg border border-input hover:bg-muted transition-colors font-medium"
+                >
+                  Cancelar
+                </button>
+                <button
+                  type="submit"
+                  disabled={submittingRequest}
+                  className="flex-1 px-4 py-2 rounded-lg bg-primary text-primary-foreground hover:bg-primary/90 transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {submittingRequest ? "Enviando..." : "Enviar Solicitud"}
+                </button>
+              </div>
+            </form>
+          </motion.div>
+        </div>
+      )}
     </div>
   );
 };

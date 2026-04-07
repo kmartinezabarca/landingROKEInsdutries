@@ -89,12 +89,10 @@ const ApiDocumentationPage = () => {
     setSubmittingRequest(true);
     
     try {
-      // Aquí se enviaría la solicitud al backend
-      // Por ahora, simulamos el envío
-      console.log("Solicitud de documentación:", requestForm);
-      
-      // Simular envío
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      await documentationService.submitDocumentationRequest({
+        ...requestForm,
+        kind: "api_documentation"
+      });
       
       alert("Solicitud enviada exitosamente. Nos pondremos en contacto pronto.");
       setRequestForm({
@@ -220,7 +218,7 @@ const ApiDocumentationPage = () => {
                   className="w-full mt-6 flex items-center justify-center gap-2 px-4 py-3 bg-primary/10 text-primary rounded-lg hover:bg-primary/20 transition-colors border border-primary/20"
                 >
                   <MessageSquare className="w-4 h-4" />
-                  <span className="text-sm font-medium">Solicitar Documentación</span>
+                  <span className="text-sm font-medium">Solicitar Documentación de API</span>
                 </motion.button>
               </div>
             </motion.div>
