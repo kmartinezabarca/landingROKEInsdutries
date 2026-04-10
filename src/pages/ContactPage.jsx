@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { 
-  Mail, 
-  Phone, 
-  MapPin, 
-  Clock, 
-  Send, 
+import {
+  Mail,
+  Phone,
+  MapPin,
+  Clock,
+  Send,
   MessageCircle,
   CheckCircle,
   AlertCircle
@@ -15,6 +15,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '../components/common/C
 import Button from '../components/common/Button';
 import WhatsAppService from '../services/whatsapp/whatsappService';
 import { CONFIG, ROUTES } from '../utils/constants/config';
+import documentationService from '../services/documentationService';
 
 const ContactPage = () => {
   const [formData, setFormData] = useState({
@@ -71,6 +72,8 @@ const ContactPage = () => {
 
     if (!formData.name.trim()) {
       newErrors.name = 'El nombre es requerido';
+    } else if (formData.name.trim().length < 2) {
+      newErrors.name = 'El nombre debe tener al menos 2 caracteres';
     }
 
     if (!formData.email.trim()) {
@@ -81,6 +84,8 @@ const ContactPage = () => {
 
     if (!formData.phone.trim()) {
       newErrors.phone = 'El teléfono es requerido';
+    } else if (!/^[+]?[\d\s\-()\[\]]{7,20}$/.test(formData.phone.trim())) {
+      newErrors.phone = 'El teléfono no tiene un formato válido';
     }
 
     if (!formData.service) {
@@ -115,20 +120,24 @@ const ContactPage = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     if (!validateForm()) {
       return;
     }
 
     setFormStatus('loading');
 
-    // Simulate form submission
     try {
-      await new Promise(resolve => setTimeout(resolve, 2000));
-      
-      // Here you would normally send the data to your backend
-      console.log('Form submitted:', formData);
-      
+      await documentationService.submitUserRequest({
+        name: formData.name.trim(),
+        email: formData.email.trim(),
+        phone: formData.phone.trim(),
+        company: formData.company.trim(),
+        topic: formData.service,
+        description: formData.message.trim(),
+        kind: 'contact',
+      });
+
       setFormStatus('success');
       setFormData({
         name: '',
@@ -240,6 +249,7 @@ const ContactPage = () => {
                           errors.name ? 'border-red-500' : 'border-border'
                         }`}
                         placeholder="Tu nombre completo"
+                        maxLength={100}
                       />
                       {errors.name && (
                         <p className="text-red-500 text-sm mt-1">{errors.name}</p>
@@ -258,6 +268,7 @@ const ContactPage = () => {
                           errors.email ? 'border-red-500' : 'border-border'
                         }`}
                         placeholder="tu@email.com"
+                        maxLength={150}
                       />
                       {errors.email && (
                         <p className="text-red-500 text-sm mt-1">{errors.email}</p>
@@ -279,6 +290,7 @@ const ContactPage = () => {
                           errors.phone ? 'border-red-500' : 'border-border'
                         }`}
                         placeholder="+52 (234) 567-8900"
+                        maxLength={20}
                       />
                       {errors.phone && (
                         <p className="text-red-500 text-sm mt-1">{errors.phone}</p>
@@ -295,6 +307,7 @@ const ContactPage = () => {
                         onChange={handleInputChange}
                         className="w-full px-4 py-2 border border-border rounded-lg bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
                         placeholder="Nombre de tu empresa"
+                        maxLength={150}
                       />
                     </div>
                   </div>
@@ -336,6 +349,7 @@ const ContactPage = () => {
                         errors.message ? 'border-red-500' : 'border-border'
                       }`}
                       placeholder="Cuéntanos sobre tu proyecto o consulta..."
+                      maxLength={2000}
                     />
                     {errors.message && (
                       <p className="text-red-500 text-sm mt-1">{errors.message}</p>
