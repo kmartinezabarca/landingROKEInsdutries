@@ -63,8 +63,8 @@ const BlogPage = () => {
     const matchesCategory =
       selectedCategory === "Todos" || post.category?.name === selectedCategory;
     const matchesSearch =
-      post.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      post.excerpt.toLowerCase().includes(searchQuery.toLowerCase());
+      post.title?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      post.excerpt?.toLowerCase().includes(searchQuery.toLowerCase());
     return matchesCategory && matchesSearch;
   });
 
@@ -370,7 +370,7 @@ const BlogPage = () => {
                 
                 try {
                   setSubscriptionLoading(true);
-                  await documentationService.subscribeToBlog(subscriptionEmail);
+                  await documentationService.subscribeToBlog("Suscriptor", subscriptionEmail);
                   setSubscriptionMessage({
                     type: "success",
                     text: "¡Suscripción exitosa! Revisa tu correo para confirmar.",

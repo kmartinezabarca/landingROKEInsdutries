@@ -1,20 +1,18 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { 
-  BookOpen, 
-  Search, 
-  ChevronRight, 
-  FileText, 
+import {
+  BookOpen,
+  Search,
   AlertCircle,
+  CheckCircle,
   Loader2,
-  Star,
   Clock,
   MessageSquare,
   X
 } from 'lucide-react';
+import ReactMarkdown from 'react-markdown';
 import Container from '../components/common/Container';
 import documentationService from '../services/documentationService';
-import apiClient from '../lib/apiClient';
 
 const DocumentationPage = () => {
   const [documentation, setDocumentation] = useState([]);
@@ -30,6 +28,8 @@ const DocumentationPage = () => {
     description: ""
   });
   const [submittingRequest, setSubmittingRequest] = useState(false);
+  const [requestErrors, setRequestErrors] = useState({});
+  const [requestStatus, setRequestStatus] = useState(null); // 'success' | 'error' | null
 
   useEffect(() => {
     const loadDocumentation = async () => {
@@ -57,36 +57,60 @@ const DocumentationPage = () => {
     doc.content.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
+  const validateRequestForm = () => {
+    const errs = {};
+    if (!requestForm.name.trim()) {
+      errs.name = 'El nombre es requerido';
+    }
+    if (!requestForm.email.trim()) {
+      errs.email = 'El email es requerido';
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(requestForm.email.trim())) {
+      errs.email = 'El email no es válido';
+    }
+    if (!requestForm.topic.trim()) {
+      errs.topic = 'El tema es requerido';
+    }
+    setRequestErrors(errs);
+    return Object.keys(errs).length === 0;
+  };
+
   const handleRequestSubmit = async (e) => {
     e.preventDefault();
-    
-    if (!requestForm.name || !requestForm.email || !requestForm.topic) {
-      alert("Por favor completa todos los campos requeridos");
+
+    if (!validateRequestForm()) {
       return;
     }
 
     setSubmittingRequest(true);
-    
+    setRequestStatus(null);
+
     try {
-      await apiClient.post("/documentation-requests", {
-        ...requestForm,
-        kind: "documentation"
-      });
-      
-      alert("Solicitud enviada exitosamente. Nos pondremos en contacto pronto.");
-      setRequestForm({
-        name: "",
-        email: "",
-        topic: "",
-        description: ""
-      });
-      setShowRequestModal(false);
+      await documentationService.submitDocumentationRequest(
+        requestForm.name.trim(),
+        requestForm.email.trim(),
+        requestForm.topic.trim(),
+        requestForm.description.trim()
+      );
+
+      setRequestStatus('success');
+      setRequestForm({ name: "", email: "", topic: "", description: "" });
+      setRequestErrors({});
+      setTimeout(() => {
+        setShowRequestModal(false);
+        setRequestStatus(null);
+      }, 2000);
     } catch (err) {
-      console.error("Error sending request:", err);
-      alert("Error al enviar la solicitud. Por favor intenta de nuevo.");
+      setRequestStatus('error');
     } finally {
       setSubmittingRequest(false);
     }
+  };
+
+  const handleCloseModal = () => {
+    setShowRequestModal(false);
+    setRequestErrors({});
+    setRequestStatus(null);
+    setRequestForm({ name: "", email: "", topic: "", description: "" });
   };
 
   return (
@@ -216,11 +240,9 @@ const DocumentationPage = () => {
                     </div>
                   </div>
                   <div className="prose dark:prose-invert max-w-none">
-                    <div
-                      dangerouslySetInnerHTML={{
-                        __html: selectedDoc.content.replace(/\n/g, "<br />"),
-                      }}
-                    />
+                    <ReactMarkdown>
+                      {selectedDoc.content}
+                    </ReactMarkdown>
                   </div>
                 </div>
               ) : (
@@ -246,24 +268,46 @@ const DocumentationPage = () => {
             <div className="flex items-center justify-between mb-6">
               <h2 className="text-2xl font-bold">Solicitar Documentación</h2>
               <button
-                onClick={() => setShowRequestModal(false)}
+                onClick={handleCloseModal}
                 className="p-1 hover:bg-muted rounded-lg transition-colors"
               >
                 <X className="w-5 h-5" />
               </button>
             </div>
 
-            <form onSubmit={handleRequestSubmit} className="space-y-4">
+            {requestStatus === 'success' && (
+              <div className="mb-4 p-4 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg flex items-center gap-3">
+                <CheckCircle className="w-5 h-5 text-green-600 flex-shrink-0" />
+                <p className="text-green-800 dark:text-green-200 text-sm font-medium">
+                  Solicitud enviada exitosamente. Nos pondremos en contacto pronto.
+                </p>
+              </div>
+            )}
+
+            {requestStatus === 'error' && (
+              <div className="mb-4 p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg flex items-center gap-3">
+                <AlertCircle className="w-5 h-5 text-red-600 flex-shrink-0" />
+                <p className="text-red-800 dark:text-red-200 text-sm font-medium">
+                  Error al enviar la solicitud. Por favor intenta de nuevo.
+                </p>
+              </div>
+            )}
+
+            <form onSubmit={handleRequestSubmit} className="space-y-4" noValidate>
               <div>
                 <label className="block text-sm font-medium mb-2">Nombre *</label>
                 <input
                   type="text"
                   value={requestForm.name}
-                  onChange={(e) => setRequestForm({ ...requestForm, name: e.target.value })}
+                  onChange={(e) => {
+                    setRequestForm({ ...requestForm, name: e.target.value });
+                    if (requestErrors.name) setRequestErrors({ ...requestErrors, name: '' });
+                  }}
                   placeholder="Tu nombre"
-                  className="w-full px-4 py-2 rounded-lg border border-input bg-background focus:outline-none focus:ring-2 focus:ring-primary"
-                  required
+                  maxLength={100}
+                  className={`w-full px-4 py-2 rounded-lg border bg-background focus:outline-none focus:ring-2 focus:ring-primary ${requestErrors.name ? 'border-red-500' : 'border-input'}`}
                 />
+                {requestErrors.name && <p className="text-red-500 text-xs mt-1">{requestErrors.name}</p>}
               </div>
 
               <div>
@@ -271,11 +315,15 @@ const DocumentationPage = () => {
                 <input
                   type="email"
                   value={requestForm.email}
-                  onChange={(e) => setRequestForm({ ...requestForm, email: e.target.value })}
+                  onChange={(e) => {
+                    setRequestForm({ ...requestForm, email: e.target.value });
+                    if (requestErrors.email) setRequestErrors({ ...requestErrors, email: '' });
+                  }}
                   placeholder="tu@email.com"
-                  className="w-full px-4 py-2 rounded-lg border border-input bg-background focus:outline-none focus:ring-2 focus:ring-primary"
-                  required
+                  maxLength={150}
+                  className={`w-full px-4 py-2 rounded-lg border bg-background focus:outline-none focus:ring-2 focus:ring-primary ${requestErrors.email ? 'border-red-500' : 'border-input'}`}
                 />
+                {requestErrors.email && <p className="text-red-500 text-xs mt-1">{requestErrors.email}</p>}
               </div>
 
               <div>
@@ -283,11 +331,15 @@ const DocumentationPage = () => {
                 <input
                   type="text"
                   value={requestForm.topic}
-                  onChange={(e) => setRequestForm({ ...requestForm, topic: e.target.value })}
+                  onChange={(e) => {
+                    setRequestForm({ ...requestForm, topic: e.target.value });
+                    if (requestErrors.topic) setRequestErrors({ ...requestErrors, topic: '' });
+                  }}
                   placeholder="Ej: Configuración de DNS"
-                  className="w-full px-4 py-2 rounded-lg border border-input bg-background focus:outline-none focus:ring-2 focus:ring-primary"
-                  required
+                  maxLength={200}
+                  className={`w-full px-4 py-2 rounded-lg border bg-background focus:outline-none focus:ring-2 focus:ring-primary ${requestErrors.topic ? 'border-red-500' : 'border-input'}`}
                 />
+                {requestErrors.topic && <p className="text-red-500 text-xs mt-1">{requestErrors.topic}</p>}
               </div>
 
               <div>
@@ -297,6 +349,7 @@ const DocumentationPage = () => {
                   onChange={(e) => setRequestForm({ ...requestForm, description: e.target.value })}
                   placeholder="Cuéntanos qué documentación necesitas..."
                   rows={4}
+                  maxLength={1000}
                   className="w-full px-4 py-2 rounded-lg border border-input bg-background focus:outline-none focus:ring-2 focus:ring-primary resize-none"
                 />
               </div>
@@ -304,14 +357,14 @@ const DocumentationPage = () => {
               <div className="flex gap-3 pt-4">
                 <button
                   type="button"
-                  onClick={() => setShowRequestModal(false)}
+                  onClick={handleCloseModal}
                   className="flex-1 px-4 py-2 rounded-lg border border-input hover:bg-muted transition-colors font-medium"
                 >
                   Cancelar
                 </button>
                 <button
                   type="submit"
-                  disabled={submittingRequest}
+                  disabled={submittingRequest || requestStatus === 'success'}
                   className="flex-1 px-4 py-2 rounded-lg bg-primary text-primary-foreground hover:bg-primary/90 transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {submittingRequest ? "Enviando..." : "Enviar Solicitud"}
