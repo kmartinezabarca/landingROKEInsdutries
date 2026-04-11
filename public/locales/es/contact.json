@@ -1,0 +1,51 @@
+{
+  "title": "Contáctanos",
+  "subtitle": "Estamos aquí para ayudarte. Ponte en contacto con nuestro equipo de expertos.",
+  "form": {
+    "name": "Nombre",
+    "namePlaceholder": "Tu nombre completo",
+    "email": "Email",
+    "emailPlaceholder": "tu@email.com",
+    "phone": "Teléfono",
+    "phonePlaceholder": "+52 (234) 567-8900",
+    "company": "Empresa",
+    "companyPlaceholder": "Nombre de tu empresa",
+    "service": "Servicio de interés",
+    "servicePlaceholder": "Selecciona un servicio",
+    "message": "Mensaje",
+    "messagePlaceholder": "Cuéntanos sobre tu proyecto o consulta...",
+    "submit": "Enviar Mensaje",
+    "submitting": "Enviando...",
+    "required": "* Campo requerido"
+  },
+  "validation": {
+    "nameRequired": "El nombre es requerido",
+    "nameMinLength": "El nombre debe tener al menos 2 caracteres",
+    "emailRequired": "El email es requerido",
+    "emailInvalid": "El email no es válido",
+    "phoneRequired": "El teléfono es requerido",
+    "phoneInvalid": "El teléfono no tiene un formato válido",
+    "serviceRequired": "Selecciona un servicio",
+    "messageRequired": "El mensaje es requerido",
+    "messageMinLength": "El mensaje debe tener al menos 10 caracteres"
+  },
+  "success": {
+    "title": "¡Mensaje enviado!",
+    "description": "Te responderemos pronto."
+  },
+  "error": {
+    "title": "Error al enviar",
+    "description": "Intenta nuevamente o contáctanos por WhatsApp."
+  },
+  "info": {
+    "email": "Email",
+    "emailDescription": "Respuesta en menos de 24 horas",
+    "phone": "Teléfono",
+    "phoneDescription": "Lunes a Viernes 9:00 - 18:00",
+    "office": "Oficina",
+    "officeDescription": "Visitas con cita previa",
+    "hours": "Horario",
+    "hoursValue": "Lun - Vie: 9:00 - 18:00",
+    "hoursDescription": "Soporte 24/7 disponible"
+  }
+}

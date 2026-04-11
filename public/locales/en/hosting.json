@@ -1,0 +1,13 @@
+{
+  "title": "Hosting Plans",
+  "subtitle": "Choose the plan that best fits your needs.",
+  "popular": "Popular",
+  "perMonth": "/month",
+  "perYear": "/year",
+  "billingCycle": "Billing cycle",
+  "selectPlan": "Select Plan",
+  "contactSales": "Contact Sales",
+  "features": "Included features",
+  "loading": "Loading service plans...",
+  "error": "Could not load plans. Please try again later."
+}

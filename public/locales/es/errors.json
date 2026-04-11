@@ -1,0 +1,14 @@
+{
+  "notFound": {
+    "title": "Página no encontrada",
+    "description": "La página que buscas no existe o fue movida.",
+    "hint": "Verifica la URL o navega desde el menú principal."
+  },
+  "generic": {
+    "title": "Algo salió mal",
+    "description": "Ocurrió un error inesperado. Puedes intentar recargar la página o volver al inicio."
+  },
+  "network": "No se pudo conectar al servidor. Verifica tu conexión.",
+  "unauthorized": "No tienes permiso para ver esta página.",
+  "serverError": "Error del servidor. Por favor intenta más tarde."
+}

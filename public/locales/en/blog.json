@@ -1,0 +1,26 @@
+{
+  "title": "Blog",
+  "subtitle": "Stay up to date with the latest trends in technology, hosting, gaming and web development.",
+  "featured": "Featured Articles",
+  "searchPlaceholder": "Search articles...",
+  "allCategories": "All",
+  "noResults": "No articles found",
+  "noResultsSearch": "We couldn't find any articles matching your search.",
+  "noResultsCategory": "No articles available in this category.",
+  "clearSearch": "Clear search",
+  "readTime": "{{minutes}} min read",
+  "by": "By",
+  "newsletter": {
+    "title": "Subscribe to Our Blog",
+    "description": "Get the latest updates, exclusive articles and tech news straight to your inbox.",
+    "placeholder": "you@email.com",
+    "subscribe": "Subscribe",
+    "subscribing": "Subscribing...",
+    "successMessage": "Subscribed! Check your email to confirm.",
+    "errorMessage": "Failed to subscribe. Please try again."
+  },
+  "error": {
+    "title": "Failed to load blog",
+    "description": "Could not load blog articles. Please try again later."
+  }
+}

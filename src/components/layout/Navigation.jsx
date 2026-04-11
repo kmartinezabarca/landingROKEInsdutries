@@ -5,6 +5,7 @@ import { Menu, X } from 'lucide-react';
 import { CONFIG, ROUTES } from '../../utils/constants/config';
 import Container from '../common/Container';
 import ThemeToggle from './ThemeToggle';
+import LanguageSwitcher from '../common/LanguageSwitcher';
 import { cn } from '../../lib/utils';
 
 const Navigation = () => {
@@ -75,11 +76,13 @@ const Navigation = () => {
 
           {/* Desktop Actions */}
           <div className="hidden md:flex items-center space-x-4">
+            <LanguageSwitcher />
             <ThemeToggle />
           </div>
 
           {/* Mobile menu button */}
           <div className="md:hidden flex items-center space-x-2">
+            <LanguageSwitcher />
             <ThemeToggle />
             <button
               onClick={() => setIsOpen(!isOpen)}

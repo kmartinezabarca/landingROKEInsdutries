@@ -1,0 +1,51 @@
+{
+  "title": "Contact Us",
+  "subtitle": "We're here to help. Get in touch with our team of experts.",
+  "form": {
+    "name": "Name",
+    "namePlaceholder": "Your full name",
+    "email": "Email",
+    "emailPlaceholder": "you@email.com",
+    "phone": "Phone",
+    "phonePlaceholder": "+1 (234) 567-8900",
+    "company": "Company",
+    "companyPlaceholder": "Your company name",
+    "service": "Service of interest",
+    "servicePlaceholder": "Select a service",
+    "message": "Message",
+    "messagePlaceholder": "Tell us about your project or inquiry...",
+    "submit": "Send Message",
+    "submitting": "Sending...",
+    "required": "* Required field"
+  },
+  "validation": {
+    "nameRequired": "Name is required",
+    "nameMinLength": "Name must be at least 2 characters",
+    "emailRequired": "Email is required",
+    "emailInvalid": "Email is not valid",
+    "phoneRequired": "Phone is required",
+    "phoneInvalid": "Phone format is not valid",
+    "serviceRequired": "Please select a service",
+    "messageRequired": "Message is required",
+    "messageMinLength": "Message must be at least 10 characters"
+  },
+  "success": {
+    "title": "Message sent!",
+    "description": "We'll get back to you soon."
+  },
+  "error": {
+    "title": "Failed to send",
+    "description": "Please try again or contact us via WhatsApp."
+  },
+  "info": {
+    "email": "Email",
+    "emailDescription": "Response within 24 hours",
+    "phone": "Phone",
+    "phoneDescription": "Monday to Friday 9:00 - 18:00",
+    "office": "Office",
+    "officeDescription": "Visits by appointment",
+    "hours": "Hours",
+    "hoursValue": "Mon - Fri: 9:00 - 18:00",
+    "hoursDescription": "24/7 support available"
+  }
+}

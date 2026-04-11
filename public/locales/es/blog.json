@@ -1,0 +1,26 @@
+{
+  "title": "Blog",
+  "subtitle": "Mantente actualizado con las últimas tendencias en tecnología, hosting, gaming y desarrollo web.",
+  "featured": "Artículos Destacados",
+  "searchPlaceholder": "Buscar artículos...",
+  "allCategories": "Todos",
+  "noResults": "No hay artículos",
+  "noResultsSearch": "No encontramos artículos que coincidan con tu búsqueda.",
+  "noResultsCategory": "No hay artículos disponibles en esta categoría.",
+  "clearSearch": "Limpiar búsqueda",
+  "readTime": "{{minutes}} min",
+  "by": "Por",
+  "newsletter": {
+    "title": "Suscríbete a Nuestro Blog",
+    "description": "Recibe las últimas actualizaciones, artículos exclusivos y noticias sobre tecnología directamente en tu bandeja de entrada.",
+    "placeholder": "tu@email.com",
+    "subscribe": "Suscribirse",
+    "subscribing": "Suscribiendo...",
+    "successMessage": "¡Suscripción exitosa! Revisa tu correo para confirmar.",
+    "errorMessage": "Error al suscribirse. Por favor, intenta de nuevo."
+  },
+  "error": {
+    "title": "Error al cargar el blog",
+    "description": "No se pudieron cargar los artículos del blog. Por favor, intenta más tarde."
+  }
+}

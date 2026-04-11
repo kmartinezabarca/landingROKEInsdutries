@@ -1,0 +1,13 @@
+{
+  "title": "Planes de Hosting",
+  "subtitle": "Elige el plan que mejor se adapte a tus necesidades.",
+  "popular": "Popular",
+  "perMonth": "/mes",
+  "perYear": "/año",
+  "billingCycle": "Ciclo de facturación",
+  "selectPlan": "Seleccionar Plan",
+  "contactSales": "Contactar Ventas",
+  "features": "Características incluidas",
+  "loading": "Cargando planes de servicio...",
+  "error": "No se pudieron cargar los planes. Por favor intenta más tarde."
+}

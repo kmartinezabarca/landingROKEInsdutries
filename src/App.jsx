@@ -9,6 +9,7 @@ import FloatingButton from './components/common/FloatingButton';
 import ErrorBoundary from './components/common/ErrorBoundary';
 import WhatsAppService from './services/whatsapp/whatsappService';
 import { ROUTES } from './utils/constants/config';
+import { usePageTracking } from './hooks/usePageTracking';
 import './App.css';
 
 // ---------------------------------------------------------------------------
@@ -42,6 +43,14 @@ const PageLoader = () => (
   </div>
 );
 
+// ---------------------------------------------------------------------------
+// Tracker interno — debe estar dentro del Router para acceder a useLocation
+// ---------------------------------------------------------------------------
+const PageTracker = () => {
+  usePageTracking();
+  return null;
+};
+
 function App() {
   const handleContactClick = () => {
     window.location.href = ROUTES.CONTACT;
@@ -56,6 +65,7 @@ function App() {
       <ThemeProvider>
         <ErrorBoundary>
           <Router>
+            <PageTracker />
             <div className="min-h-screen bg-background text-foreground">
               <Navigation />
 

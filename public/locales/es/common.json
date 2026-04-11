@@ -1,0 +1,25 @@
+{
+  "company": {
+    "name": "ROKE Industries",
+    "tagline": "Soluciones tecnológicas profesionales"
+  },
+  "actions": {
+    "send": "Enviar",
+    "cancel": "Cancelar",
+    "back": "Volver",
+    "goHome": "Ir al inicio",
+    "reload": "Recargar",
+    "retry": "Intentar de nuevo",
+    "readMore": "Leer más",
+    "contactWhatsApp": "Contactar por WhatsApp",
+    "subscribe": "Suscribirse",
+    "search": "Buscar",
+    "loading": "Cargando...",
+    "sending": "Enviando..."
+  },
+  "status": {
+    "success": "¡Éxito!",
+    "error": "Error",
+    "loading": "Cargando"
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "notFound": {
+    "title": "Page not found",
+    "description": "The page you're looking for doesn't exist or was moved.",
+    "hint": "Check the URL or navigate from the main menu."
+  },
+  "generic": {
+    "title": "Something went wrong",
+    "description": "An unexpected error occurred. You can try reloading the page or going back home."
+  },
+  "network": "Could not connect to the server. Check your connection.",
+  "unauthorized": "You don't have permission to view this page.",
+  "serverError": "Server error. Please try again later."
+}
