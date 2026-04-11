@@ -12,6 +12,7 @@ import {
 import Button from "../components/common/Button";
 import { getBlogPosts, getBlogCategories } from "../services/blogService";
 import documentationService from "../services/documentationService";
+import SEO from "../components/common/SEO";
 
 // Logo de ROKE Industries como imagen por defecto
 const DEFAULT_IMAGE = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 300'%3E%3Crect fill='%23f0f0f0' width='400' height='300'/%3E%3Ctext x='50%25' y='50%25' font-size='48' fill='%23999' text-anchor='middle' dominant-baseline='middle' font-family='Arial, sans-serif' font-weight='bold'%3EROKE Industries%3C/text%3E%3C/svg%3E";
@@ -170,6 +171,12 @@ const BlogPage = () => {
   };
 
   return (
+    <>
+      <SEO
+        title="Blog"
+        description="Artículos sobre hosting, servidores gaming, cloud, desarrollo web y las últimas tendencias tecnológicas del equipo de ROKE Industries."
+        canonical="/blog"
+      />
     <div className="min-h-screen bg-background">
       {/* Header */}
       <section className="relative h-[400px] md:h-[500px] flex items-center justify-center text-center text-white overflow-hidden">
@@ -421,6 +428,7 @@ const BlogPage = () => {
         </motion.section>
       </Container>
     </div>
+    </>
   );
 };
 

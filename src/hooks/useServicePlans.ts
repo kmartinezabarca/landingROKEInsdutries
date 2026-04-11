@@ -1,17 +1,13 @@
 import { useQuery } from '@tanstack/react-query';
 import { getServicePlans } from '../services/servicePlanService';
-import { keysToCamel } from "../utils/formatters";
+import { keysToCamel } from '../utils/formatters';
+import type { ServicePlan } from '../types/api';
 
 export const useServicePlans = () => {
   return useQuery({
     queryKey: ['servicePlans'],
     queryFn: getServicePlans,
-    select: (data) => keysToCamel(data.data),
-    staleTime: 5 * 60 * 1000, // 5 minutos
-    cacheTime: 20 * 60 * 1000, // 20 minutos
-    onError: (error) => {
-      console.log(error);
-    }
+    select: (data): ServicePlan[] => keysToCamel(data.data),
+    staleTime: 5 * 60 * 1000,
   });
 };
-

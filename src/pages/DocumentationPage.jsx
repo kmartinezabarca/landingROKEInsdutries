@@ -13,6 +13,7 @@ import {
 import ReactMarkdown from 'react-markdown';
 import Container from '../components/common/Container';
 import documentationService from '../services/documentationService';
+import SEO from '../components/common/SEO';
 
 const DocumentationPage = () => {
   const [documentation, setDocumentation] = useState([]);
@@ -114,6 +115,12 @@ const DocumentationPage = () => {
   };
 
   return (
+    <>
+      <SEO
+        title="Documentación"
+        description="Documentación técnica de los servicios de ROKE Industries. Guías, manuales y recursos para aprovechar al máximo tu hosting y servicios cloud."
+        canonical="/docs"
+      />
     <div className="min-h-screen bg-background">
       {/* Header */}
       <section className="relative h-[300px] md:h-[400px] flex items-center justify-center text-center text-white overflow-hidden">
@@ -375,6 +382,7 @@ const DocumentationPage = () => {
         </div>
       )}
     </div>
+    </>
   );
 };
 

@@ -16,6 +16,7 @@ import Button from '../components/common/Button';
 import WhatsAppService from '../services/whatsapp/whatsappService';
 import { CONFIG, ROUTES } from '../utils/constants/config';
 import documentationService from '../services/documentationService';
+import SEO from '../components/common/SEO';
 
 const ContactPage = () => {
   const [formData, setFormData] = useState({
@@ -161,6 +162,12 @@ const ContactPage = () => {
   };
 
   return (
+    <>
+      <SEO
+        title="Contacto"
+        description="Contáctanos para conocer más sobre nuestros servicios de hosting, cloud y desarrollo de software. Respondemos en menos de 24 horas."
+        canonical="/contact"
+      />
     <div className="min-h-screen bg-background">
       {/* Header */}
       <section className="relative h-[400px] md:h-[450px] flex items-center justify-center text-center text-white overflow-hidden">
@@ -467,6 +474,7 @@ const ContactPage = () => {
         </div>
       </Container>
     </div>
+    </>
   );
 };
 
