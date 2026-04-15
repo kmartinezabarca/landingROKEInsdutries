@@ -1,0 +1,23 @@
+{
+  "title": "Our Team",
+  "subtitle": "Meet the passionate professionals who make our excellence services possible and are committed to your success.",
+  "members": {
+    "ceo": {
+      "position": "CEO & Founder",
+      "description": "Solutions architect with experience across the full technology spectrum: from hardware and robotics to software and DevOps. As CEO and Founder, I lead ROKE with an obsession for technical excellence. I am a builder at heart, dedicated to creating reliable and scalable systems, from the smallest circuit to the largest cloud."
+    },
+    "cto": {
+      "position": "CTO",
+      "description": "Co-Founder and CTO of ROKE Industries. Rocío is the strategic mind that transforms business vision into robust and secure system architecture. As a Data Engineer, she leads our Business Intelligence initiatives and operational excellence, ensuring every ROKE product is built on an intelligent data foundation and enterprise-level security."
+    }
+  },
+  "cta": {
+    "title": "Want to join our team?",
+    "description": "We are always looking for exceptional talent to strengthen our team. If you share our passion for technology and excellence, we would love to meet you.",
+    "button": "Send CV"
+  },
+  "social": {
+    "linkedin": "{{name}}'s LinkedIn",
+    "twitter": "{{name}}'s Twitter"
+  }
+}

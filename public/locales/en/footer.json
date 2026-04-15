@@ -1,0 +1,27 @@
+{
+  "description": "We offer hosting solutions, gaming servers, and high-quality technology services.",
+  "copyright": "All rights reserved.",
+  "sections": {
+    "services": {
+      "title": "Services",
+      "hosting": "Web Hosting",
+      "gaming": "Gaming Servers",
+      "support": "Technical Support",
+      "consulting": "Consulting"
+    },
+    "company": {
+      "title": "Company",
+      "about": "About Us",
+      "blog": "Blog",
+      "contact": "Contact",
+      "terms": "Terms"
+    },
+    "resources": {
+      "title": "Resources",
+      "docs": "Documentation",
+      "api": "API",
+      "status": "System Status",
+      "privacy": "Privacy Policy"
+    }
+  }
+}

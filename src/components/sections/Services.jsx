@@ -20,6 +20,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "../common/Card";
 import Button from "../common/Button";
 import { ROUTES } from "../../utils/constants/config";
 import { useServices } from "../../hooks/useServices";
+import { useTranslation } from "react-i18next";
 
 // Mapeo de nombres de íconos a componentes de Lucide React
 const iconMap = {
@@ -27,6 +28,7 @@ const iconMap = {
 };
 
 const Services = () => {
+  const { t } = useTranslation("services");
   const { data, isLoading, isError, error } = useServices();
 
   if (isLoading) {
@@ -35,10 +37,10 @@ const Services = () => {
         <Container>
           <div className="text-center mb-16">
             <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
-              Cargando Servicios...
+              {t("loading.title")}
             </h2>
             <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-              Obteniendo la información más reciente para ti.
+              {t("loading.subtitle")}
             </p>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16">
@@ -86,12 +88,12 @@ const Services = () => {
         <Container>
           <div className="text-center mb-16">
             <h2 className="text-3xl md:text-4xl font-bold text-red-500 mb-4">
-              Error al cargar los servicios
+              {t("error.title")}
             </h2>
             <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-              Lo sentimos, no pudimos cargar los servicios. Por favor, inténtalo de nuevo más tarde.
+              {t("error.subtitle")}
             </p>
-            <p className="text-sm text-red-400 mt-2">Detalles del error: {error.message}</p>
+            <p className="text-sm text-red-400 mt-2">{t("error.details", { message: error.message })}</p>
           </div>
         </Container>
       </section>
@@ -113,11 +115,10 @@ const Services = () => {
           className="text-center mb-16"
         >
           <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
-            Nuestros Servicios
+            {t("title")}
           </h2>
           <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-            Ofrecemos una amplia gama de servicios tecnológicos diseñados para
-            impulsar tu presencia digital y optimizar tu infraestructura.
+            {t("subtitle")}
           </p>
         </motion.div>
 
@@ -192,7 +193,7 @@ const Services = () => {
                           to={`/servicios/${service.slug}`}
                           className="flex items-center"
                         >
-                          Saber más
+                          {t("learnMore")}
                           <ArrowRight className="ml-2 h-4 w-4" />
                         </Link>
                       </Button>
@@ -213,7 +214,7 @@ const Services = () => {
           className="bg-muted/30 rounded-2xl p-8 mb-12"
         >
           <h3 className="text-2xl font-bold text-foreground mb-8 text-center">
-            Servicios Adicionales
+            {t("additional.title")}
           </h3>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             {additionalServices.map((service, index) => {
@@ -254,21 +255,20 @@ const Services = () => {
           className="text-center"
         >
           <h3 className="text-2xl font-bold text-foreground mb-4">
-            ¿Necesitas una solución personalizada?
+            {t("cta.title")}
           </h3>
           <p className="text-muted-foreground mb-8 max-w-2xl mx-auto">
-            Nuestro equipo de expertos está listo para ayudarte a encontrar la
-            solución perfecta para tus necesidades específicas.
+            {t("cta.subtitle")}
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Button size="lg" asChild>
               <Link to={ROUTES.CONTACT} className="flex items-center">
-                Solicitar Cotización
+                {t("cta.quote")}
                 <ArrowRight className="ml-2 h-4 w-4" />
               </Link>
             </Button>
             <Button variant="outline" size="lg" asChild>
-              <Link to={ROUTES.HOSTING}>Ver Planes de Hosting</Link>
+              <Link to={ROUTES.HOSTING}>{t("cta.hosting")}</Link>
             </Button>
           </div>
         </motion.div>

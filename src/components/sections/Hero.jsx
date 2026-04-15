@@ -2,48 +2,43 @@ import React from "react";
 import { motion } from "framer-motion";
 import { ArrowRight, ServerCog, ShieldCheck, Rabbit } from "lucide-react";
 import { Link } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import Container from "../common/Container";
 import Button from "../common/Button";
 import { ROUTES, CONFIG } from "../../utils/constants/config";
 
 const Hero = () => {
+  const { t } = useTranslation("hero");
+
   const features = [
     {
-      icon: ServerCog, // Representa infraestructura gestionada y de precisión
-      title: "Infraestructura de Alta Disponibilidad",
-      description:
-        "Operamos sobre una arquitectura redundante para garantizar un uptime del 99.9%. Tu negocio se mantiene en línea, siempre.",
+      icon: ServerCog,
+      title: t("features.infrastructure.title"),
+      description: t("features.infrastructure.description"),
     },
     {
-      icon: ShieldCheck, // El check añade una capa de "garantía" y "verificación"
-      title: "Seguridad de Grado Empresarial",
-      description:
-        "Protección proactiva 24/7 con firewalls de aplicaciones web (WAF) y monitoreo constante contra amenazas.",
+      icon: ShieldCheck,
+      title: t("features.security.title"),
+      description: t("features.security.description"),
     },
     {
-      icon: Rabbit, // Un conejo es un símbolo universal de velocidad y agilidad
-      title: "Rendimiento Acelerado",
-      description:
-        "Tus aplicaciones y sitios web corren sobre almacenamiento NVMe ultrarrápido y una red optimizada para la mínima latencia.",
+      icon: Rabbit,
+      title: t("features.performance.title"),
+      description: t("features.performance.description"),
     },
   ];
 
   return (
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
-      {/* Background Image */}
       <div
         className="absolute inset-0 bg-cover bg-center bg-no-repeat"
-        style={{
-          backgroundImage: "url(/assets/hero-bg.png)",
-        }}
+        style={{ backgroundImage: "url(/assets/hero-bg.png)" }}
       >
         <div className="absolute inset-0 bg-background/80 dark:bg-background/90" />
       </div>
 
-      {/* Content */}
       <Container className="relative z-10">
         <div className="text-center max-w-4xl mx-auto">
-          {/* Main Title */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -55,13 +50,10 @@ const Hero = () => {
               </span>
             </h1>
             <p className="text-xl md:text-2xl text-muted-foreground mb-8 max-w-3xl mx-auto">
-              {CONFIG.COMPANY_TAGLINE}. Somos constructores de corazón.
-              Diseñamos y fabricamos las soluciones tecnológicas que potencian
-              tu visión, desde la nube más grande hasta el circuito más pequeño.
+              {CONFIG.COMPANY_TAGLINE}. {t("subtitle")}
             </p>
           </motion.div>
 
-          {/* CTA Buttons */}
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
@@ -70,21 +62,15 @@ const Hero = () => {
           >
             <Button size="lg" className="text-lg px-8 py-4" asChild>
               <Link to={ROUTES.SERVICES} className="flex items-center">
-                Explorar Servicios
-                <ArrowRight className="ml-2 h-5 w-5" />{" "}
+                {t("cta.explore")}
+                <ArrowRight className="ml-2 h-5 w-5" />
               </Link>
-            </Button>{" "}
-            <Button
-              variant="outline"
-              size="lg"
-              className="text-lg px-8 py-4"
-              asChild
-            >
-              <Link to={ROUTES.CONTACT}>Contactar Ahora</Link>
+            </Button>
+            <Button variant="outline" size="lg" className="text-lg px-8 py-4" asChild>
+              <Link to={ROUTES.CONTACT}>{t("cta.contact")}</Link>
             </Button>
           </motion.div>
 
-          {/* Features Grid */}
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
@@ -104,9 +90,7 @@ const Hero = () => {
                   <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mb-4 mx-auto">
                     <Icon className="w-6 h-6 text-primary" />
                   </div>
-                  <h3 className="text-lg font-semibold text-foreground mb-2">
-                    {feature.title}
-                  </h3>
+                  <h3 className="text-lg font-semibold text-foreground mb-2">{feature.title}</h3>
                   <p className="text-muted-foreground">{feature.description}</p>
                 </motion.div>
               );
@@ -115,7 +99,6 @@ const Hero = () => {
         </div>
       </Container>
 
-      {/* Scroll Indicator */}
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}

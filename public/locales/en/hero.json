@@ -1,0 +1,21 @@
+{
+  "subtitle": "We are builders at heart. We design and manufacture the technological solutions that power your vision, from the largest cloud to the smallest circuit.",
+  "cta": {
+    "explore": "Explore Services",
+    "contact": "Contact Now"
+  },
+  "features": {
+    "infrastructure": {
+      "title": "High Availability Infrastructure",
+      "description": "We operate on a redundant architecture to guarantee 99.9% uptime. Your business stays online, always."
+    },
+    "security": {
+      "title": "Enterprise-Grade Security",
+      "description": "Proactive 24/7 protection with web application firewalls (WAF) and constant threat monitoring."
+    },
+    "performance": {
+      "title": "Accelerated Performance",
+      "description": "Your applications and websites run on ultra-fast NVMe storage and a network optimized for minimum latency."
+    }
+  }
+}

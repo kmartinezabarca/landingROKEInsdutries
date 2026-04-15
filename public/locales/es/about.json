@@ -1,0 +1,44 @@
+{
+  "title": "Nuestra Historia",
+  "subtitle": "Desde nuestros inicios, hemos estado comprometidos con la excelencia tecnológica y la satisfacción del cliente.",
+  "stats": {
+    "clients": "Clientes Satisfechos",
+    "uptime": "Uptime Garantizado",
+    "support": "Soporte Técnico",
+    "experience": "Años de Experiencia"
+  },
+  "milestones": {
+    "title": "Hitos Importantes",
+    "forge": {
+      "title": "La Forja del Ingeniero",
+      "description": "Años de inmersión autodidacta en ingeniería de ciclo completo: desde la reparación de electrónica de potencia y generadores hasta el ensamblaje de drones y sistemas de control con Arduino y Raspberry Pi."
+    },
+    "lab": {
+      "title": "Construcción del Laboratorio",
+      "description": "Inversión y ensamblaje del núcleo del laboratorio de I+D de ROKE: estaciones de trabajo de alto rendimiento, infraestructura de red gestionada y adquisición de herramientas de fabricación digital (CNC, Impresión 3D)."
+    },
+    "infra": {
+      "title": "Nacimiento de la Infraestructura",
+      "description": "Diseño y construcción de nuestro centro de datos privado, ensamblando un servidor de grado empresarial basado en Xeon para potenciar nuestras futuras operaciones de hosting y servicios en la nube."
+    },
+    "founding": {
+      "title": "Fundación de ROKE Industries",
+      "description": "Lanzamiento oficial de ROKE Industries, la culminación de años de experiencia práctica y la consolidación de un laboratorio de tecnología de vanguardia para servir a nuestros clientes con soluciones reales y probadas."
+    }
+  },
+  "values": {
+    "title": "Nuestros Principios",
+    "mission": {
+      "title": "Nuestra Misión",
+      "description": "Empoderar a creadores e innovadores con soluciones tecnológicas de ciclo completo, desde la infraestructura de nube robusta hasta la fabricación de prototipos de hardware, acelerando el viaje de la idea a la realidad."
+    },
+    "vision": {
+      "title": "Nuestra Visión",
+      "description": "Ser el socio tecnológico fundamental para la próxima generación de startups y empresas, reconocidos no solo por nuestros servicios, sino por nuestra capacidad de construir las herramientas que construyen el futuro."
+    },
+    "principles": {
+      "title": "Nuestros Valores",
+      "description": "La curiosidad del ingeniero, la precisión del artesano y la transparencia del socio. Construimos con excelencia, nos obsesionamos con la fiabilidad y creemos en el poder de la tecnología para resolver problemas reales."
+    }
+  }
+}

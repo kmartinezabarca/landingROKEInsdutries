@@ -2,7 +2,11 @@
   "notFound": {
     "title": "Página no encontrada",
     "description": "La página que buscas no existe o fue movida.",
-    "hint": "Verifica la URL o navega desde el menú principal."
+    "hint": "Verifica la URL o navega desde el menú principal.",
+    "message": "La página que buscas no existe o fue movida. Verifica la URL o navega desde el menú principal.",
+    "back": "Volver atrás",
+    "support": "Contactar soporte",
+    "popular": "Páginas populares:"
   },
   "generic": {
     "title": "Algo salió mal",

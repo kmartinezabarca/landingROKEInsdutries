@@ -2,7 +2,11 @@
   "notFound": {
     "title": "Page not found",
     "description": "The page you're looking for doesn't exist or was moved.",
-    "hint": "Check the URL or navigate from the main menu."
+    "hint": "Check the URL or navigate from the main menu.",
+    "message": "The page you are looking for does not exist or was moved. Check the URL or navigate from the main menu.",
+    "back": "Go back",
+    "support": "Contact support",
+    "popular": "Popular pages:"
   },
   "generic": {
     "title": "Something went wrong",

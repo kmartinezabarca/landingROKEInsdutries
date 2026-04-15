@@ -10,36 +10,38 @@ import {
 } from 'react-icons/fa6';
 import { CONFIG, ROUTES } from '../../utils/constants/config';
 import Container from '../common/Container';
+import { useTranslation } from 'react-i18next';
 
 const Footer = () => {
+  const { t } = useTranslation("footer");
   const currentYear = new Date().getFullYear();
 
   const footerSections = [
     {
-      title: 'Servicios',
+      title: t("sections.services.title"),
       links: [
-        { name: 'Hosting Web', href: ROUTES.HOSTING },
-        { name: 'Servidores Gaming', href: ROUTES.HOSTING + '#gaming' },
-        { name: 'Soporte Técnico', href: ROUTES.CONTACT },
-        { name: 'Consultoría', href: ROUTES.SERVICES },
+        { name: t("sections.services.hosting"), href: ROUTES.HOSTING },
+        { name: t("sections.services.gaming"), href: ROUTES.HOSTING + "#gaming" },
+        { name: t("sections.services.support"), href: ROUTES.CONTACT },
+        { name: t("sections.services.consulting"), href: ROUTES.SERVICES },
       ],
     },
     {
-      title: 'Empresa',
+      title: t("sections.company.title"),
       links: [
-        { name: 'Nosotros', href: ROUTES.ABOUT },
-        { name: 'Blog', href: ROUTES.BLOG },
-        { name: 'Contacto', href: ROUTES.CONTACT },
-        { name: 'Términos', href: '/terms' },
+        { name: t("sections.company.about"), href: ROUTES.ABOUT },
+        { name: t("sections.company.blog"), href: ROUTES.BLOG },
+        { name: t("sections.company.contact"), href: ROUTES.CONTACT },
+        { name: t("sections.company.terms"), href: "/terms" },
       ],
     },
     {
-      title: 'Recursos',
+      title: t("sections.resources.title"),
       links: [
-        { name: 'Documentación', href: '/docs' },
-        { name: 'API', href: '/api' },
-        { name: 'Estado del Sistema', href: '/status' },
-        { name: 'Política de Privacidad', href: '/privacy' },
+        { name: t("sections.resources.docs"), href: "/docs" },
+        { name: t("sections.resources.api"), href: "/api" },
+        { name: t("sections.resources.status"), href: "/status" },
+        { name: t("sections.resources.privacy"), href: "/privacy" },
       ],
     },
   ];
@@ -94,8 +96,7 @@ const Footer = () => {
                 </span>
               </div>
               <p className="text-muted-foreground mb-6 max-w-md">
-                {CONFIG.COMPANY_TAGLINE}. Ofrecemos soluciones de hosting, 
-                servidores gaming y servicios tecnológicos de alta calidad.
+                {CONFIG.COMPANY_TAGLINE}. {t("description")}
               </p>
               
               {/* Contact Info */}
@@ -143,7 +144,7 @@ const Footer = () => {
           {/* Bottom Footer */}
           <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
             <p className="text-sm text-muted-foreground">
-              © {currentYear} {CONFIG.COMPANY_NAME}. Todos los derechos reservados.
+              © {currentYear} {CONFIG.COMPANY_NAME}. {t("copyright")}
             </p>
             
             {/* Social Links */}

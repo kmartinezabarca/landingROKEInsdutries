@@ -1,0 +1,23 @@
+{
+  "title": "Nuestros Servicios",
+  "subtitle": "Ofrecemos una amplia gama de servicios tecnológicos diseñados para impulsar tu presencia digital y optimizar tu infraestructura.",
+  "loading": {
+    "title": "Cargando Servicios...",
+    "subtitle": "Obteniendo la información más reciente para ti."
+  },
+  "error": {
+    "title": "Error al cargar los servicios",
+    "subtitle": "Lo sentimos, no pudimos cargar los servicios. Por favor, inténtalo de nuevo más tarde.",
+    "details": "Detalles del error: {{message}}"
+  },
+  "additional": {
+    "title": "Servicios Adicionales"
+  },
+  "cta": {
+    "title": "¿Necesitas una solución personalizada?",
+    "subtitle": "Nuestro equipo de expertos está listo para ayudarte a encontrar la solución perfecta para tus necesidades específicas.",
+    "quote": "Solicitar Cotización",
+    "hosting": "Ver Planes de Hosting"
+  },
+  "learnMore": "Saber más"
+}

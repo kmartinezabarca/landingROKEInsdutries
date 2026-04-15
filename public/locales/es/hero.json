@@ -1,0 +1,21 @@
+{
+  "subtitle": "Somos constructores de corazón. Diseñamos y fabricamos las soluciones tecnológicas que potencian tu visión, desde la nube más grande hasta el circuito más pequeño.",
+  "cta": {
+    "explore": "Explorar Servicios",
+    "contact": "Contactar Ahora"
+  },
+  "features": {
+    "infrastructure": {
+      "title": "Infraestructura de Alta Disponibilidad",
+      "description": "Operamos sobre una arquitectura redundante para garantizar un uptime del 99.9%. Tu negocio se mantiene en línea, siempre."
+    },
+    "security": {
+      "title": "Seguridad de Grado Empresarial",
+      "description": "Protección proactiva 24/7 con firewalls de aplicaciones web (WAF) y monitoreo constante contra amenazas."
+    },
+    "performance": {
+      "title": "Rendimiento Acelerado",
+      "description": "Tus aplicaciones y sitios web corren sobre almacenamiento NVMe ultrarrápido y una red optimizada para la mínima latencia."
+    }
+  }
+}

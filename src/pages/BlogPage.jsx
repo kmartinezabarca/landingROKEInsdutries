@@ -108,6 +108,7 @@ const BlogPage = () => {
             }}
             className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
             loading="lazy"
+            decoding="async"
           />
           {post.isFeatured && (
             <div className="absolute top-4 right-4 bg-gradient-to-r from-primary to-primary/80 text-white px-3 py-1 rounded-full text-xs font-bold shadow-lg">

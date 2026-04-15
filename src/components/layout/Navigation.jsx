@@ -7,18 +7,20 @@ import Container from '../common/Container';
 import ThemeToggle from './ThemeToggle';
 import LanguageSwitcher from '../common/LanguageSwitcher';
 import { cn } from '../../lib/utils';
+import { useTranslation } from 'react-i18next';
 
 const Navigation = () => {
+  const { t } = useTranslation("nav");
   const [isOpen, setIsOpen] = useState(false);
   const location = useLocation();
 
   const navigationItems = [
-    { name: 'Inicio', href: ROUTES.HOME },
-    { name: 'Servicios', href: ROUTES.SERVICES },
-    { name: 'Hosting', href: ROUTES.HOSTING },
-    { name: 'Blog', href: ROUTES.BLOG },
-    { name: 'Nosotros', href: ROUTES.ABOUT },
-    { name: 'Contacto', href: ROUTES.CONTACT },
+    { name: t('home'), href: ROUTES.HOME },
+    { name: t('services'), href: ROUTES.SERVICES },
+    { name: t('hosting'), href: ROUTES.HOSTING },
+    { name: t('blog'), href: ROUTES.BLOG },
+    { name: t('about'), href: ROUTES.ABOUT },
+    { name: t('contact'), href: ROUTES.CONTACT },
   ];
 
   const isActiveRoute = (href) => {

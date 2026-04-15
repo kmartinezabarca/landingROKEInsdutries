@@ -39,6 +39,8 @@ export default defineConfig({
       workbox: {
         // Cachear assets estáticos (JS, CSS, imágenes)
         globPatterns: ['**/*.{js,css,html,ico,png,svg,woff2}'],
+        // Permitir imágenes de hasta 5 MiB en el precache
+        maximumFileSizeToCacheInBytes: 5 * 1024 * 1024,
         // Cachear traducciones i18n
         runtimeCaching: [
           {
@@ -80,6 +82,9 @@ export default defineConfig({
   },
 
   build: {
+    target: 'es2020',
+    cssCodeSplit: true,
+    reportCompressedSize: false,
     // Separar vendors grandes en chunks independientes
     rollupOptions: {
       output: {

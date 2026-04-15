@@ -1,0 +1,44 @@
+{
+  "title": "Our History",
+  "subtitle": "From our beginnings, we have been committed to technological excellence and customer satisfaction.",
+  "stats": {
+    "clients": "Satisfied Clients",
+    "uptime": "Guaranteed Uptime",
+    "support": "Technical Support",
+    "experience": "Years of Experience"
+  },
+  "milestones": {
+    "title": "Key Milestones",
+    "forge": {
+      "title": "The Engineer's Forge",
+      "description": "Years of self-taught immersion in full-cycle engineering: from repairing power electronics and generators to assembling drones and control systems with Arduino and Raspberry Pi."
+    },
+    "lab": {
+      "title": "Building the Laboratory",
+      "description": "Investment and assembly of the ROKE R&D lab core: high-performance workstations, managed network infrastructure, and acquisition of digital fabrication tools (CNC, 3D Printing)."
+    },
+    "infra": {
+      "title": "Birth of the Infrastructure",
+      "description": "Design and construction of our private data center, assembling an enterprise-grade Xeon-based server to power our future hosting operations and cloud services."
+    },
+    "founding": {
+      "title": "Founding of ROKE Industries",
+      "description": "Official launch of ROKE Industries, the culmination of years of hands-on experience and the consolidation of a cutting-edge technology lab to serve our clients with real, proven solutions."
+    }
+  },
+  "values": {
+    "title": "Our Principles",
+    "mission": {
+      "title": "Our Mission",
+      "description": "Empower creators and innovators with full-cycle technological solutions, from robust cloud infrastructure to hardware prototype manufacturing, accelerating the journey from idea to reality."
+    },
+    "vision": {
+      "title": "Our Vision",
+      "description": "To be the fundamental technology partner for the next generation of startups and companies, recognized not only for our services but for our ability to build the tools that build the future."
+    },
+    "principles": {
+      "title": "Our Values",
+      "description": "The curiosity of the engineer, the precision of the craftsman and the transparency of the partner. We build with excellence, obsess over reliability and believe in the power of technology to solve real problems."
+    }
+  }
+}

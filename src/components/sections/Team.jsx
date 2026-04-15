@@ -4,14 +4,16 @@ import { Linkedin, Twitter, Github, Mail } from "lucide-react";
 import Container from "../common/Container";
 import { Card, CardContent } from "../common/Card";
 import { FaLinkedin, FaXTwitter } from "react-icons/fa6";
+import { useTranslation } from "react-i18next";
 
 const Team = () => {
+  const { t } = useTranslation("team");
+
   const teamMembers = [
     {
       name: "Kevin Martinez",
-      position: "CEO & Fundador",
-      description:
-        "Arquitecto de soluciones con experiencia en todo el espectro tecnológico: desde hardware y robótica hasta software y DevOps. Como CEO y Fundador, lidero ROKE con una obsesión por la excelencia técnica. Soy un constructor en el corazón, dedicado a crear sistemas confiables y escalables, desde el circuito más pequeño hasta la nube más grande.",
+      position: t("members.ceo.position"),
+      description: t("members.ceo.description"),
       image: "/assets/team-ceo.png",
       social: {
         linkedin: "https://www.linkedin.com/in/kevmartinezabarca",
@@ -19,9 +21,8 @@ const Team = () => {
     },
     {
       name: "Rocio Salazar",
-      position: "CTO",
-      description:
-        "Co-Fundadora y CTO de ROKE Industries. Rocío es la mente estratégica que transforma la visión de negocio en arquitectura de sistemas robusta y segura. Como Ingeniera de Datos, lidera nuestras iniciativas de Business Intelligence y la excelencia operativa, asegurando que cada producto ROKE se construya sobre una base de datos inteligente y seguridad de nivel empresarial.",
+      position: t("members.cto.position"),
+      description: t("members.cto.description"),
       image: "/assets/team-cto.png",
       social: {
         linkedin:
@@ -42,11 +43,10 @@ const Team = () => {
           className="text-center mb-16"
         >
           <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
-            Nuestro Equipo
+            {t("title")}
           </h2>
           <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-            Conoce a los profesionales apasionados que hacen posible nuestros
-            servicios de excelencia y están comprometidos con tu éxito.
+            {t("subtitle")}
           </p>
         </motion.div>
 
@@ -67,6 +67,8 @@ const Team = () => {
                     <img
                       src={member.image}
                       alt={member.name}
+                      loading="lazy"
+                      decoding="async"
                       className="w-32 h-32 rounded-full mx-auto object-cover shadow-lg
                          group-hover:scale-105 transition-transform duration-300"
                     />
@@ -98,7 +100,7 @@ const Team = () => {
                         className="w-11 h-11 bg-blue-500/10 text-blue-400 rounded-full flex items-center justify-center
                            hover:bg-blue-500/20 hover:text-blue-300 transition-all duration-200
                            hover:scale-110"
-                        aria-label={`LinkedIn de ${member.name}`}
+                        aria-label={t("social.linkedin", { name: member.name })}
                       >
                         <FaLinkedin className="w-5 h-5" />
                       </a>
@@ -112,7 +114,7 @@ const Team = () => {
                         className="w-11 h-11 bg-foreground/5 text-foreground/80 rounded-full flex items-center justify-center
                            hover:bg-foreground/10 hover:text-foreground
                            transition-all duration-200 hover:scale-110"
-                        aria-label={`Twitter de ${member.name}`}
+                        aria-label={t("social.twitter", { name: member.name })}
                       >
                         <FaXTwitter className="w-5 h-5" />
                       </a>
@@ -135,12 +137,10 @@ const Team = () => {
           className="text-center mt-16 p-8 bg-primary/5 rounded-2xl border border-primary/10"
         >
           <h3 className="text-2xl font-bold text-foreground mb-4">
-            ¿Quieres unirte a nuestro equipo?
+            {t("cta.title")}
           </h3>
           <p className="text-muted-foreground mb-6 max-w-2xl mx-auto">
-            Estamos siempre buscando talento excepcional para fortalecer nuestro
-            equipo. Si compartes nuestra pasión por la tecnología y la
-            excelencia, nos encantaría conocerte.
+            {t("cta.description")}
           </p>
           <motion.a
             href="mailto:careers@rokeindustries.com"
@@ -149,7 +149,7 @@ const Team = () => {
             whileTap={{ scale: 0.95 }}
           >
             <Mail className="w-4 h-4 mr-2" />
-            Enviar CV
+            {t("cta.button")}
           </motion.a>
         </motion.div>
       </Container>

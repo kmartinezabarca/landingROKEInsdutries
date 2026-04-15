@@ -1,0 +1,23 @@
+{
+  "title": "Our Services",
+  "subtitle": "We offer a wide range of technological services designed to boost your digital presence and optimize your infrastructure.",
+  "loading": {
+    "title": "Loading Services...",
+    "subtitle": "Getting the latest information for you."
+  },
+  "error": {
+    "title": "Error loading services",
+    "subtitle": "Sorry, we could not load the services. Please try again later.",
+    "details": "Error details: {{message}}"
+  },
+  "additional": {
+    "title": "Additional Services"
+  },
+  "cta": {
+    "title": "Need a custom solution?",
+    "subtitle": "Our team of experts is ready to help you find the perfect solution for your specific needs.",
+    "quote": "Request a Quote",
+    "hosting": "View Hosting Plans"
+  },
+  "learnMore": "Learn more"
+}

@@ -2,10 +2,13 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { Home, ArrowLeft, Search } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import Container from '../components/common/Container';
 import { ROUTES, CONFIG } from '../utils/constants/config';
 
 const NotFoundPage: React.FC = () => {
+  const { t } = useTranslation(["errors", "nav", "common"]);
+
   return (
     <div className="min-h-screen bg-background flex items-center justify-center">
       <Container className="py-20">
@@ -29,12 +32,10 @@ const NotFoundPage: React.FC = () => {
             transition={{ duration: 0.6, delay: 0.2 }}
           >
             <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
-              Página no encontrada
+              {t("errors:notFound.title")}
             </h1>
             <p className="text-muted-foreground text-lg mb-10">
-              La página que buscas no existe o fue movida.
-              <br />
-              Verifica la URL o navega desde el menú principal.
+              {t("errors:notFound.message")}
             </p>
           </motion.div>
 
@@ -50,7 +51,7 @@ const NotFoundPage: React.FC = () => {
               className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-lg bg-primary text-primary-foreground hover:bg-primary/90 transition-colors font-semibold"
             >
               <Home className="w-5 h-5" />
-              Ir al inicio
+              {t("common:actions.goHome")}
             </Link>
 
             <button
@@ -58,7 +59,7 @@ const NotFoundPage: React.FC = () => {
               className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-lg border border-border hover:bg-muted transition-colors font-semibold text-foreground"
             >
               <ArrowLeft className="w-5 h-5" />
-              Volver atrás
+              {t("errors:notFound.back")}
             </button>
 
             <Link
@@ -66,7 +67,7 @@ const NotFoundPage: React.FC = () => {
               className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-lg border border-border hover:bg-muted transition-colors font-semibold text-foreground"
             >
               <Search className="w-5 h-5" />
-              Contactar soporte
+              {t("errors:notFound.support")}
             </Link>
           </motion.div>
 
@@ -77,13 +78,13 @@ const NotFoundPage: React.FC = () => {
             transition={{ duration: 0.6, delay: 0.6 }}
             className="mt-14 pt-8 border-t border-border"
           >
-            <p className="text-sm text-muted-foreground mb-4">Páginas populares:</p>
+            <p className="text-sm text-muted-foreground mb-4">{t("errors:notFound.popular")}</p>
             <div className="flex flex-wrap justify-center gap-3">
               {[
-                { label: 'Servicios', to: ROUTES.SERVICES },
-                { label: 'Hosting', to: ROUTES.HOSTING },
-                { label: 'Blog', to: ROUTES.BLOG },
-                { label: 'Contacto', to: ROUTES.CONTACT },
+                { label: t("nav:services"), to: ROUTES.SERVICES },
+                { label: t("nav:hosting"), to: ROUTES.HOSTING },
+                { label: t("nav:blog"), to: ROUTES.BLOG },
+                { label: t("nav:contact"), to: ROUTES.CONTACT },
               ].map((link) => (
                 <Link
                   key={link.to}
