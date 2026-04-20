@@ -2,15 +2,15 @@ import React from "react";
 import { motion } from "framer-motion";
 import { Star, Users, Zap, Award } from "lucide-react";
 import { 
-  SiLinux, 
-  SiDocker, 
-  SiKubernetes, 
-  SiAmazonwebservices, 
-  SiNodedotjs, 
-  SiPython, 
-  SiReact, 
-  SiPostgresql 
-} from "react-icons/si";
+  FaLinux, 
+  FaDocker, 
+  FaAws, 
+  FaNode, 
+  FaPython, 
+  FaReact, 
+  FaAws as FaAmazonAws
+} from "react-icons/fa";
+import { SiKubernetes, SiPostgresql } from "react-icons/si";
 import Container from "../common/Container";
 
 const SocialProof = () => {
@@ -63,13 +63,13 @@ const SocialProof = () => {
   ];
 
   const technologies = [
-    { name: "Linux", icon: SiLinux, color: "hover:text-[#FCC624]" },
-    { name: "Docker", icon: SiDocker, color: "hover:text-[#2496ED]" },
+    { name: "Linux", icon: FaLinux, color: "hover:text-[#FCC624]" },
+    { name: "Docker", icon: FaDocker, color: "hover:text-[#2496ED]" },
     { name: "Kubernetes", icon: SiKubernetes, color: "hover:text-[#326CE5]" },
-    { name: "AWS", icon: SiAmazonwebservices, color: "hover:text-[#FF9900]" },
-    { name: "Node.js", icon: SiNodedotjs, color: "hover:text-[#339933]" },
-    { name: "Python", icon: SiPython, color: "hover:text-[#3776AB]" },
-    { name: "React", icon: SiReact, color: "hover:text-[#61DAFB]" },
+    { name: "AWS", icon: FaAws, color: "hover:text-[#FF9900]" },
+    { name: "Node.js", icon: FaNode, color: "hover:text-[#339933]" },
+    { name: "Python", icon: FaPython, color: "hover:text-[#3776AB]" },
+    { name: "React", icon: FaReact, color: "hover:text-[#61DAFB]" },
     { name: "PostgreSQL", icon: SiPostgresql, color: "hover:text-[#4169E1]" },
   ];
 
