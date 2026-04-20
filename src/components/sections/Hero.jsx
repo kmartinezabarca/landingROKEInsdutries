@@ -1,35 +1,32 @@
 import React from "react";
 import { motion } from "framer-motion";
-import { ArrowRight, ServerCog, ShieldCheck, Rabbit } from "lucide-react";
+import { ArrowRight, Zap, Shield, Rocket } from "lucide-react";
 import { Link } from "react-router-dom";
 import Container from "../common/Container";
 import Button from "../common/Button";
 import { ROUTES, CONFIG } from "../../utils/constants/config";
 
 const Hero = () => {
-  const features = [
+  const quickBenefits = [
     {
-      icon: ServerCog, // Representa infraestructura gestionada y de precisión
-      title: "Infraestructura de Alta Disponibilidad",
-      description:
-        "Operamos sobre una arquitectura redundante para garantizar un uptime del 99.9%. Tu negocio se mantiene en línea, siempre.",
+      icon: Rocket,
+      title: "Lanzamiento en 24h",
+      description: "Servidores listos en un día",
     },
     {
-      icon: ShieldCheck, // El check añade una capa de "garantía" y "verificación"
-      title: "Seguridad de Grado Empresarial",
-      description:
-        "Protección proactiva 24/7 con firewalls de aplicaciones web (WAF) y monitoreo constante contra amenazas.",
+      icon: Shield,
+      title: "Uptime 99.9%",
+      description: "Infraestructura confiable",
     },
     {
-      icon: Rabbit, // Un conejo es un símbolo universal de velocidad y agilidad
-      title: "Rendimiento Acelerado",
-      description:
-        "Tus aplicaciones y sitios web corren sobre almacenamiento NVMe ultrarrápido y una red optimizada para la mínima latencia.",
+      icon: Zap,
+      title: "Soporte Real 24/7",
+      description: "Equipo en español",
     },
   ];
 
   return (
-    <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
+    <section className="relative min-h-screen flex items-center justify-center overflow-hidden pt-20">
       {/* Background Image */}
       <div
         className="absolute inset-0 bg-cover bg-center bg-no-repeat"
@@ -37,13 +34,13 @@ const Hero = () => {
           backgroundImage: "url(/assets/hero-bg.png)",
         }}
       >
-        <div className="absolute inset-0 bg-background/80 dark:bg-background/90" />
+        <div className="absolute inset-0 bg-background/85 dark:bg-background/90" />
       </div>
 
       {/* Content */}
       <Container className="relative z-10">
         <div className="text-center max-w-4xl mx-auto">
-          {/* Main Title */}
+          {/* Main Title - Conversion Focused */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -51,17 +48,17 @@ const Hero = () => {
           >
             <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold text-foreground mb-6">
               <span className="bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">
-                {CONFIG.COMPANY_NAME}
+                Infraestructura, Hosting y Soluciones Digitales
               </span>
+              <br />
+              <span className="text-foreground">listas para crecer tu negocio</span>
             </h1>
-            <p className="text-xl md:text-2xl text-muted-foreground mb-8 max-w-3xl mx-auto">
-              {CONFIG.COMPANY_TAGLINE}. Somos constructores de corazón.
-              Diseñamos y fabricamos las soluciones tecnológicas que potencian
-              tu visión, desde la nube más grande hasta el circuito más pequeño.
+            <p className="text-xl md:text-2xl text-muted-foreground mb-8 max-w-3xl mx-auto leading-relaxed">
+              Lanza servidores, automatiza procesos y desarrolla software profesional con soporte real. Desde hosting de videojuegos hasta soluciones empresariales con IA.
             </p>
           </motion.div>
 
-          {/* CTA Buttons */}
+          {/* CTA Buttons - Primary Focus */}
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
@@ -69,33 +66,35 @@ const Hero = () => {
             className="flex flex-col sm:flex-row gap-4 justify-center mb-16"
           >
             <Button size="lg" className="text-lg px-8 py-4" asChild>
-              <Link to={ROUTES.SERVICES} className="flex items-center">
-                Explorar Servicios
-                <ArrowRight className="ml-2 h-5 w-5" />{" "}
+              <Link to={ROUTES.HOSTING} className="flex items-center">
+                Ver Planes y Precios
+                <ArrowRight className="ml-2 h-5 w-5" />
               </Link>
-            </Button>{" "}
+            </Button>
             <Button
               variant="outline"
               size="lg"
               className="text-lg px-8 py-4"
               asChild
             >
-              <Link to={ROUTES.CONTACT}>Contactar Ahora</Link>
+              <a href="https://wa.me/+1234567890?text=Hola%20ROKE%20Industries%2C%20quiero%20conocer%20m%C3%A1s%20sobre%20sus%20servicios">
+                Hablar por WhatsApp
+              </a>
             </Button>
           </motion.div>
 
-          {/* Features Grid */}
+          {/* Quick Benefits - Social Proof */}
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.4 }}
             className="grid grid-cols-1 md:grid-cols-3 gap-8"
           >
-            {features.map((feature, index) => {
-              const Icon = feature.icon;
+            {quickBenefits.map((benefit, index) => {
+              const Icon = benefit.icon;
               return (
                 <motion.div
-                  key={feature.title}
+                  key={benefit.title}
                   initial={{ opacity: 0, y: 30 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.6, delay: 0.6 + index * 0.1 }}
@@ -105,12 +104,38 @@ const Hero = () => {
                     <Icon className="w-6 h-6 text-primary" />
                   </div>
                   <h3 className="text-lg font-semibold text-foreground mb-2">
-                    {feature.title}
+                    {benefit.title}
                   </h3>
-                  <p className="text-muted-foreground">{feature.description}</p>
+                  <p className="text-muted-foreground text-sm">{benefit.description}</p>
                 </motion.div>
               );
             })}
+          </motion.div>
+
+          {/* Trust Indicators */}
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.8 }}
+            className="mt-16 pt-8 border-t border-border/50"
+          >
+            <p className="text-sm text-muted-foreground mb-4">
+              Confiado por empresas en México y Latinoamérica
+            </p>
+            <div className="flex justify-center items-center gap-8 flex-wrap">
+              <div className="text-center">
+                <div className="text-2xl font-bold text-primary">500+</div>
+                <div className="text-xs text-muted-foreground">Clientes Activos</div>
+              </div>
+              <div className="text-center">
+                <div className="text-2xl font-bold text-primary">99.9%</div>
+                <div className="text-xs text-muted-foreground">Uptime Garantizado</div>
+              </div>
+              <div className="text-center">
+                <div className="text-2xl font-bold text-primary">24/7</div>
+                <div className="text-xs text-muted-foreground">Soporte en Español</div>
+              </div>
+            </div>
           </motion.div>
         </div>
       </Container>

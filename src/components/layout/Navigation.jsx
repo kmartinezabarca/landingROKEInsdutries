@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Menu, X } from 'lucide-react';
+import { Menu, X, MessageCircle } from 'lucide-react';
 import { CONFIG, ROUTES } from '../../utils/constants/config';
 import Container from '../common/Container';
+import Button from '../common/Button';
 import ThemeToggle from './ThemeToggle';
 import { cn } from '../../lib/utils';
 
@@ -76,6 +77,12 @@ const Navigation = () => {
           {/* Desktop Actions */}
           <div className="hidden md:flex items-center space-x-4">
             <ThemeToggle />
+            <Button size="sm" asChild className="bg-primary hover:bg-primary/90">
+              <a href="https://wa.me/+1234567890?text=Hola%20ROKE%20Industries%2C%20quiero%20conocer%20m%C3%A1s%20sobre%20sus%20servicios" className="flex items-center gap-2">
+                <MessageCircle className="w-4 h-4" />
+                Cotiza Ahora
+              </a>
+            </Button>
           </div>
 
           {/* Mobile menu button */}
@@ -117,6 +124,14 @@ const Navigation = () => {
                     {item.name}
                   </Link>
                 ))}
+                <div className="px-3 py-2 mt-4 pt-4 border-t border-border">
+                  <Button size="sm" asChild className="w-full bg-primary hover:bg-primary/90">
+                    <a href="https://wa.me/+1234567890?text=Hola%20ROKE%20Industries%2C%20quiero%20conocer%20m%C3%A1s%20sobre%20sus%20servicios" className="flex items-center justify-center gap-2">
+                      <MessageCircle className="w-4 h-4" />
+                      Cotiza Ahora
+                    </a>
+                  </Button>
+                </div>
               </div>
             </motion.div>
           )}
@@ -127,5 +142,3 @@ const Navigation = () => {
 };
 
 export default Navigation;
-
-
