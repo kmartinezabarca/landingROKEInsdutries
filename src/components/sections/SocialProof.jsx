@@ -1,6 +1,16 @@
 import React from "react";
 import { motion } from "framer-motion";
 import { Star, Users, Zap, Award } from "lucide-react";
+import { 
+  SiLinux, 
+  SiDocker, 
+  SiKubernetes, 
+  SiAmazonwebservices, 
+  SiNodedotjs, 
+  SiPython, 
+  SiReact, 
+  SiPostgresql 
+} from "react-icons/si";
 import Container from "../common/Container";
 
 const SocialProof = () => {
@@ -53,14 +63,14 @@ const SocialProof = () => {
   ];
 
   const technologies = [
-    "Linux",
-    "Docker",
-    "Kubernetes",
-    "AWS",
-    "Node.js",
-    "Python",
-    "React",
-    "PostgreSQL",
+    { name: "Linux", icon: SiLinux, color: "hover:text-[#FCC624]" },
+    { name: "Docker", icon: SiDocker, color: "hover:text-[#2496ED]" },
+    { name: "Kubernetes", icon: SiKubernetes, color: "hover:text-[#326CE5]" },
+    { name: "AWS", icon: SiAmazonwebservices, color: "hover:text-[#FF9900]" },
+    { name: "Node.js", icon: SiNodedotjs, color: "hover:text-[#339933]" },
+    { name: "Python", icon: SiPython, color: "hover:text-[#3776AB]" },
+    { name: "React", icon: SiReact, color: "hover:text-[#61DAFB]" },
+    { name: "PostgreSQL", icon: SiPostgresql, color: "hover:text-[#4169E1]" },
   ];
 
   return (
@@ -163,18 +173,24 @@ const SocialProof = () => {
             Tecnologías que utilizamos
           </h3>
           <div className="flex flex-wrap justify-center gap-4">
-            {technologies.map((tech, index) => (
-              <motion.div
-                key={tech}
-                initial={{ opacity: 0, scale: 0.8 }}
-                whileInView={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 0.4, delay: 0.05 * index }}
-                viewport={{ once: true }}
-                className="bg-card border border-border rounded-lg px-6 py-3 hover:border-primary/50 transition-colors"
-              >
-                <span className="font-semibold text-foreground">{tech}</span>
-              </motion.div>
-            ))}
+            {technologies.map((tech, index) => {
+              const Icon = tech.icon;
+              return (
+                <motion.div
+                  key={tech.name}
+                  initial={{ opacity: 0, scale: 0.8 }}
+                  whileInView={{ opacity: 1, scale: 1 }}
+                  transition={{ duration: 0.4, delay: 0.05 * index }}
+                  viewport={{ once: true }}
+                  className={`bg-card border border-border rounded-lg px-6 py-3 flex items-center gap-3 transition-all duration-300 group ${tech.color} hover:border-current hover:shadow-md`}
+                >
+                  <Icon className="w-6 h-6 text-muted-foreground group-hover:text-current transition-colors" />
+                  <span className="font-semibold text-foreground group-hover:text-current transition-colors">
+                    {tech.name}
+                  </span>
+                </motion.div>
+              );
+            })}
           </div>
         </motion.div>
       </Container>
