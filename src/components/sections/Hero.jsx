@@ -26,7 +26,7 @@ const Hero = () => {
   ];
 
   return (
-    <section className="relative min-h-screen flex items-center justify-center overflow-hidden pt-20">
+    <section className="relative min-h-screen flex items-center justify-center overflow-hidden pt-20 pb-20">
       {/* Background Image */}
       <div
         className="absolute inset-0 bg-cover bg-center bg-no-repeat"
@@ -88,7 +88,7 @@ const Hero = () => {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.4 }}
-            className="grid grid-cols-1 md:grid-cols-3 gap-8"
+            className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16"
           >
             {quickBenefits.map((benefit, index) => {
               const Icon = benefit.icon;
@@ -117,9 +117,9 @@ const Hero = () => {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.8 }}
-            className="mt-16 pt-8 border-t border-border/50"
+            className="pt-8 border-t border-border/50"
           >
-            <p className="text-sm text-muted-foreground mb-4">
+            <p className="text-sm text-muted-foreground mb-6">
               Confiado por empresas en México y Latinoamérica
             </p>
             <div className="flex justify-center items-center gap-8 flex-wrap">
@@ -140,12 +140,12 @@ const Hero = () => {
         </div>
       </Container>
 
-      {/* Scroll Indicator */}
+      {/* Scroll Indicator - Fixed at bottom */}
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 1, delay: 1 }}
-        className="absolute bottom-8 left-1/2 transform -translate-x-1/2"
+        className="absolute bottom-6 left-1/2 transform -translate-x-1/2 z-20 pointer-events-none"
       >
         <motion.div
           animate={{ y: [0, 10, 0] }}

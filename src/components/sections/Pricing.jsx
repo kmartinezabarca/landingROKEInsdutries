@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useMemo } from "react";
 import { motion } from "framer-motion";
 import { Check, ArrowRight, Star } from "lucide-react";
 import { Link } from "react-router-dom";
@@ -6,60 +6,29 @@ import Container from "../common/Container";
 import { Card, CardContent, CardHeader, CardTitle } from "../common/Card";
 import Button from "../common/Button";
 import { ROUTES } from "../../utils/constants/config";
+import { useServicePlans } from "../../hooks/useServicePlans";
+import { useBillingCycles } from "../../hooks/useBillingCycles";
 
 const Pricing = () => {
-  const pricingPlans = [
-    {
-      name: "Hosting Básico",
-      price: "99",
-      period: "MXN/mes",
-      description: "Perfecto para proyectos pequeños",
-      features: [
-        "5 GB de almacenamiento",
-        "Ancho de banda ilimitado",
-        "1 base de datos",
-        "Certificado SSL gratis",
-        "Soporte por email",
-      ],
-      cta: "Comenzar",
-      highlighted: false,
-    },
-    {
-      name: "Hosting Pro",
-      price: "199",
-      period: "MXN/mes",
-      description: "Para empresas en crecimiento",
-      features: [
-        "50 GB de almacenamiento",
-        "Ancho de banda ilimitado",
-        "Bases de datos ilimitadas",
-        "Certificado SSL gratis",
-        "Soporte prioritario 24/7",
-        "Backups automáticos diarios",
-        "CDN global incluido",
-      ],
-      cta: "Contratar Ahora",
-      highlighted: true,
-    },
-    {
-      name: "Hosting Premium",
-      price: "399",
-      period: "MXN/mes",
-      description: "Para aplicaciones empresariales",
-      features: [
-        "Almacenamiento ilimitado",
-        "Ancho de banda ilimitado",
-        "Bases de datos ilimitadas",
-        "Certificado SSL gratis",
-        "Soporte técnico 24/7",
-        "Backups en tiempo real",
-        "CDN global + DDoS protection",
-        "IP dedicada",
-      ],
-      cta: "Contratar Ahora",
-      highlighted: false,
-    },
-  ];
+  const { data: servicePlans, isLoading, isError } = useServicePlans();
+  const { data: billingCycles } = useBillingCycles();
+  const [activeBillingCycleSlug, setActiveBillingCycleSlug] = useState("monthly");
+
+  const currentBillingCycle = useMemo(() => {
+    return billingCycles?.find((cycle) => cycle.slug === activeBillingCycleSlug);
+  }, [billingCycles, activeBillingCycleSlug]);
+
+  const calculatePrice = (basePrice) => {
+    if (!currentBillingCycle) return basePrice;
+    const discount = parseFloat(currentBillingCycle.discount_percentage) / 100;
+    const finalPrice = parseFloat(basePrice) * (1 - discount);
+    return finalPrice.toFixed(2);
+  };
+
+  // Filter hosting plans from API
+  const hostingPlans = useMemo(() => {
+    return servicePlans?.filter((plan) => plan.category.slug === "hosting") || [];
+  }, [servicePlans]);
 
   const enterprisePlans = [
     {
@@ -82,6 +51,30 @@ const Pricing = () => {
     },
   ];
 
+  if (isLoading) {
+    return (
+      <section className="py-20">
+        <Container>
+          <div className="text-center">
+            <p className="text-lg text-muted-foreground">Cargando planes...</p>
+          </div>
+        </Container>
+      </section>
+    );
+  }
+
+  if (isError) {
+    return (
+      <section className="py-20">
+        <Container>
+          <div className="text-center">
+            <p className="text-lg text-red-500">Error al cargar los planes</p>
+          </div>
+        </Container>
+      </section>
+    );
+  }
+
   return (
     <section className="py-20">
       <Container>
@@ -102,17 +95,38 @@ const Pricing = () => {
             </p>
           </div>
 
+          {/* Billing Cycle Toggle */}
+          {billingCycles && billingCycles.length > 0 && (
+            <div className="flex justify-center mb-12">
+              <div className="bg-muted p-1 rounded-lg flex gap-1">
+                {billingCycles.map((cycle) => (
+                  <button
+                    key={cycle.id}
+                    onClick={() => setActiveBillingCycleSlug(cycle.slug)}
+                    className={`px-4 py-2 text-sm font-medium rounded-md transition-colors ${
+                      activeBillingCycleSlug === cycle.slug
+                        ? "bg-primary text-primary-foreground"
+                        : "text-muted-foreground hover:bg-muted-foreground/10"
+                    }`}
+                  >
+                    {cycle.name}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {pricingPlans.map((plan, index) => (
+            {hostingPlans.map((plan, index) => (
               <motion.div
-                key={plan.name}
+                key={plan.id || plan.name}
                 initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: 0.1 * index }}
                 viewport={{ once: true }}
                 className="relative"
               >
-                {plan.highlighted && (
+                {plan.isPopular && (
                   <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 z-10">
                     <span className="bg-primary text-primary-foreground px-4 py-1 rounded-full text-sm font-medium flex items-center gap-1">
                       <Star className="w-3 h-3" />
@@ -122,7 +136,7 @@ const Pricing = () => {
                 )}
                 <Card
                   className={`h-full flex flex-col transition-all duration-300 ${
-                    plan.highlighted
+                    plan.isPopular
                       ? "border-primary shadow-lg md:scale-105"
                       : "hover:border-primary/50"
                   }`}
@@ -134,29 +148,36 @@ const Pricing = () => {
                     </p>
                     <div className="flex items-baseline gap-1 mb-4">
                       <span className="text-4xl font-bold text-primary">
-                        ${plan.price}
+                        ${calculatePrice(plan.basePrice)}
                       </span>
                       <span className="text-muted-foreground text-sm">
-                        {plan.period}
+                        /{currentBillingCycle?.name.toLowerCase() || "mes"}
                       </span>
                     </div>
                   </CardHeader>
                   <CardContent className="flex-grow flex flex-col">
                     <ul className="space-y-3 mb-8 flex-grow">
-                      {plan.features.map((feature, idx) => (
+                      {plan.features && plan.features.map((feature, idx) => (
                         <li key={idx} className="flex items-start gap-3">
                           <Check className="w-5 h-5 text-green-500 flex-shrink-0 mt-0.5" />
-                          <span className="text-foreground text-sm">{feature}</span>
+                          <span className="text-foreground text-sm">
+                            {typeof feature === "string"
+                              ? feature
+                              : feature.feature}
+                          </span>
                         </li>
                       ))}
                     </ul>
                     <Button
                       className="w-full"
-                      variant={plan.highlighted ? "default" : "outline"}
+                      variant={plan.isPopular ? "default" : "outline"}
                       asChild
                     >
-                      <Link to={ROUTES.HOSTING} className="flex items-center justify-center gap-2">
-                        {plan.cta}
+                      <Link
+                        to={ROUTES.HOSTING}
+                        className="flex items-center justify-center gap-2"
+                      >
+                        Contratar {plan.name}
                         <ArrowRight className="w-4 h-4" />
                       </Link>
                     </Button>
@@ -210,7 +231,10 @@ const Pricing = () => {
               ¿Necesitas una solución personalizada? Hablemos de tu proyecto.
             </p>
             <Button size="lg" asChild>
-              <Link to={ROUTES.CONTACT} className="flex items-center justify-center gap-2">
+              <Link
+                to={ROUTES.CONTACT}
+                className="flex items-center justify-center gap-2"
+              >
                 Solicitar Cotización
                 <ArrowRight className="w-4 h-4" />
               </Link>
