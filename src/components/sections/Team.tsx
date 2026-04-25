@@ -140,7 +140,7 @@ const Team: React.FC = () => {
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.4 }}
           viewport={{ once: true }}
-          className="text-center mt-16 p-8 bg-gradient-to-br from-primary/8 via-primary/5 to-transparent dark:from-primary/15 dark:via-primary/8 dark:to-slate-950/60 rounded-2xl border border-primary/10"
+          className="text-center mt-16 p-8 bg-gradient-to-br from-primary/10 via-primary/5 to-primary/[0.03] dark:from-slate-900 dark:via-primary/15 dark:to-slate-950 rounded-2xl border border-primary/10 dark:border-primary/20"
         >
           <h3 className="text-2xl font-bold text-foreground mb-4">
             ¿Quieres unirte a nuestro equipo?

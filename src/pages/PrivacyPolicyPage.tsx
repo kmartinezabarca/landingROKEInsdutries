@@ -167,7 +167,7 @@ const PrivacyPolicyPage: React.FC = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.8 }}
-            className="bg-primary/5 rounded-lg p-8 mt-12 text-center"
+            className="bg-gradient-to-br from-primary/10 via-primary/5 to-primary/[0.03] dark:from-slate-900 dark:via-primary/15 dark:to-slate-950 rounded-lg p-8 mt-12 text-center border border-primary/10 dark:border-primary/20"
           >
             <h3 className="text-2xl font-semibold mb-4">¿Tienes Preguntas sobre tu Privacidad?</h3>
             <p className="text-muted-foreground mb-6">
