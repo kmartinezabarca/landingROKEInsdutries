@@ -94,7 +94,7 @@ const SocialProof: React.FC = () => {
   ];
 
   return (
-    <section className="py-20 bg-muted/20 dark:bg-gradient-to-br dark:from-slate-950 dark:via-primary/5 dark:to-slate-950">
+    <section className="py-20 bg-muted/20 dark:bg-slate-900/30">
       <Container>
         {/* Stats Grid */}
         <motion.div

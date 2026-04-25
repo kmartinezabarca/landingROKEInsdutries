@@ -162,7 +162,7 @@ curl -X GET "https://api.rokeindustries.com/v1/hosting/stats" \\
   ];
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background dark:bg-slate-950">
       <Container className="py-20">
         <motion.div
           initial={{ opacity: 0, y: 20 }}

@@ -76,7 +76,7 @@ const DocumentationDetailPage: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background dark:bg-slate-950">
       {/* Header */}
       <section className="relative h-[300px] md:h-[350px] flex items-center justify-center text-center text-white overflow-hidden">
         <div

@@ -79,7 +79,7 @@ const About: React.FC = () => {
   ];
 
   return (
-    <section className="py-20 bg-muted/30">
+    <section className="py-20 bg-muted/30 dark:bg-slate-900/40">
       <Container>
         {/* Header */}
         <motion.div

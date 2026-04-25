@@ -170,7 +170,7 @@ const AboutPage: React.FC = () => {
       </section>
 
       {/* Stats Section */}
-      <section className="py-16 bg-card/30">
+      <section className="py-16 bg-card/30 dark:bg-slate-900/40">
         <Container>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
             {stats.map((stat, index) => {
@@ -306,7 +306,7 @@ const AboutPage: React.FC = () => {
       </section>
 
       {/* Timeline */}
-      <section className="py-16 bg-card/30">
+      <section className="py-16 bg-card/30 dark:bg-slate-900/40">
         <Container>
           <motion.div
             initial={{ opacity: 0, y: 30 }}
@@ -451,7 +451,7 @@ const AboutPage: React.FC = () => {
       </section>
 
       {/* Contact Info */}
-      <section className="py-16 bg-gradient-to-r from-primary to-secondary">
+      <section className="py-16 bg-gradient-to-br from-primary via-primary/95 to-primary/80 dark:from-slate-950 dark:via-primary/15 dark:to-slate-950">
         <Container>
           <motion.div
             initial={{ opacity: 0, y: 30 }}

@@ -361,7 +361,7 @@ const HostingPage: React.FC = () => {
       </Container>
 
       {/* CTA Section */}
-      <section className="py-16 bg-primary/10">
+      <section className="py-16 bg-gradient-to-br from-primary/10 via-primary/5 to-background dark:from-slate-950 dark:via-primary/15 dark:to-slate-950">
         <Container className="text-center">
             <h3 className="text-2xl font-bold text-foreground mb-4">
               ¿Necesitas una solución personalizada?

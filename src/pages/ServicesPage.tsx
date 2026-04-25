@@ -549,7 +549,7 @@ const ServicesPage: React.FC = () => {
         </Container>
       </section>
 
-      <section className="py-16 bg-primary/10">
+      <section className="py-16 bg-gradient-to-br from-primary/10 via-primary/5 to-background dark:from-slate-950 dark:via-primary/15 dark:to-slate-950">
         <Container className="text-center">
           <h3 className="text-3xl font-bold text-foreground mb-4">
             ¿Listo para llevar tu proyecto al siguiente nivel?

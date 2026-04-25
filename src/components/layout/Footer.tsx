@@ -95,7 +95,7 @@ const Footer: React.FC = () => {
   ];
 
   return (
-    <footer className="bg-muted/30 border-t border-border">
+    <footer className="bg-muted/30 dark:bg-slate-900 border-t border-border dark:border-slate-800">
       <Container>
         <div className="py-12">
           {/* Main Footer Content */}

@@ -222,7 +222,7 @@ const Services: React.FC = () => {
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.4 }}
           viewport={{ once: true }}
-          className="bg-muted/30 rounded-2xl p-8 mb-12"
+          className="bg-muted/30 dark:bg-slate-900/50 rounded-2xl p-8 mb-12"
         >
           <h3 className="text-2xl font-bold text-foreground mb-8 text-center">
             Servicios Adicionales

@@ -39,7 +39,7 @@ const Team: React.FC = () => {
   ];
 
   return (
-    <section className="py-20 bg-muted/30">
+    <section className="py-20 bg-muted/30 dark:bg-slate-900/40">
       <Container>
         {/* Header */}
         <motion.div
@@ -140,7 +140,7 @@ const Team: React.FC = () => {
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.4 }}
           viewport={{ once: true }}
-          className="text-center mt-16 p-8 bg-primary/5 rounded-2xl border border-primary/10"
+          className="text-center mt-16 p-8 bg-gradient-to-br from-primary/8 via-primary/5 to-transparent dark:from-primary/15 dark:via-primary/8 dark:to-slate-950/60 rounded-2xl border border-primary/10"
         >
           <h3 className="text-2xl font-bold text-foreground mb-4">
             ¿Quieres unirte a nuestro equipo?

@@ -51,7 +51,7 @@ const Benefits: React.FC = () => {
   ];
 
   return (
-    <section className="py-20 bg-muted/30 dark:bg-gradient-to-br dark:from-slate-950 dark:via-primary/5 dark:to-slate-950">
+    <section className="py-20 bg-muted/30 dark:bg-slate-900/40">
       <Container>
         <motion.div
           initial={{ opacity: 0, y: 30 }}

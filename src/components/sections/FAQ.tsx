@@ -55,7 +55,7 @@ const FAQ: React.FC = () => {
   ];
 
   return (
-    <section className="py-20 bg-muted/20">
+    <section className="py-20 bg-muted/20 dark:bg-slate-900/40">
       <Container>
         <motion.div
           initial={{ opacity: 0, y: 30 }}
