@@ -1,5 +1,5 @@
 // Jenkinsfile — ROKE Industries Landing Page
-// Dominios: rokeindustries.com / .com.mx / .net / .dev
+// Dominios: rokeindustries.com / .com.mx / .dev
 
 pipeline {
     agent {
@@ -11,23 +11,22 @@ pipeline {
     }
 
     environment {
-        // ── Dominios por entorno ──────────────────────────────
         PROD_URL      = 'https://rokeindustries.com'
         PROD_MX_URL   = 'https://rokeindustries.com.mx'
         STAGING_URL   = 'https://rokeindustries.dev'
 
-        // ── APIs por entorno ──────────────────────────────────
-        PROD_API_URL      = 'https://api.rokeindustries.com'
-        PROD_MX_API_URL   = 'https://api.rokeindustries.com.mx'
-        STAGING_API_URL   = 'https://api.rokeindustries.dev'
+        PROD_API_URL     = 'https://api.rokeindustries.com'
+        STAGING_API_URL  = 'https://api.rokeindustries.dev'
 
-        // ── Servidor destino (Tailscale IP del SRV-DELL) ──────
-        DEPLOY_HOST   = '100.124.151.68'
-        DEPLOY_USER   = 'rokecore'
+        DEPLOY_HOST  = '100.124.151.68'
+        DEPLOY_USER  = 'rokecore'
 
-        // ── Paths en el servidor (NUEVA ESTRUCTURA /opt/apps) ─
-        PROD_PATH     = '/opt/apps/landing'
-        STAGING_PATH  = '/opt/apps/staging/landing'
+        PROD_PATH    = '/opt/apps/landing'
+        STAGING_PATH = '/opt/apps/staging/landing'
+
+        // Paths de los .env en el servidor
+        ENV_STAGING_PATH = '/opt/apps/staging/landing/.env.staging'
+        ENV_PROD_PATH    = '/opt/apps/landing/.env.production'
     }
 
     options {
@@ -61,16 +60,46 @@ pipeline {
                     echo "📦 Obteniendo código fuente..."
                     checkout scm
                     sh '''
-                        echo "Branch: $(git rev-parse --abbrev-ref HEAD)"
-                        echo "Commit: $(git rev-parse --short HEAD)"
-                        echo "Autor:  $(git log -1 --pretty=format:'%an')"
+                        echo "Branch:  $(git rev-parse --abbrev-ref HEAD)"
+                        echo "Commit:  $(git rev-parse --short HEAD)"
+                        echo "Autor:   $(git log -1 --pretty=format:'%an')"
                         echo "Mensaje: $(git log -1 --pretty=format:'%s')"
                     '''
                 }
             }
         }
 
-        // ── STAGE 2: Dependencias ─────────────────────────────
+        // ── STAGE 2: Cargar .env desde el servidor ────────────
+        // El .env de la landing tiene variables VITE_* que Vite hornea
+        // en el bundle durante el build. Deben cargarse ANTES de build.
+        stage('Load Environment') {
+            when { expression { params.DEPLOY_ENV != 'none' } }
+            steps {
+                script {
+                    echo "🔑 Cargando variables de entorno desde el servidor..."
+                }
+                sshagent(credentials: ['roke-ssh-key']) {
+                    sh '''
+                        if [ "${DEPLOY_ENV}" = "staging" ]; then
+                            scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null \
+                                ${DEPLOY_USER}@${DEPLOY_HOST}:${ENV_STAGING_PATH} .env
+                            echo "✅ .env.staging cargado"
+                        elif [ "${DEPLOY_ENV}" = "production" ]; then
+                            scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null \
+                                ${DEPLOY_USER}@${DEPLOY_HOST}:${ENV_PROD_PATH} .env
+                            echo "✅ .env.production cargado"
+                        fi
+
+                        # Verificar (sin mostrar valores)
+                        echo "Variables cargadas: $(grep -c "^VITE_" .env) VITE_* vars"
+                        grep "^VITE_API_URL" .env
+                        grep "^VITE_ENVIRONMENT" .env
+                    '''
+                }
+            }
+        }
+
+        // ── STAGE 3: Dependencias ─────────────────────────────
         stage('Install Dependencies') {
             steps {
                 echo "📥 Instalando dependencias con pnpm..."
@@ -82,7 +111,7 @@ pipeline {
             }
         }
 
-        // ── STAGE 3: Calidad de código (paralelo) ─────────────
+        // ── STAGE 4: Calidad de código (paralelo) ─────────────
         stage('Code Quality') {
             parallel {
                 stage('Lint') {
@@ -108,7 +137,7 @@ pipeline {
             }
         }
 
-        // ── STAGE 4: Tests ────────────────────────────────────
+        // ── STAGE 5: Tests ────────────────────────────────────
         stage('Tests') {
             when { expression { !params.SKIP_TESTS } }
             steps {
@@ -117,39 +146,53 @@ pipeline {
             }
         }
 
-        // ── STAGE 5: Build ────────────────────────────────────
+        // ── STAGE 6: Build ────────────────────────────────────
         stage('Build') {
             parallel {
                 stage('Build Staging') {
-                    when { expression { params.DEPLOY_ENV == 'staging' || params.DEPLOY_ENV == 'none' } }
+                    when { expression { params.DEPLOY_ENV == 'staging' } }
                     steps {
                         echo "🏗️ Build para STAGING: ${STAGING_URL}"
-                        sh """
-                            VITE_API_URL=${STAGING_API_URL} \\
-                            VITE_APP_ENV=staging \\
-                            VITE_APP_TITLE='Roke Industries [DEV]' \\
+                        sh '''
+                            # El .env ya está en el workspace con las vars correctas
+                            # Vite lo lee automáticamente
                             pnpm run build
-                        """
-                        sh 'test -d dist && echo "✅ Build staging exitosa"'
+                            test -d dist && echo "✅ Build staging exitosa"
+                            echo "=== Variables bakeadas en el build ==="
+                            grep -r "api.rokeindustries.dev" dist/ --include="*.js" -l 2>/dev/null \
+                                && echo "✅ API URL de staging confirmada en bundle" \
+                                || echo "⚠️  API URL no encontrada en bundle"
+                        '''
                     }
                 }
                 stage('Build Production') {
                     when { expression { params.DEPLOY_ENV == 'production' } }
                     steps {
                         echo "🏗️ Build para PRODUCCIÓN: ${PROD_URL}"
-                        sh """
-                            VITE_API_URL=${PROD_API_URL} \\
-                            VITE_APP_ENV=production \\
-                            VITE_APP_TITLE='Roke Industries' \\
+                        sh '''
                             pnpm run build
-                        """
-                        sh 'test -d dist && echo "✅ Build producción exitosa"'
+                            test -d dist && echo "✅ Build producción exitosa"
+                            echo "=== Variables bakeadas en el build ==="
+                            grep -r "api.rokeindustries.com" dist/ --include="*.js" -l 2>/dev/null \
+                                && echo "✅ API URL de producción confirmada en bundle" \
+                                || echo "⚠️  API URL no encontrada en bundle"
+                        '''
+                    }
+                }
+                stage('Build Preview (none)') {
+                    when { expression { params.DEPLOY_ENV == 'none' } }
+                    steps {
+                        echo "🏗️ Build de preview (sin deploy)..."
+                        sh '''
+                            pnpm run build
+                            test -d dist && echo "✅ Build preview exitosa"
+                        '''
                     }
                 }
             }
         }
 
-        // ── STAGE 6: Archivar artefactos ──────────────────────
+        // ── STAGE 7: Archivar artefactos ──────────────────────
         stage('Archive') {
             steps {
                 echo "📁 Archivando artefactos..."
@@ -157,7 +200,7 @@ pipeline {
             }
         }
 
-        // ── STAGE 7: Deploy Staging ───────────────────────────
+        // ── STAGE 8: Deploy Staging ───────────────────────────
         stage('Deploy Staging') {
             when { expression { params.DEPLOY_ENV == 'staging' } }
             steps {
@@ -174,7 +217,7 @@ pipeline {
             }
         }
 
-        // ── STAGE 8: Deploy Producción ────────────────────────
+        // ── STAGE 9: Deploy Producción ────────────────────────
         stage('Deploy Production') {
             when { expression { params.DEPLOY_ENV == 'production' } }
             steps {
@@ -188,7 +231,7 @@ pipeline {
                 echo "🚀 Desplegando a: ${PROD_URL} y ${PROD_MX_URL}"
                 sshagent(credentials: ['roke-ssh-key']) {
                     sh '''
-                        # Backup del deploy anterior (en /opt/backups/landing)
+                        # Backup del deploy anterior
                         ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null \
                             ${DEPLOY_USER}@${DEPLOY_HOST} \
                             "sudo mkdir -p /opt/backups/landing && \
@@ -200,7 +243,7 @@ pipeline {
                             dist/ \
                             ${DEPLOY_USER}@${DEPLOY_HOST}:${PROD_PATH}/
 
-                        # Reload Nginx (rokecore tiene NOPASSWD para esto)
+                        # Reload Nginx
                         ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null \
                             ${DEPLOY_USER}@${DEPLOY_HOST} \
                             "sudo /usr/bin/systemctl reload nginx"
@@ -212,12 +255,10 @@ pipeline {
         }
     }
 
-    // ── POST: Notificaciones y limpieza ───────────────────────
     post {
         success {
             script {
                 def envName = params.DEPLOY_ENV == 'none' ? 'build' : params.DEPLOY_ENV
-                def url     = params.DEPLOY_ENV == 'staging' ? env.STAGING_URL : env.PROD_URL
                 echo "✅ Pipeline #${env.BUILD_NUMBER} completado — ${envName}"
             }
         }
