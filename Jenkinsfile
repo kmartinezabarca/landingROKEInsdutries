@@ -1,30 +1,24 @@
 // Jenkinsfile — ROKE Industries Landing Page
-// Dominios: rokeindustries.com / .com.mx / .dev
-
 pipeline {
     agent {
         docker {
             image 'roke-jenkins-agent:latest'
-            args '-v /var/run/docker.sock:/var/run/docker.sock -v /root/.npm:/root/.npm'
+            args '-v /var/run/docker.sock:/var/run/docker.sock -v /root/.npm:/root/.npm -v /opt/apps:/opt/apps:rw'
             reuseNode true
         }
     }
 
     environment {
-        PROD_URL      = 'https://rokeindustries.com'
-        PROD_MX_URL   = 'https://rokeindustries.com.mx'
-        STAGING_URL   = 'https://rokeindustries.dev'
+        PROD_URL     = 'https://rokeindustries.com'
+        PROD_MX_URL  = 'https://rokeindustries.com.mx'
+        STAGING_URL  = 'https://rokeindustries.dev'
 
-        PROD_API_URL     = 'https://api.rokeindustries.com'
-        STAGING_API_URL  = 'https://api.rokeindustries.dev'
+        PROD_API_URL    = 'https://api.rokeindustries.com'
+        STAGING_API_URL = 'https://api.rokeindustries.dev'
 
-        DEPLOY_HOST  = '100.124.151.68'
-        DEPLOY_USER  = 'rokecore'
-
-        PROD_PATH    = '/opt/apps/landing'
         STAGING_PATH = '/opt/apps/staging/landing'
+        PROD_PATH    = '/opt/apps/landing'
 
-        // Paths de los .env en el servidor
         ENV_STAGING_PATH = '/opt/apps/staging/landing/.env.staging'
         ENV_PROD_PATH    = '/opt/apps/landing/.env.production'
     }
@@ -48,16 +42,14 @@ pipeline {
         )
         booleanParam(name: 'RUN_LINT',         defaultValue: true,  description: 'Ejecutar ESLint')
         booleanParam(name: 'RUN_FORMAT_CHECK', defaultValue: true,  description: 'Verificar formato con Prettier')
-        booleanParam(name: 'SKIP_TESTS',       defaultValue: false, description: 'Saltar tests (no recomendado en producción)')
+        booleanParam(name: 'SKIP_TESTS',       defaultValue: false, description: 'Saltar tests')
     }
 
     stages {
 
-        // ── STAGE 1: Checkout ─────────────────────────────────
         stage('Checkout') {
             steps {
                 script {
-                    echo "📦 Obteniendo código fuente..."
                     checkout scm
                     sh '''
                         echo "Branch:  $(git rev-parse --abbrev-ref HEAD)"
@@ -69,40 +61,27 @@ pipeline {
             }
         }
 
-        // ── STAGE 2: Cargar .env desde el servidor ────────────
-        // El .env de la landing tiene variables VITE_* que Vite hornea
-        // en el bundle durante el build. Deben cargarse ANTES de build.
         stage('Load Environment') {
             when { expression { params.DEPLOY_ENV != 'none' } }
             steps {
                 script {
-                    echo "🔑 Cargando variables de entorno desde el servidor..."
-                }
-                sshagent(credentials: ['roke-ssh-key']) {
-                    sh '''
-                        if [ "${DEPLOY_ENV}" = "staging" ]; then
-                            scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null \
-                                ${DEPLOY_USER}@${DEPLOY_HOST}:${ENV_STAGING_PATH} .env
-                            echo "✅ .env.staging cargado"
-                        elif [ "${DEPLOY_ENV}" = "production" ]; then
-                            scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null \
-                                ${DEPLOY_USER}@${DEPLOY_HOST}:${ENV_PROD_PATH} .env
-                            echo "✅ .env.production cargado"
-                        fi
+                    def envPath = params.DEPLOY_ENV == 'staging'
+                        ? env.ENV_STAGING_PATH
+                        : env.ENV_PROD_PATH
 
-                        # Verificar (sin mostrar valores)
-                        echo "Variables cargadas: $(grep -c "^VITE_" .env) VITE_* vars"
+                    sh """
+                        cp ${envPath} .env
+                        echo ".env cargado desde: ${envPath}"
+                        echo "Variables VITE_*: \$(grep -c '^VITE_' .env)"
                         grep "^VITE_API_URL" .env
-                        grep "^VITE_ENVIRONMENT" .env
-                    '''
+                        grep "^VITE_ENVIRONMENT" .env || true
+                    """
                 }
             }
         }
 
-        // ── STAGE 3: Dependencias ─────────────────────────────
         stage('Install Dependencies') {
             steps {
-                echo "📥 Instalando dependencias con pnpm..."
                 sh '''
                     corepack enable
                     corepack prepare pnpm@10.4.1 --activate
@@ -111,165 +90,126 @@ pipeline {
             }
         }
 
-        // ── STAGE 4: Calidad de código (paralelo) ─────────────
         stage('Code Quality') {
             parallel {
                 stage('Lint') {
                     when { expression { params.RUN_LINT } }
-                    steps {
-                        echo "🔍 Ejecutando ESLint..."
-                        sh 'pnpm run lint || true'
-                    }
+                    steps { sh 'pnpm run lint || true' }
                 }
                 stage('Format Check') {
                     when { expression { params.RUN_FORMAT_CHECK } }
-                    steps {
-                        echo "🎨 Verificando formato con Prettier..."
-                        sh 'pnpm run format:check || true'
-                    }
+                    steps { sh 'pnpm run format:check || true' }
                 }
                 stage('Security Audit') {
-                    steps {
-                        echo "🔐 Auditando dependencias..."
-                        sh 'pnpm audit --audit-level=high || true'
-                    }
+                    steps { sh 'pnpm audit --audit-level=high || true' }
                 }
             }
         }
 
-        // ── STAGE 5: Tests ────────────────────────────────────
         stage('Tests') {
             when { expression { !params.SKIP_TESTS } }
-            steps {
-                echo "🧪 Ejecutando tests..."
-                sh 'pnpm run test:ci || true'
-            }
+            steps { sh 'pnpm run test:ci || true' }
         }
 
-        // ── STAGE 6: Build ────────────────────────────────────
         stage('Build') {
-            parallel {
-                stage('Build Staging') {
-                    when { expression { params.DEPLOY_ENV == 'staging' } }
-                    steps {
-                        echo "🏗️ Build para STAGING: ${STAGING_URL}"
-                        sh '''
-                            # El .env ya está en el workspace con las vars correctas
-                            # Vite lo lee automáticamente
-                            pnpm run build
-                            test -d dist && echo "✅ Build staging exitosa"
-                            echo "=== Variables bakeadas en el build ==="
-                            grep -r "api.rokeindustries.dev" dist/ --include="*.js" -l 2>/dev/null \
-                                && echo "✅ API URL de staging confirmada en bundle" \
-                                || echo "⚠️  API URL no encontrada en bundle"
-                        '''
-                    }
-                }
-                stage('Build Production') {
-                    when { expression { params.DEPLOY_ENV == 'production' } }
-                    steps {
-                        echo "🏗️ Build para PRODUCCIÓN: ${PROD_URL}"
-                        sh '''
-                            pnpm run build
-                            test -d dist && echo "✅ Build producción exitosa"
-                            echo "=== Variables bakeadas en el build ==="
-                            grep -r "api.rokeindustries.com" dist/ --include="*.js" -l 2>/dev/null \
-                                && echo "✅ API URL de producción confirmada en bundle" \
-                                || echo "⚠️  API URL no encontrada en bundle"
-                        '''
-                    }
-                }
-                stage('Build Preview (none)') {
-                    when { expression { params.DEPLOY_ENV == 'none' } }
-                    steps {
-                        echo "🏗️ Build de preview (sin deploy)..."
-                        sh '''
-                            pnpm run build
-                            test -d dist && echo "✅ Build preview exitosa"
-                        '''
-                    }
-                }
-            }
-        }
-
-        // ── STAGE 7: Archivar artefactos ──────────────────────
-        stage('Archive') {
-            steps {
-                echo "📁 Archivando artefactos..."
-                archiveArtifacts artifacts: 'dist/**/*', fingerprint: true
-            }
-        }
-
-        // ── STAGE 8: Deploy Staging ───────────────────────────
-        stage('Deploy Staging') {
-            when { expression { params.DEPLOY_ENV == 'staging' } }
-            steps {
-                echo "🚀 Desplegando a STAGING: ${STAGING_URL}"
-                sshagent(credentials: ['roke-ssh-key']) {
-                    sh '''
-                        rsync -avz --delete \
-                            -e "ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null" \
-                            dist/ \
-                            ${DEPLOY_USER}@${DEPLOY_HOST}:${STAGING_PATH}/
-                    '''
-                }
-                echo "✅ Staging disponible en: ${STAGING_URL}"
-            }
-        }
-
-        // ── STAGE 9: Deploy Producción ────────────────────────
-        stage('Deploy Production') {
-            when { expression { params.DEPLOY_ENV == 'production' } }
             steps {
                 script {
-                    echo "⚠️  Desplegando a PRODUCCIÓN"
+                    sh '''
+                        pnpm run build
+                        test -d dist && echo "Build exitoso"
+                        test -f dist/index.html && echo "index.html presente"
+                        du -sh dist/
+                    '''
+
+                    if (params.DEPLOY_ENV == 'staging') {
+                        sh '''
+                            grep -r "api.rokeindustries.dev" dist/ --include="*.js" -l 2>/dev/null \
+                                && echo "API URL staging confirmada en bundle" \
+                                || echo "API URL no encontrada en bundle"
+                        '''
+                    } else if (params.DEPLOY_ENV == 'production') {
+                        sh '''
+                            grep -r "api.rokeindustries.com" dist/ --include="*.js" -l 2>/dev/null \
+                                && echo "API URL produccion confirmada en bundle" \
+                                || echo "API URL no encontrada en bundle"
+                        '''
+                    }
+                }
+            }
+            post {
+                success {
+                    archiveArtifacts artifacts: 'dist/**/*', fingerprint: true
+                }
+            }
+        }
+
+        stage('Confirmar deploy a produccion') {
+            when {
+                allOf {
+                    expression { params.DEPLOY_ENV == 'production' }
+                }
+            }
+            steps {
+                script {
                     input(
-                        message: "¿Confirmas el deploy a producción?\n${PROD_URL}\n${PROD_MX_URL}",
-                        ok: '🚀 Sí, desplegar'
+                        message: "Confirmas deploy a PRODUCCION?\n\n${PROD_URL}\n${PROD_MX_URL}\nCommit: ${sh(returnStdout: true, script: 'git rev-parse --short HEAD').trim()}",
+                        ok: 'Si, desplegar',
+                        submitter: 'admin'
                     )
                 }
-                echo "🚀 Desplegando a: ${PROD_URL} y ${PROD_MX_URL}"
-                sshagent(credentials: ['roke-ssh-key']) {
-                    sh '''
-                        # Backup del deploy anterior
-                        ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null \
-                            ${DEPLOY_USER}@${DEPLOY_HOST} \
-                            "sudo mkdir -p /opt/backups/landing && \
-                             sudo cp -r ${PROD_PATH} /opt/backups/landing/landing_$(date +%Y%m%d_%H%M%S) 2>/dev/null || true"
+            }
+        }
 
-                        # Deploy
-                        rsync -avz --delete \
-                            -e "ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null" \
-                            dist/ \
-                            ${DEPLOY_USER}@${DEPLOY_HOST}:${PROD_PATH}/
-
-                        # Reload Nginx
-                        ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null \
-                            ${DEPLOY_USER}@${DEPLOY_HOST} \
-                            "sudo /usr/bin/systemctl reload nginx"
-                    '''
+        stage('Deploy Staging') {
+            when {
+                allOf {
+                    expression { params.DEPLOY_ENV == 'staging' }
                 }
-                echo "✅ Producción actualizada: ${PROD_URL}"
-                echo "✅ Espejo México actualizado: ${PROD_MX_URL}"
+            }
+            steps {
+                sh '''
+                    cp -r dist/. ${STAGING_PATH}/
+                    test -f ${STAGING_PATH}/index.html && echo "Deploy staging exitoso"
+                    ls ${STAGING_PATH}/ | head -5
+                '''
+                echo "Disponible en: ${STAGING_URL}"
+            }
+        }
+
+        stage('Deploy Production') {
+            when {
+                allOf {
+                    expression { params.DEPLOY_ENV == 'production' }
+                }
+            }
+            steps {
+                sh '''
+                    # Backup
+                    mkdir -p /opt/backups/landing
+                    cp -r ${PROD_PATH} /opt/backups/landing/landing_$(date +%Y%m%d_%H%M%S) 2>/dev/null || true
+
+                    # Deploy
+                    cp -r dist/. ${PROD_PATH}/
+                    test -f ${PROD_PATH}/index.html && echo "Deploy produccion exitoso"
+                    ls ${PROD_PATH}/ | head -5
+
+                    # Reload Nginx
+                    sudo /usr/bin/systemctl reload nginx
+                '''
+                echo "Disponible en: ${PROD_URL} y ${PROD_MX_URL}"
             }
         }
     }
 
     post {
         success {
-            script {
-                def envName = params.DEPLOY_ENV == 'none' ? 'build' : params.DEPLOY_ENV
-                echo "✅ Pipeline #${env.BUILD_NUMBER} completado — ${envName}"
-            }
+            echo "Pipeline #${env.BUILD_NUMBER} completado — ${params.DEPLOY_ENV}"
         }
         failure {
-            echo "❌ Pipeline #${env.BUILD_NUMBER} falló en: ${env.STAGE_NAME}"
-        }
-        unstable {
-            echo "⚠️ Pipeline inestable — revisar tests"
+            echo "Pipeline #${env.BUILD_NUMBER} fallo en: ${env.STAGE_NAME}"
         }
         cleanup {
-            echo "🧹 Limpiando workspace..."
+            sh 'rm -f .env 2>/dev/null || true'
             cleanWs()
         }
     }
