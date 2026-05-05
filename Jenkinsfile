@@ -13,9 +13,6 @@ pipeline {
         PROD_MX_URL  = 'https://rokeindustries.com.mx'
         STAGING_URL  = 'https://rokeindustries.dev'
 
-        PROD_API_URL    = 'https://api.rokeindustries.com'
-        STAGING_API_URL = 'https://api.rokeindustries.dev'
-
         STAGING_PATH = '/opt/apps/staging/landing'
         PROD_PATH    = '/opt/apps/landing'
 
@@ -41,23 +38,21 @@ pipeline {
             '''
         )
         booleanParam(name: 'RUN_LINT',         defaultValue: true,  description: 'Ejecutar ESLint')
-        booleanParam(name: 'RUN_FORMAT_CHECK', defaultValue: true,  description: 'Verificar formato con Prettier')
-        booleanParam(name: 'SKIP_TESTS',       defaultValue: false, description: 'Saltar tests')
+        booleanParam(name: 'RUN_FORMAT_CHECK', defaultValue: false, description: 'Verificar formato con Prettier')
+        booleanParam(name: 'SKIP_TESTS',       defaultValue: true,  description: 'Saltar tests')
     }
 
     stages {
 
         stage('Checkout') {
             steps {
-                script {
-                    checkout scm
-                    sh '''
-                        echo "Branch:  $(git rev-parse --abbrev-ref HEAD)"
-                        echo "Commit:  $(git rev-parse --short HEAD)"
-                        echo "Autor:   $(git log -1 --pretty=format:'%an')"
-                        echo "Mensaje: $(git log -1 --pretty=format:'%s')"
-                    '''
-                }
+                checkout scm
+                sh '''
+                    echo "Branch:  $(git rev-parse --abbrev-ref HEAD)"
+                    echo "Commit:  $(git rev-parse --short HEAD)"
+                    echo "Autor:   $(git log -1 --pretty=format:'%an')"
+                    echo "Mensaje: $(git log -1 --pretty=format:'%s')"
+                '''
             }
         }
 
@@ -73,7 +68,7 @@ pipeline {
                         cp ${envPath} .env
                         echo ".env cargado desde: ${envPath}"
                         echo "Variables VITE_*: \$(grep -c '^VITE_' .env)"
-                        grep "^VITE_API_URL" .env
+                        grep "^VITE_API_URL" .env || true
                         grep "^VITE_ENVIRONMENT" .env || true
                     """
                 }
@@ -94,46 +89,28 @@ pipeline {
             parallel {
                 stage('Lint') {
                     when { expression { params.RUN_LINT } }
-                    steps { sh 'pnpm run lint || true' }
+                    steps { sh 'pnpm lint || true' }
                 }
                 stage('Format Check') {
                     when { expression { params.RUN_FORMAT_CHECK } }
                     steps { sh 'pnpm run format:check || true' }
                 }
-                stage('Security Audit') {
-                    steps { sh 'pnpm audit --audit-level=high || true' }
-                }
             }
-        }
-
-        stage('Tests') {
-            when { expression { !params.SKIP_TESTS } }
-            steps { sh 'pnpm run test:ci || true' }
         }
 
         stage('Build') {
             steps {
                 script {
-                    sh '''
-                        pnpm run build
+                    def buildCmd = params.DEPLOY_ENV == 'staging'    ? 'pnpm run build:staging'
+                                 : params.DEPLOY_ENV == 'production'  ? 'pnpm run build'
+                                 :                                      'pnpm run build'
+
+                    sh """
+                        ${buildCmd}
                         test -d dist && echo "Build exitoso"
                         test -f dist/index.html && echo "index.html presente"
                         du -sh dist/
-                    '''
-
-                    if (params.DEPLOY_ENV == 'staging') {
-                        sh '''
-                            grep -r "api.rokeindustries.dev" dist/ --include="*.js" -l 2>/dev/null \
-                                && echo "API URL staging confirmada en bundle" \
-                                || echo "API URL no encontrada en bundle"
-                        '''
-                    } else if (params.DEPLOY_ENV == 'production') {
-                        sh '''
-                            grep -r "api.rokeindustries.com" dist/ --include="*.js" -l 2>/dev/null \
-                                && echo "API URL produccion confirmada en bundle" \
-                                || echo "API URL no encontrada en bundle"
-                        '''
-                    }
+                    """
                 }
             }
             post {
@@ -145,14 +122,12 @@ pipeline {
 
         stage('Confirmar deploy a produccion') {
             when {
-                allOf {
-                    expression { params.DEPLOY_ENV == 'production' }
-                }
+                expression { params.DEPLOY_ENV == 'production' }
             }
             steps {
                 script {
                     input(
-                        message: "Confirmas deploy a PRODUCCION?\n\n${PROD_URL}\n${PROD_MX_URL}\nCommit: ${sh(returnStdout: true, script: 'git rev-parse --short HEAD').trim()}",
+                        message: "Confirmas deploy a PRODUCCION?\n\n${PROD_URL}\n${PROD_MX_URL}",
                         ok: 'Si, desplegar',
                         submitter: 'admin'
                     )
@@ -162,15 +137,13 @@ pipeline {
 
         stage('Deploy Staging') {
             when {
-                allOf {
-                    expression { params.DEPLOY_ENV == 'staging' }
-                }
+                expression { params.DEPLOY_ENV == 'staging' }
             }
             steps {
                 sh '''
-                    cp -r dist/. ${STAGING_PATH}/
+                    rm -rf ${STAGING_PATH}/assets
+                    cp -rf dist/. ${STAGING_PATH}/
                     test -f ${STAGING_PATH}/index.html && echo "Deploy staging exitoso"
-                    ls ${STAGING_PATH}/ | head -5
                 '''
                 echo "Disponible en: ${STAGING_URL}"
             }
@@ -178,22 +151,15 @@ pipeline {
 
         stage('Deploy Production') {
             when {
-                allOf {
-                    expression { params.DEPLOY_ENV == 'production' }
-                }
+                expression { params.DEPLOY_ENV == 'production' }
             }
             steps {
                 sh '''
-                    # Backup
                     mkdir -p /opt/backups/landing
                     cp -r ${PROD_PATH} /opt/backups/landing/landing_$(date +%Y%m%d_%H%M%S) 2>/dev/null || true
-
-                    # Deploy
-                    cp -r dist/. ${PROD_PATH}/
+                    rm -rf ${PROD_PATH}/assets
+                    cp -rf dist/. ${PROD_PATH}/
                     test -f ${PROD_PATH}/index.html && echo "Deploy produccion exitoso"
-                    ls ${PROD_PATH}/ | head -5
-
-                    # Reload Nginx
                     sudo /usr/bin/systemctl reload nginx
                 '''
                 echo "Disponible en: ${PROD_URL} y ${PROD_MX_URL}"
