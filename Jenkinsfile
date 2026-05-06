@@ -66,9 +66,9 @@ pipeline {
         stage('Build') {
             steps {
                 sh '''
-                    corepack enable
-                    pnpm install --frozen-lockfile
-                    pnpm run build
+                    npm install -g pnpm
+pnpm install
+pnpm run build
                 '''
             }
         }
