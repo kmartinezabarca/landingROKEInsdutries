@@ -1,4 +1,3 @@
-def webhook = "https://discord.com/api/webhooks/1501364059117715558/W_w1xbGHR_jifhNtdE9koiPjoaiXB2fYEJ62mAsMn9zSeOnQxLXasOWpPN9a-Is35Wsd"
 
 def notify(status, extra="") {
     def color = status == "START" ? 3447003 : status == "SUCCESS" ? 3066993 : 15158332
@@ -20,12 +19,17 @@ def notify(status, extra="") {
           {"name":"URL","value":"${url}","inline":true},
           {"name":"Build URL","value":"${env.BUILD_URL}","inline":false},
           {"name":"Extra","value":"${extra}","inline":false}
-        ],
-        "timestamp":"${new Date().format("yyyy-MM-dd'T'HH:mm:ss'Z'")}"
+        ]
       }]
     }
     """
-    sh "curl -s -H 'Content-Type: application/json' -X POST -d '${payload}' ${webhook}"
+
+    sh """
+      curl -s -H 'Content-Type: application/json' \
+           -X POST \
+           -d '${payload}' \
+           ${env.DISCORD_WEBHOOK}
+    """
 }
 
 pipeline {
@@ -35,6 +39,7 @@ pipeline {
         PROD_URL='https://rokeindustries.com'
         STAGING_URL='https://rokeindustries.dev'
         BASE_PATH='/opt/apps/landing'
+        DISCORD_WEBHOOK = 'https://discord.com/api/webhooks/1501364059117715558/W_w1xbGHR_jifhNtdE9koiPjoaiXB2fYEJ62mAsMn9zSeOnQxLXasOWpPN9a-Is35Wsd'
     }
 
     parameters {
@@ -115,11 +120,13 @@ pipeline {
             script {
                 // 🔁 rollback automático
                 sh '''
-                    LAST=$(ls -t ${BASE_PATH}/releases | sed -n 2p)
-                    if [ ! -z "$LAST" ]; then
-                      ln -sfn ${BASE_PATH}/releases/$LAST ${BASE_PATH}/current
-                      systemctl reload nginx
-                    fi
+                    if [ -d ${BASE_PATH}/releases ]; then
+  LAST=$(ls -t ${BASE_PATH}/releases | sed -n 2p)
+  if [ ! -z "$LAST" ]; then
+    ln -sfn ${BASE_PATH}/releases/$LAST ${BASE_PATH}/current
+    systemctl reload nginx
+  fi
+fi
                 '''
                 notify("FAILURE", "Rollback ejecutado")
             }
