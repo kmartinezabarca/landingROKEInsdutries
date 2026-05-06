@@ -33,7 +33,13 @@ def notify(status, extra="") {
 }
 
 pipeline {
-    agent any
+   agent {
+    docker {
+        image 'roke-jenkins-agent:latest'
+        args '-v /var/run/docker.sock:/var/run/docker.sock -v /opt/apps:/opt/apps:rw'
+        reuseNode true
+    }
+}
 
     environment {
         PROD_URL='https://rokeindustries.com'
