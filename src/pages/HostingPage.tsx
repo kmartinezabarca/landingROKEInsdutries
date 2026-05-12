@@ -5,10 +5,8 @@ import {
   X,
   Globe,
   Gamepad2,
-  Crown,
   Star,
   ArrowRight,
-  Link,
   Calculator,
 } from "lucide-react";
 import Container from "../components/common/Container";
@@ -19,9 +17,9 @@ import {
   CardTitle,
 } from "../components/common/Card";
 import Button from "../components/common/Button";
-import WhatsAppService from "../services/whatsapp/whatsappService";
 import { useServicePlans } from "../hooks/useServicePlans";
 import { useBillingCycles } from "../hooks/useBillingCycles";
+import { useCheckout } from "../contexts/CheckoutContext";
 
 const HostingPage: React.FC = () => {
   const [activeTab, setActiveTab] = React.useState<string>("hosting");
@@ -34,6 +32,7 @@ const HostingPage: React.FC = () => {
 
   const [activeBillingCycleSlug, setActiveBillingCycleSlug] =
     useState<string>("monthly");
+  const { openCheckout } = useCheckout();
 
   const currentBillingCycle = useMemo(() => {
     return billingCycles?.find(
@@ -65,14 +64,6 @@ const HostingPage: React.FC = () => {
     servicePlans?.filter((plan) => plan.category.slug === "hosting") || [];
   const gamingPlans =
     servicePlans?.filter((plan) => plan.category.slug === "gameserver") || [];
-
-  const handleContactSales = (planName: string, planType: string): void => {
-    const message =
-      WhatsAppService.generateServiceMessage(
-        planType === "hosting" ? "hosting" : "gameserver"
-      ) + ` Estoy interesado en el plan ${planName}.`;
-    WhatsAppService.openWhatsApp(message);
-  };
 
   const calculatePrice = (basePrice: string | number): string => {
     if (!currentBillingCycle) return String(basePrice);
@@ -228,7 +219,7 @@ const HostingPage: React.FC = () => {
                     <Button
                       className="w-full mt-6"
                       variant={plan.isPopular ? "default" : "outline"}
-                      onClick={() => handleContactSales(plan.name, "hosting")}
+                      onClick={() => openCheckout(plan, currentBillingCycle as any)}
                     >
                       Contratar {plan.name}
                       <ArrowRight className="w-4 h-4 ml-2" />
@@ -346,7 +337,7 @@ const HostingPage: React.FC = () => {
                       className="w-full mt-6"
                       variant={plan.isPopular ? "default" : "outline"}
                       onClick={() =>
-                        handleContactSales(plan.name, "gameserver")
+                        openCheckout(plan, currentBillingCycle as any)
                       }
                     >
                       Contratar {plan.name}

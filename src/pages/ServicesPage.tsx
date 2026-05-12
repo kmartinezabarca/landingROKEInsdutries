@@ -25,6 +25,7 @@ import { CONFIG } from "../utils/constants/config";
 import { useServicePlans } from "../hooks/useServicePlans";
 import { useCategories } from "../hooks/useCategories";
 import { useBillingCycles } from "../hooks/useBillingCycles";
+import { useCheckout } from "../contexts/CheckoutContext";
 
 const iconMap: Record<string, React.ElementType> = {
   Server,
@@ -156,6 +157,7 @@ const rokeLabsServices: ConsultingService[] = [
 ];
 
 const ServicesPage: React.FC = () => {
+  const { openCheckout } = useCheckout();
   const {
     data: categories,
     isLoading: isLoadingCategories,
@@ -444,7 +446,10 @@ const ServicesPage: React.FC = () => {
                           </li>
                         ))}
                       </ul>
-                      <Button className="w-full mt-auto">
+                      <Button
+                        className="w-full mt-auto"
+                        onClick={() => openCheckout(plan, currentBillingCycle as any)}
+                      >
                         Contratar {plan.name}
                         <ArrowRight className="ml-2 h-4 w-4" />
                       </Button>

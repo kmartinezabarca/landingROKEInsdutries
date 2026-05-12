@@ -40,7 +40,7 @@ const Hero: React.FC = () => {
           backgroundImage: "url(/assets/hero-bg.png)",
         }}
       >
-        <div className="absolute inset-0 bg-background/85 dark:bg-background/90" />
+        <div className="absolute inset-0 bg-background/85 dark:bg-background/20" />
       </div>
 
       {/* Content */}

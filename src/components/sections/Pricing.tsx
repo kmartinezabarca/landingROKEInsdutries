@@ -8,6 +8,7 @@ import Button from "../common/Button";
 import { ROUTES } from "../../utils/constants/config";
 import { useServicePlans } from "../../hooks/useServicePlans";
 import { useBillingCycles } from "../../hooks/useBillingCycles";
+import { useCheckout } from "../../contexts/CheckoutContext";
 
 interface EnterprisePlan {
   name: string;
@@ -20,6 +21,7 @@ const Pricing: React.FC = () => {
   const { data: servicePlans, isLoading, isError } = useServicePlans();
   const { data: billingCycles } = useBillingCycles();
   const [activeBillingCycleSlug, setActiveBillingCycleSlug] = useState<string>("monthly");
+  const { openCheckout } = useCheckout();
 
   const currentBillingCycle = useMemo(() => {
     return billingCycles?.find((cycle) => cycle.slug === activeBillingCycleSlug);
@@ -178,15 +180,12 @@ const Pricing: React.FC = () => {
                     <Button
                       className="w-full"
                       variant={plan.isPopular ? "default" : "outline"}
-                      asChild
+                      onClick={() => openCheckout(plan, currentBillingCycle as any)}
                     >
-                      <Link
-                        to={ROUTES.HOSTING}
-                        className="flex items-center justify-center gap-2"
-                      >
+                      <span className="flex items-center justify-center gap-2">
                         Contratar {plan.name}
                         <ArrowRight className="w-4 h-4" />
-                      </Link>
+                      </span>
                     </Button>
                   </CardContent>
                 </Card>
