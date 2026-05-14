@@ -2,7 +2,7 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { CardElement, useStripe, useElements } from '@stripe/react-stripe-js';
 import { useQuery } from '@tanstack/react-query';
 import { Loader2, ShieldCheck, CreditCard, Plus, ChevronDown, Receipt } from 'lucide-react';
-import { toast } from 'sonner';
+import { sileo as toast } from 'sileo';
 import ApiService from '../../../lib/apiClient';
 import contractService from '../../../services/contractService';
 import type { InvoiceData } from '../../../services/contractService';

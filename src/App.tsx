@@ -3,7 +3,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { GoogleOAuthProvider } from '@react-oauth/google';
 import { MessageCircle, Phone } from 'lucide-react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { Toaster } from './components/ui/sonner';
+import { Toaster } from './components/ui/sileo-toaster';
 import { ThemeProvider } from './contexts/ThemeContext';
 import { AuthProvider } from './contexts/AuthContext';
 import { CheckoutProvider } from './contexts/CheckoutContext';
@@ -89,7 +89,11 @@ const App: React.FC = () => {
           </FloatingButton>
         </div>
         <CheckoutModal />
+<<<<<<< HEAD
         <Toaster richColors position="top-right" closeButton />
+=======
+        <Toaster />
+>>>>>>> 1c6a7d393d950deab418b9a470c38bc65a6b26c5
       </Router>
     </ThemeProvider>
     </CheckoutProvider>
