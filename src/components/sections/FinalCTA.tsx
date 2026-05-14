@@ -31,7 +31,7 @@ const FinalCTA: React.FC = () => {
               asChild
             >
               <Link to={ROUTES.HOSTING} className="flex items-center justify-center gap-2">
-                Comenzar Ahora
+                Ver planes disponibles
                 <ArrowRight className="w-5 h-5" />
               </Link>
             </Button>

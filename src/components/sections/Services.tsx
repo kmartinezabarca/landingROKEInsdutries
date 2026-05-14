@@ -280,7 +280,7 @@ const Services: React.FC = () => {
               </Link>
             </Button>
             <Button variant="outline" size="lg" asChild>
-              <Link to={ROUTES.HOSTING}>Ver Planes de Hosting</Link>
+              <Link to={ROUTES.HOSTING}>Ver planes disponibles</Link>
             </Button>
           </div>
         </motion.div>

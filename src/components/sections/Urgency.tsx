@@ -40,7 +40,7 @@ const Urgency: React.FC = () => {
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Button size="lg" asChild className="text-lg px-8 py-4">
                 <Link to={ROUTES.HOSTING} className="flex items-center justify-center gap-2">
-                  Ver Planes Ahora
+                  Ver planes disponibles
                   <ArrowRight className="w-5 h-5" />
                 </Link>
               </Button>

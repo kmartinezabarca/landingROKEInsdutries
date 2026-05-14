@@ -73,7 +73,7 @@ const Hero: React.FC = () => {
           >
             <Button size="lg" className="text-lg px-8 py-4" asChild>
               <Link to={ROUTES.HOSTING} className="flex items-center">
-                Ver Planes y Precios
+                Ver planes disponibles
                 <ArrowRight className="ml-2 h-5 w-5" />
               </Link>
             </Button>

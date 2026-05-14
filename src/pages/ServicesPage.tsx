@@ -26,6 +26,12 @@ import { useServicePlans } from "../hooks/useServicePlans";
 import { useCategories } from "../hooks/useCategories";
 import { useBillingCycles } from "../hooks/useBillingCycles";
 import { useCheckout } from "../contexts/CheckoutContext";
+import {
+  getAvailableCategories,
+  getPlanPrice,
+  getPlansForCategory,
+  sortPlanFeatures,
+} from "../utils/serviceCatalog";
 
 const iconMap: Record<string, React.ElementType> = {
   Server,
@@ -178,36 +184,74 @@ const ServicesPage: React.FC = () => {
   const [activeBillingCycleSlug, setActiveBillingCycleSlug] =
     useState<string>("monthly");
 
-  useEffect(() => {
-    if (categories && categories.length > 0 && !activeCategorySlug) {
-      setActiveCategorySlug(categories[0].slug);
-    }
-  }, [categories, activeCategorySlug]);
+  const availableCategories = useMemo(() => {
+    return getAvailableCategories(categories, servicePlans);
+  }, [categories, servicePlans]);
 
-  const currentBillingCycle = useMemo(() => {
-    return billingCycles?.find(
-      (cycle) => cycle.slug === activeBillingCycleSlug
+  useEffect(() => {
+    if (!availableCategories.length) return;
+
+    const hasSelectedCategory = availableCategories.some(
+      (category) => category.slug === activeCategorySlug
     );
-  }, [billingCycles, activeBillingCycleSlug]);
+
+    if (!hasSelectedCategory) {
+      setActiveCategorySlug(availableCategories[0].slug || null);
+    }
+  }, [availableCategories, activeCategorySlug]);
 
   const currentCategory = useMemo(() => {
-    return categories?.find((cat) => cat.slug === activeCategorySlug);
-  }, [categories, activeCategorySlug]);
+    return availableCategories.find((cat) => cat.slug === activeCategorySlug);
+  }, [availableCategories, activeCategorySlug]);
 
   const filteredPlans = useMemo(() => {
-    if (!servicePlans || !activeCategorySlug) return [];
-    return servicePlans.filter(
-      (plan) => plan.category.slug === activeCategorySlug
-    );
+    return getPlansForCategory(servicePlans, activeCategorySlug);
   }, [servicePlans, activeCategorySlug]);
 
+  const availableBillingCycles = useMemo(() => {
+    if (!billingCycles?.length) return [];
 
-  const calculatePrice = (basePrice: string | number): string => {
-    if (!currentBillingCycle) return String(basePrice);
-    const discount = parseFloat(currentBillingCycle.discount_percentage) / 100;
-    const finalPrice = parseFloat(String(basePrice)) * (1 - discount);
-    return finalPrice.toFixed(2);
-  };
+    const categoryCycleSlugs = new Set(
+      filteredPlans.flatMap((plan) =>
+        (plan.pricing || []).map(
+          (entry: any) => entry.billingCycle?.slug || entry.billing_cycle?.slug
+        )
+      )
+    );
+
+    const filtered = billingCycles.filter((cycle: any) => {
+      if (cycle.is_active === false) return false;
+      if (categoryCycleSlugs.size === 0) return true;
+      return categoryCycleSlugs.has(cycle.slug);
+    });
+
+    return filtered.sort((left: any, right: any) => {
+      const leftOrder = Number(left.sort_order ?? 999);
+      const rightOrder = Number(right.sort_order ?? 999);
+      return leftOrder - rightOrder;
+    });
+  }, [billingCycles, filteredPlans]);
+
+  useEffect(() => {
+    if (!availableBillingCycles.length) return;
+
+    const hasSelectedCycle = availableBillingCycles.some(
+      (cycle: any) => cycle.slug === activeBillingCycleSlug
+    );
+
+    if (!hasSelectedCycle) {
+      const preferredCycle =
+        availableBillingCycles.find((cycle: any) => cycle.slug === "monthly") ||
+        availableBillingCycles[0];
+      setActiveBillingCycleSlug(preferredCycle.slug);
+    }
+  }, [availableBillingCycles, activeBillingCycleSlug]);
+
+  const currentBillingCycle = useMemo(() => {
+    return availableBillingCycles.find(
+      (cycle: any) => cycle.slug === activeBillingCycleSlug
+    );
+  }, [availableBillingCycles, activeBillingCycleSlug]);
 
   const isLoading =
     isLoadingCategories || isLoadingServicePlans || isLoadingBillingCycles;
@@ -263,7 +307,7 @@ const ServicesPage: React.FC = () => {
       <section className="py-12 bg-card/50">
         <Container>
           <div className="flex flex-wrap justify-center gap-4">
-            {categories?.map((category, index) => {
+            {availableCategories.map((category, index) => {
               const Icon = iconMap[category.icon];
               if (!Icon) return null;
               return (
@@ -323,7 +367,7 @@ const ServicesPage: React.FC = () => {
 
             <div className="flex justify-center mb-10">
               <div className="bg-muted p-1 rounded-lg flex gap-1">
-                {billingCycles?.map((cycle) => (
+                {availableBillingCycles.map((cycle: any) => (
                   <button
                     key={cycle.id}
                     onClick={() => setActiveBillingCycleSlug(cycle.slug)}
@@ -350,7 +394,7 @@ const ServicesPage: React.FC = () => {
                   Planes de {currentCategory.name}
                 </h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                  {filteredPlans.map((plan) => (
+                  {filteredPlans.map((plan: any) => (
                     <Card
                       key={plan.id}
                       className="flex flex-col p-6 border border-border/50 rounded-lg shadow-sm hover:shadow-md transition-all duration-300"
@@ -373,9 +417,9 @@ const ServicesPage: React.FC = () => {
                         {plan.name}
                       </h4>
                       <p className="text-4xl font-extrabold text-primary mb-4 text-center">
-                        ${calculatePrice(plan.basePrice)}
+                        ${getPlanPrice(plan, currentBillingCycle).toFixed(2)}
                         <span className="text-lg font-medium text-muted-foreground">
-                          /{currentBillingCycle?.name.toLowerCase()}
+                          /{currentBillingCycle?.name?.toLowerCase() || "mes"}
                         </span>
                       </p>
 
@@ -436,13 +480,13 @@ const ServicesPage: React.FC = () => {
                       )}
 
                       <ul className="space-y-3 flex-grow mb-6">
-                        {plan.features.map((feature, idx) => (
+                        {sortPlanFeatures(plan.features).map((feature: any, idx) => (
                           <li
                             key={idx}
                             className="flex items-center text-muted-foreground"
                           >
                             <CheckCircle className="w-5 h-5 text-green-500 mr-2 flex-shrink-0" />
-                            <span>{feature.feature}</span>
+                            <span>{typeof feature === "string" ? feature : feature.feature}</span>
                           </li>
                         ))}
                       </ul>

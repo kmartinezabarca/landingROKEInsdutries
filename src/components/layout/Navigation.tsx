@@ -7,6 +7,9 @@ import Container from '../common/Container';
 import Button from '../common/Button';
 import ThemeToggle from './ThemeToggle';
 import { cn } from '../../lib/utils';
+import { useCategories } from '../../hooks/useCategories';
+import { useServicePlans } from '../../hooks/useServicePlans';
+import { getAvailableCategories } from '../../utils/serviceCatalog';
 
 interface NavigationItem {
   name: string;
@@ -16,11 +19,16 @@ interface NavigationItem {
 const Navigation: React.FC = () => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const location = useLocation();
+  const { data: categories } = useCategories();
+  const { data: servicePlans } = useServicePlans();
+
+  const availableCategories = getAvailableCategories(categories, servicePlans);
+  const featuredPlansLabel = availableCategories[0]?.name || 'Planes';
 
   const navigationItems: NavigationItem[] = [
     { name: 'Inicio', href: ROUTES.HOME },
     { name: 'Servicios', href: ROUTES.SERVICES },
-    { name: 'Hosting', href: ROUTES.HOSTING },
+    { name: featuredPlansLabel, href: ROUTES.HOSTING },
     { name: 'Blog', href: ROUTES.BLOG },
     { name: 'Nosotros', href: ROUTES.ABOUT },
     { name: 'Contacto', href: ROUTES.CONTACT },
