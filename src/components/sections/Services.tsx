@@ -1,23 +1,7 @@
 import React from "react";
 import { motion } from "framer-motion";
-import {
-  Server,
-  LifeBuoy,
-  Zap,
-  Shield,
-  Code,
-  Database,
-  Gamepad2,
-  Cloud,
-  ArrowRight,
-  Cpu,
-  ScanEye,
-  Check,
-} from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { Link } from "react-router-dom";
-import Container from "../common/Container";
-import { Card, CardContent, CardHeader, CardTitle } from "../common/Card";
-import Button from "../common/Button";
 import { ROUTES } from "../../utils/constants/config";
 import { useServices } from "../../hooks/useServices";
 
@@ -31,11 +15,79 @@ interface ServiceItem {
   features?: string[];
   type: string;
   slug?: string;
+  linkLabel?: string;
 }
 
-// Mapeo de nombres de íconos a componentes de Lucide React
-const iconMap: Record<string, React.ElementType> = {
-  Server, LifeBuoy, Zap, Shield, Code, Database, Gamepad2, Cloud, Cpu, ScanEye,
+/* ── Custom SVGs matching Landing.html exactly (26×26, stroke-width 1.5) ── */
+const SvgServer = () => (
+  <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true">
+    <rect x="3" y="4" width="18" height="6" rx="1" />
+    <rect x="3" y="14" width="18" height="6" rx="1" />
+    <circle cx="7" cy="7" r="0.8" fill="currentColor" />
+    <circle cx="7" cy="17" r="0.8" fill="currentColor" />
+  </svg>
+);
+
+const SvgGamepad = () => (
+  <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true">
+    <rect x="3" y="7" width="18" height="11" rx="3" />
+    <line x1="7" y1="12" x2="9" y2="12" />
+    <line x1="8" y1="11" x2="8" y2="13" />
+    <circle cx="16" cy="11.5" r="1" fill="currentColor" />
+    <circle cx="17.5" cy="13.5" r="1" fill="currentColor" />
+  </svg>
+);
+
+const SvgCpu = () => (
+  <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true">
+    <rect x="5" y="5" width="14" height="14" rx="1" />
+    <line x1="9" y1="2" x2="9" y2="5" />
+    <line x1="15" y1="2" x2="15" y2="5" />
+    <line x1="9" y1="19" x2="9" y2="22" />
+    <line x1="15" y1="19" x2="15" y2="22" />
+    <line x1="2" y1="9" x2="5" y2="9" />
+    <line x1="2" y1="15" x2="5" y2="15" />
+    <line x1="19" y1="9" x2="22" y2="9" />
+    <line x1="19" y1="15" x2="22" y2="15" />
+    <circle cx="12" cy="12" r="2.5" fill="currentColor" />
+  </svg>
+);
+
+const SvgCloud = () => (
+  <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true">
+    <path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z" />
+    <path d="M8 14l3 3 5-5" />
+  </svg>
+);
+
+const SvgDefault = () => (
+  <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true">
+    <rect x="3" y="3" width="18" height="18" rx="2" />
+    <path d="M9 9h6M9 12h6M9 15h4" />
+  </svg>
+);
+
+const iconMap: Record<string, React.FC> = {
+  Server:    SvgServer,
+  LifeBuoy:  SvgServer,
+  Gamepad2:  SvgGamepad,
+  Cpu:       SvgCpu,
+  ScanEye:   SvgCpu,
+  Cloud:     SvgCloud,
+  Shield:    SvgCloud,
+  Code:      SvgDefault,
+  Database:  SvgDefault,
+  Zap:       SvgDefault,
+};
+
+const linkLabels: Record<string, string> = {
+  Server:   "Ver planes",
+  LifeBuoy: "Ver planes",
+  Gamepad2: "Ver opciones",
+  Cpu:      "Explorar casos",
+  ScanEye:  "Explorar casos",
+  Cloud:    "Cómo trabajamos",
+  Shield:   "Cómo trabajamos",
 };
 
 const Services: React.FC = () => {
@@ -43,248 +95,288 @@ const Services: React.FC = () => {
 
   if (isLoading) {
     return (
-      <section className="py-20">
-        <Container>
-          <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
-              Cargando Servicios...
-            </h2>
-            <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-              Obteniendo la información más reciente para ti.
-            </p>
+      <section className="roke-section-services">
+        <div style={{ maxWidth: 1296, margin: "0 auto" }}>
+          <div
+            style={{
+              fontFamily: '"JetBrains Mono", monospace',
+              fontSize: 11,
+              color: "var(--roke-text-dimmer)",
+              marginBottom: 48,
+              display: "flex",
+              alignItems: "center",
+              gap: 14,
+            }}
+          >
+            <span
+              style={{ width: 32, height: 1, background: "var(--roke-text-dimmer)", display: "inline-block" }}
+            />
+            Cargando servicios…
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16">
-            {[...Array(6)].map((_, index) => (
-              <motion.div
-                key={index}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: 0.1 * index }}
-                viewport={{ once: true }}
-                className="h-full"
-              >
-                <Card className="relative h-full flex flex-col p-6 overflow-hidden bg-gradient-to-br from-card to-card/60 border-border/20 group transition-all duration-300 hover:border-primary/30 animate-pulse">
-                  <CardHeader className="p-0 mb-6 z-10 flex items-center gap-4">
-                    <div className="w-12 h-12 bg-gray-200 rounded-lg flex items-center justify-center shrink-0"></div>
-                    <div className="h-6 bg-gray-200 rounded w-3/4"></div>
-                  </CardHeader>
-                  <CardContent className="p-0 flex-grow flex flex-col z-10">
-                    <div className="h-4 bg-gray-200 rounded w-full mb-2"></div>
-                    <div className="h-4 bg-gray-200 rounded w-5/6 mb-6"></div>
-                    <ul className="space-y-2">
-                      {[...Array(4)].map((_, idx) => (
-                        <li key={idx} className="flex items-start text-sm text-muted-foreground">
-                          <div className="w-4 h-4 bg-gray-200 rounded-full mr-2 mt-0.5 shrink-0"></div>
-                          <div className="h-4 bg-gray-200 rounded w-full"></div>
-                        </li>
-                      ))}
-                    </ul>
-                    <div className="mt-auto pt-6">
-                      <div className="h-8 bg-gray-200 rounded w-1/3"></div>
-                    </div>
-                  </CardContent>
-                </Card>
-              </motion.div>
+          <div className="roke-services-grid">
+            {[...Array(4)].map((_, i) => (
+              <div
+                key={i}
+                style={{
+                  padding: "36px 36px 32px",
+                  border: "1px solid var(--roke-border-strong)",
+                  margin: -1,
+                  background: "var(--roke-surface)",
+                  minHeight: 200,
+                }}
+              />
             ))}
           </div>
-        </Container>
+        </div>
       </section>
     );
   }
 
   if (isError) {
     return (
-      <section className="py-20">
-        <Container>
-          <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-4xl font-bold text-red-500 mb-4">
-              Error al cargar los servicios
-            </h2>
-            <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-              Lo sentimos, no pudimos cargar los servicios. Por favor, inténtalo de nuevo más tarde.
-            </p>
-            <p className="text-sm text-red-400 mt-2">Detalles del error: {error.message}</p>
-          </div>
-        </Container>
+      <section className="roke-section-services">
+        <div style={{ maxWidth: 1296, margin: "0 auto", textAlign: "center" }}>
+          <p style={{ color: "var(--roke-text-dim)", fontSize: 14 }}>
+            Error al cargar los servicios: {error.message}
+          </p>
+        </div>
       </section>
     );
   }
 
-  const mainServices: ServiceItem[] = data?.filter((service: ServiceItem) => service.type === "main") || [];
-  const additionalServices: ServiceItem[] = data?.filter((service: ServiceItem) => service.type === "additional") || [];
+  const mainServices: ServiceItem[] =
+    data?.filter((s: ServiceItem) => s.type === "main") || [];
 
   return (
-    <section className="py-20">
-      <Container>
-        {/* Header */}
-        <motion.div
+    <section className="roke-section-services">
+      <div style={{ maxWidth: 1296, margin: "0 auto" }}>
+
+        {/* ── Section header ── */}
+        <motion.header
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8 }}
+          transition={{ duration: 0.7 }}
           viewport={{ once: true }}
-          className="text-center mb-16"
+          className="roke-section-header"
         >
-          <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
-            Nuestros Servicios
-          </h2>
-          <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-            Ofrecemos una amplia gama de servicios tecnológicos diseñados para
-            impulsar tu presencia digital y optimizar tu infraestructura.
-          </p>
-        </motion.div>
+          <div>
+            {/* Eyebrow */}
+            <div className="roke-eyebrow">
+              <span className="roke-eyebrow-line" />
+              <span>02 / SERVICIOS</span>
+            </div>
 
-        {/* Main Services Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16">
-          {mainServices.map((service, index) => {
-            const Icon = iconMap[service.iconName];
-            if (!Icon) return null;
-            return (
-              <motion.div
-                key={service.id || service.title}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: 0.1 * index }}
-                viewport={{ once: true }}
-                className="h-full"
+            {/* Title */}
+            <h2
+              style={{
+                fontFamily: '"Montserrat", system-ui, sans-serif',
+                fontSize: 64,
+                fontWeight: 700,
+                lineHeight: 0.98,
+                letterSpacing: "-0.035em",
+                color: "var(--roke-text)",
+                margin: 0,
+              }}
+            >
+              Lo que{" "}
+              <span
+                style={{
+                  color: "var(--roke-text-dim)",
+                  fontWeight: 500,
+                }}
               >
-                <Card
-                  className="relative h-full flex flex-col p-6 overflow-hidden
-                     bg-gradient-to-br from-card to-card/60
-                     border-border/20 group transition-all duration-300
-                     hover:border-primary/30"
+                hacemos.
+              </span>
+            </h2>
+          </div>
+
+          {/* Subtitle */}
+          <p
+            style={{
+              fontSize: 17,
+              lineHeight: 1.55,
+              color: "var(--roke-text-dim)",
+              margin: 0,
+              paddingBottom: 6,
+              maxWidth: 520,
+            }}
+          >
+            Cuatro líneas de servicio, una sola obsesión: que tu infraestructura
+            corra como debe. Diseñamos, desplegamos y monitoreamos. Tú decides
+            hasta dónde llegamos.
+          </p>
+        </motion.header>
+
+        {/* ── Services grid ── */}
+        <div className="roke-services-grid">
+          {mainServices.map((service, index) => {
+            const Icon = iconMap[service.iconName] || SvgDefault;
+            const linkLabel = linkLabels[service.iconName] || "Saber más";
+            return (
+              <motion.article
+                key={service.id || service.title}
+                initial={{ opacity: 0, y: 24 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.45, delay: 0.08 * index }}
+                viewport={{ once: true }}
+                style={{
+                  padding: "36px 36px 32px",
+                  border: "1px solid var(--roke-border-strong)",
+                  margin: -1,
+                  background: "var(--roke-surface)",
+                  position: "relative",
+                  display: "flex",
+                  flexDirection: "column",
+                  gap: 14,
+                  transition: "background 0.18s ease",
+                  cursor: "default",
+                }}
+                onMouseEnter={(e) =>
+                  ((e.currentTarget as HTMLElement).style.background =
+                    "var(--roke-surface-2)")
+                }
+                onMouseLeave={(e) =>
+                  ((e.currentTarget as HTMLElement).style.background =
+                    "var(--roke-surface)")
+                }
+              >
+                {/* Head row: icon LEFT, num RIGHT */}
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "flex-start",
+                    justifyContent: "space-between",
+                    marginBottom: 8,
+                  }}
                 >
+                  {/* Icon box */}
                   <div
-                    className="absolute inset-0 bg-gradient-to-r from-primary/10 to-transparent
-                       opacity-0 group-hover:opacity-100 transition-opacity duration-300
-                       -translate-x-full group-hover:translate-x-0"
-                    style={{ transitionDuration: "500ms" }}
-                  />
-
-                  <CardHeader
-                    className="p-0 mb-6 z-10 transition-transform duration-300
-             group-hover:-translate-y-1 flex items-center gap-4"
+                    className="roke-icon-box"
+                    style={{
+                      width: 56,
+                      height: 56,
+                      display: "grid",
+                      placeItems: "center",
+                      color: "var(--roke-text)",
+                      border: "1px solid var(--roke-border-strong)",
+                      borderRadius: 6,
+                      background: "var(--roke-bg)",
+                      position: "relative",
+                      overflow: "hidden",
+                      flexShrink: 0,
+                    }}
                   >
-                    <div
-                      className={`w-12 h-12 ${service.bgColor} rounded-lg flex items-center justify-center
-               transition-all duration-300 shrink-0`}
-                    >
-                      <Icon className={`w-6 h-6 ${service.color}`} />
-                    </div>
-                    <CardTitle className="text-xl text-card-foreground">
-                      {service.title}
-                    </CardTitle>
-                  </CardHeader>
+                    <Icon />
+                  </div>
 
-                  <CardContent className="p-0 flex-grow flex flex-col z-10">
-                    <p className="text-muted-foreground mb-6">
-                      {service.description}
-                    </p>
+                  {/* Number */}
+                  <span
+                    style={{
+                      fontFamily: '"JetBrains Mono", monospace',
+                      fontSize: 11,
+                      color: "var(--roke-text-dimmer)",
+                      letterSpacing: "0.14em",
+                    }}
+                  >
+                    / 0{index + 1}
+                  </span>
+                </div>
 
-                    <ul className="space-y-2">
-                      {service.features && service.features.map((feature, idx) => (
-                        <li
-                          key={idx}
-                          className="flex items-start text-sm text-muted-foreground"
-                        >
-                          <Check className="w-4 h-4 text-primary mr-2 mt-0.5 shrink-0" />
-                          <span>{feature}</span>
-                        </li>
-                      ))}
-                    </ul>
-                    <div className="mt-auto pt-6">
-                      <Button
-                        variant="ghost"
-                        className="p-0 h-auto text-primary
-                           opacity-0 group-hover:opacity-100
-                           translate-y-4 group-hover:translate-y-0
-                           transition-all duration-300"
-                        asChild
+                {/* Title */}
+                <h3
+                  style={{
+                    fontFamily: '"Montserrat", system-ui, sans-serif',
+                    fontSize: 26,
+                    fontWeight: 700,
+                    letterSpacing: "-0.02em",
+                    color: "var(--roke-text)",
+                    margin: 0,
+                    lineHeight: 1.05,
+                  }}
+                >
+                  {service.title}
+                </h3>
+
+                {/* Description */}
+                <p
+                  style={{
+                    fontSize: 15,
+                    lineHeight: 1.5,
+                    color: "var(--roke-text-dim)",
+                    margin: 0,
+                  }}
+                >
+                  {service.description}
+                </p>
+
+                {/* Tags */}
+                {service.features && service.features.length > 0 && (
+                  <ul
+                    style={{
+                      display: "flex",
+                      flexWrap: "wrap",
+                      gap: 6,
+                      listStyle: "none",
+                      margin: "8px 0 0",
+                      padding: 0,
+                    }}
+                  >
+                    {service.features.slice(0, 5).map((feature, idx) => (
+                      <li
+                        key={idx}
+                        style={{
+                          fontFamily: '"JetBrains Mono", monospace',
+                          fontSize: 11,
+                          padding: "4px 10px",
+                          border: "1px solid var(--roke-border-strong)",
+                          color: "var(--roke-text-dim)",
+                          letterSpacing: "0.04em",
+                        }}
                       >
-                        <Link
-                          to={`/servicios/${service.slug}`}
-                          className="flex items-center"
-                        >
-                          Saber más
-                          <ArrowRight className="ml-2 h-4 w-4" />
-                        </Link>
-                      </Button>
-                    </div>
-                  </CardContent>
-                </Card>
-              </motion.div>
+                        {feature}
+                      </li>
+                    ))}
+                  </ul>
+                )}
+
+                {/* Link */}
+                <Link
+                  to={`${ROUTES.SERVICES}${service.slug ? `#${service.slug}` : ""}`}
+                  style={{
+                    marginTop: "auto",
+                    paddingTop: 16,
+                    fontSize: 13,
+                    fontWeight: 600,
+                    color: "var(--roke-text)",
+                    textDecoration: "none",
+                    letterSpacing: "0.04em",
+                    textTransform: "uppercase",
+                    display: "inline-flex",
+                    alignItems: "center",
+                    gap: 8,
+                    borderTop: "1px solid var(--roke-border)",
+                    transition: "color 0.15s",
+                  }}
+                  onMouseEnter={(e) =>
+                    ((e.currentTarget as HTMLElement).style.color =
+                      "var(--roke-text-dim)")
+                  }
+                  onMouseLeave={(e) =>
+                    ((e.currentTarget as HTMLElement).style.color =
+                      "var(--roke-text)")
+                  }
+                >
+                  {linkLabel}
+                  <ArrowRight
+                    style={{ width: 14, height: 14, transition: "transform 0.18s ease" }}
+                  />
+                </Link>
+              </motion.article>
             );
           })}
         </div>
 
-        {/* Additional Services */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.4 }}
-          viewport={{ once: true }}
-          className="bg-muted/30 dark:bg-slate-900/50 rounded-2xl p-8 mb-12"
-        >
-          <h3 className="text-2xl font-bold text-foreground mb-8 text-center">
-            Servicios Adicionales
-          </h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            {additionalServices.map((service, index) => {
-              const Icon = iconMap[service.iconName];
-              if (!Icon) return null; // Manejar caso de ícono no encontrado
-              return (
-                <motion.div
-                  key={service.id || service.title}
-                  initial={{ opacity: 0, x: index % 2 === 0 ? -30 : 30 }}
-                  whileInView={{ opacity: 1, x: 0 }}
-                  transition={{ duration: 0.6, delay: 0.2 * index }}
-                  viewport={{ once: true }}
-                  className="flex items-start space-x-4"
-                >
-                  <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center flex-shrink-0">
-                    <Icon className="w-6 h-6 text-primary" />
-                  </div>
-                  <div>
-                    <h4 className="text-lg font-semibold text-foreground mb-2">
-                      {service.title}
-                    </h4>
-                    <p className="text-muted-foreground">
-                      {service.description}
-                    </p>
-                  </div>
-                </motion.div>
-              );
-            })}
-          </div>
-        </motion.div>
-
-        {/* CTA Section */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.6 }}
-          viewport={{ once: true }}
-          className="text-center"
-        >
-          <h3 className="text-2xl font-bold text-foreground mb-4">
-            ¿Necesitas una solución personalizada?
-          </h3>
-          <p className="text-muted-foreground mb-8 max-w-2xl mx-auto">
-            Nuestro equipo de expertos está listo para ayudarte a encontrar la
-            solución perfecta para tus necesidades específicas.
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button size="lg" asChild>
-              <Link to={ROUTES.CONTACT} className="flex items-center">
-                Solicitar Cotización
-                <ArrowRight className="ml-2 h-4 w-4" />
-              </Link>
-            </Button>
-            <Button variant="outline" size="lg" asChild>
-              <Link to={ROUTES.HOSTING}>Ver planes disponibles</Link>
-            </Button>
-          </div>
-        </motion.div>
-      </Container>
+      </div>
     </section>
   );
 };

@@ -8,6 +8,7 @@ import { ThemeProvider } from './contexts/ThemeContext';
 import { AuthProvider } from './contexts/AuthContext';
 import { CheckoutProvider } from './contexts/CheckoutContext';
 import { CheckoutModal } from './components/checkout/CheckoutModal';
+import { googleClientId, isGoogleAuthConfigured } from './lib/oauth';
 import Navigation from './components/layout/Navigation';
 import Footer from './components/layout/Footer';
 import FloatingButton from './components/common/FloatingButton';
@@ -39,14 +40,13 @@ const App: React.FC = () => {
     WhatsAppService.openWhatsApp();
   };
 
-  return (
-    <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID as string}>
+  const appContent = (
     <QueryClientProvider client={queryClient}>
     <AuthProvider>
     <CheckoutProvider>
     <ThemeProvider>
       <Router>
-        <div className="min-h-screen bg-background text-foreground">
+        <div className="home-modern min-h-screen bg-background text-foreground">
           <Navigation />
 
           <main>
@@ -89,16 +89,21 @@ const App: React.FC = () => {
           </FloatingButton>
         </div>
         <CheckoutModal />
-<<<<<<< HEAD
         <Toaster richColors position="top-right" closeButton />
-=======
-        <Toaster />
->>>>>>> 1c6a7d393d950deab418b9a470c38bc65a6b26c5
       </Router>
     </ThemeProvider>
     </CheckoutProvider>
     </AuthProvider>
     </QueryClientProvider>
+  );
+
+  if (!isGoogleAuthConfigured) {
+    return appContent;
+  }
+
+  return (
+    <GoogleOAuthProvider clientId={googleClientId}>
+      {appContent}
     </GoogleOAuthProvider>
   );
 }

@@ -1,133 +1,97 @@
 import React from "react";
 import { motion } from "framer-motion";
-import { Zap, Clock, Gift, ArrowRight } from "lucide-react";
-import { Link } from "react-router-dom";
-import Container from "../common/Container";
-import Button from "../common/Button";
-import { ROUTES } from "../../utils/constants/config";
+import { ArrowRight } from "lucide-react";
+
+const steps = [
+  {
+    num: "01",
+    title: "Diagnóstico",
+    desc: "Auditamos tu stack, identificamos cuellos de botella y armamos una propuesta concreta. Sin compromiso, sin jerga inútil.",
+    tags: ["3 - 5 días", "Auditoría técnica", "Propuesta + presupuesto"],
+    arrow: true,
+  },
+  {
+    num: "02",
+    title: "Implementación",
+    desc: "Diseño, despliegue y migración sin downtime. Trabajamos en paralelo con tu equipo para que aprendan a la par.",
+    tags: ["2 - 6 semanas", "Cero downtime", "Docs y handover"],
+    arrow: true,
+  },
+  {
+    num: "03",
+    title: "Soporte continuo",
+    desc: "Monitoreo 24/7, SLA real, parches de seguridad y mejora continua. Tu infra envejece bien.",
+    tags: ["SLA 99.9%", "Alertas WhatsApp", "Revisión mensual"],
+    arrow: false,
+  },
+];
 
 const Urgency: React.FC = () => {
   return (
-    <section className="py-20 bg-gradient-to-br from-primary/10 via-primary/5 to-primary/10 dark:from-slate-950 dark:via-primary/10 dark:to-slate-950">
-      <Container>
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8 }}
-          viewport={{ once: true }}
-          className="max-w-4xl mx-auto"
-        >
-          {/* Main CTA Block */}
-          <div className="bg-card border-2 border-primary rounded-2xl p-12 text-center mb-12">
-            <motion.div
-              animate={{ scale: [1, 1.05, 1] }}
-              transition={{ duration: 2, repeat: Infinity }}
-              className="inline-block mb-6"
-            >
-              <div className="flex items-center gap-2 bg-primary/10 px-4 py-2 rounded-full">
-                <Zap className="w-5 h-5 text-primary" />
-                <span className="font-semibold text-primary">Oferta Limitada</span>
-              </div>
-            </motion.div>
-
-            <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
-              Lanza tu infraestructura hoy
-            </h2>
-            <p className="text-xl text-muted-foreground mb-8 max-w-2xl mx-auto">
-              Primeros 50 clientes nuevos reciben soporte prioritario gratis por 3 meses.
-            </p>
-
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button size="lg" asChild className="text-lg px-8 py-4">
-                <Link to={ROUTES.HOSTING} className="flex items-center justify-center gap-2">
-                  Ver planes disponibles
-                  <ArrowRight className="w-5 h-5" />
-                </Link>
-              </Button>
-              <Button
-                size="lg"
-                variant="outline"
-                asChild
-                className="text-lg px-8 py-4"
-              >
-                <a href="https://wa.me/+1234567890?text=Hola%20ROKE%20Industries%2C%20quiero%20aprovechar%20la%20oferta%20limitada" className="flex items-center justify-center gap-2">
-                  Hablar por WhatsApp
-                </a>
-              </Button>
+    <section className="bg-[#f6f7f6] px-6 py-16 text-[#141821] md:px-14 md:py-20">
+      <div className="mx-auto max-w-[1296px]">
+        <div className="mb-16 grid gap-10 md:grid-cols-[1fr_1.05fr] md:items-start lg:mb-20">
+          <div>
+            <div className="roke-eyebrow mb-7">
+              <span className="roke-eyebrow-line" />
+              <span>04 / CÓMO TRABAJAMOS</span>
             </div>
+
+            <h2 className="text-[54px] font-bold leading-[0.96] tracking-[-0.045em] text-[#141821] md:text-[64px] lg:text-[66px]">
+              Tres pasos.
+              <br />
+              <span className="font-medium text-[#465363]">Sin sorpresas.</span>
+            </h2>
           </div>
 
-          {/* Benefits Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.1 }}
-              viewport={{ once: true }}
-              className="bg-card border border-border rounded-lg p-6 text-center"
-            >
-              <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mx-auto mb-4">
-                <Clock className="w-6 h-6 text-primary" />
-              </div>
-              <h3 className="text-lg font-semibold text-foreground mb-2">
-                Despliegue en 24h
-              </h3>
-              <p className="text-muted-foreground text-sm">
-                Tus servidores funcionando en menos de un día
-              </p>
-            </motion.div>
+          <p className="max-w-[560px] pt-10 text-[18px] leading-[1.45] tracking-[-0.01em] text-[#24324b] md:justify-self-center">
+            Nuestro proceso es honesto y rastreable. Cada fase tiene
+            entregables, plazos y un canal de WhatsApp directo con tu
+            líder técnico.
+          </p>
+        </div>
 
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
+        <div className="grid gap-0 md:grid-cols-3">
+          {steps.map((step, index) => (
+            <motion.article
+              key={step.num}
+              initial={{ opacity: 0, y: 18 }}
               whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.2 }}
-              viewport={{ once: true }}
-              className="bg-card border border-border rounded-lg p-6 text-center"
+              viewport={{ once: true, amount: 0.35 }}
+              transition={{ duration: 0.45, delay: index * 0.08 }}
+              className="border-[#d4d9dd] py-10 md:min-h-[328px] md:px-10 md:py-9 md:[&:not(:last-child)]:border-r lg:px-10"
             >
-              <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mx-auto mb-4">
-                <Gift className="w-6 h-6 text-primary" />
+              <div className="mb-7 flex items-center gap-5">
+                <span className="text-[54px] font-bold leading-none tracking-[-0.045em] text-[#141821]">
+                  {step.num}
+                </span>
+                {step.arrow && (
+                  <ArrowRight className="mt-1 h-5 w-5 text-[#7a8594]" strokeWidth={1.8} />
+                )}
               </div>
-              <h3 className="text-lg font-semibold text-foreground mb-2">
-                Soporte Prioritario Gratis
-              </h3>
-              <p className="text-muted-foreground text-sm">
-                3 meses de soporte técnico 24/7 sin costo adicional
-              </p>
-            </motion.div>
 
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.3 }}
-              viewport={{ once: true }}
-              className="bg-card border border-border rounded-lg p-6 text-center"
-            >
-              <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mx-auto mb-4">
-                <Zap className="w-6 h-6 text-primary" />
+              <h3 className="mb-4 text-[24px] font-bold leading-tight tracking-[-0.03em] text-[#141821]">
+                {step.title}
+              </h3>
+
+              <p className="mb-7 max-w-[390px] text-[16px] leading-[1.38] tracking-[-0.01em] text-[#24324b]">
+                {step.desc}
+              </p>
+
+              <div className="flex flex-wrap gap-1.5">
+                {step.tags.map((tag) => (
+                  <span
+                    key={tag}
+                    className="border border-[#d4d9dd] bg-[#f6f7f6] px-2.5 py-1 font-mono text-[10px] leading-none tracking-[0.18em] text-[#6f7b8b]"
+                  >
+                    {tag}
+                  </span>
+                ))}
               </div>
-              <h3 className="text-lg font-semibold text-foreground mb-2">
-                Garantía de Satisfacción
-              </h3>
-              <p className="text-muted-foreground text-sm">
-                30 días de garantía de devolución de dinero
-              </p>
-            </motion.div>
-          </div>
-
-          {/* Countdown-style text */}
-          <motion.div
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            transition={{ duration: 0.8, delay: 0.4 }}
-            viewport={{ once: true }}
-            className="mt-12 text-center"
-          >
-            <p className="text-muted-foreground">
-              ⏱️ Cupos limitados este mes • Precio de lanzamiento válido hasta fin de mes
-            </p>
-          </motion.div>
-        </motion.div>
-      </Container>
+            </motion.article>
+          ))}
+        </div>
+      </div>
     </section>
   );
 };

@@ -4,6 +4,7 @@ import { useQuery } from '@tanstack/react-query';
 import { Loader2, ShieldCheck, CreditCard, Plus, ChevronDown, Receipt } from 'lucide-react';
 import { sileo as toast } from 'sileo';
 import ApiService from '../../../lib/apiClient';
+import { isStripeConfigured } from '../../../lib/stripe';
 import contractService from '../../../services/contractService';
 import type { InvoiceData } from '../../../services/contractService';
 import type { CheckoutPlan, CheckoutBillingCycle } from '../../../contexts/CheckoutContext';
@@ -98,6 +99,7 @@ export const PaymentStep: React.FC<Props> = ({ plan, billingCycle, serviceName, 
   const invoiceValid = !wantsInvoice || (
     invoice.rfc.length >= 12 && invoice.name && invoice.zip.length === 5 && invoice.regimen && invoice.uso_cfdi
   );
+  const stripeUnavailableMessage = 'El pago con tarjeta no está configurado. Falta VITE_STRIPE_PUBLISHABLE_KEY.';
 
   const handlePay = async () => {
     if (!invoiceValid) { toast.error('Completa todos los datos fiscales'); return; }
@@ -116,6 +118,7 @@ export const PaymentStep: React.FC<Props> = ({ plan, billingCycle, serviceName, 
         });
         const body = (res.data as any);
         if (body?.data?.requires_action && body?.data?.client_secret) {
+          if (!stripe) throw new Error('Stripe todavía no está listo para confirmar este pago');
           const { error } = await stripe!.confirmCardPayment(body.data.client_secret);
           if (error) { setCardError(error.message ?? 'Error al confirmar'); setLoading(false); return; }
         }
@@ -125,9 +128,24 @@ export const PaymentStep: React.FC<Props> = ({ plan, billingCycle, serviceName, 
 
       } else {
         // ── New card ────────────────────────────────────────────────
-        if (!stripe || !elements) return;
+        if (!isStripeConfigured) {
+          setCardError(stripeUnavailableMessage);
+          toast.error(stripeUnavailableMessage);
+          return;
+        }
+        if (!stripe || !elements) {
+          const msg = 'El formulario de pago todavía está cargando. Intenta de nuevo en unos segundos.';
+          setCardError(msg);
+          toast.error(msg);
+          return;
+        }
         const cardEl = elements.getElement(CardElement);
-        if (!cardEl) return;
+        if (!cardEl) {
+          const msg = 'No se pudo cargar el campo de tarjeta.';
+          setCardError(msg);
+          toast.error(msg);
+          return;
+        }
 
         const { paymentMethod, error: pmErr } = await stripe.createPaymentMethod({ type: 'card', card: cardEl });
         if (pmErr || !paymentMethod) { setCardError(pmErr?.message ?? 'Error con la tarjeta'); setLoading(false); return; }
@@ -249,23 +267,29 @@ export const PaymentStep: React.FC<Props> = ({ plan, billingCycle, serviceName, 
             {/* CardElement */}
             {(useNewCard || savedMethods.length === 0) && (
               <div>
-                <div className="p-4 rounded-xl border border-border bg-background focus-within:ring-2 focus-within:ring-primary/40 transition">
-                  <CardElement
-                    options={{
-                      style: {
-                        base: {
-                          fontSize: '14px',
-                          color: 'var(--foreground, #1a1a1a)',
-                          fontFamily: 'Inter, system-ui, sans-serif',
-                          '::placeholder': { color: 'var(--muted-foreground, #888)' },
+                {isStripeConfigured ? (
+                  <div className="p-4 rounded-xl border border-border bg-background focus-within:ring-2 focus-within:ring-primary/40 transition">
+                    <CardElement
+                      options={{
+                        style: {
+                          base: {
+                            fontSize: '14px',
+                            color: 'var(--foreground, #1a1a1a)',
+                            fontFamily: 'Inter, system-ui, sans-serif',
+                            '::placeholder': { color: 'var(--muted-foreground, #888)' },
+                          },
+                          invalid: { color: '#ef4444' },
                         },
-                        invalid: { color: '#ef4444' },
-                      },
-                      hidePostalCode: true,
-                    }}
-                    onChange={(e) => { if (e.error) setCardError(e.error.message); else setCardError(null); }}
-                  />
-                </div>
+                        hidePostalCode: true,
+                      }}
+                      onChange={(e) => { if (e.error) setCardError(e.error.message); else setCardError(null); }}
+                    />
+                  </div>
+                ) : (
+                  <div className="rounded-xl border border-amber-300/70 bg-amber-50 px-4 py-3 text-xs text-amber-900 dark:border-amber-500/40 dark:bg-amber-950/30 dark:text-amber-100">
+                    {stripeUnavailableMessage}
+                  </div>
+                )}
                 {cardError && <p className="text-xs text-red-500 mt-1.5">{cardError}</p>}
               </div>
             )}
@@ -350,7 +374,9 @@ export const PaymentStep: React.FC<Props> = ({ plan, billingCycle, serviceName, 
       {/* Security badge */}
       <div className="flex items-center gap-2 text-xs text-muted-foreground">
         <ShieldCheck className="w-4 h-4 text-green-500 shrink-0" />
-        Pago seguro con Stripe. Cifrado TLS extremo a extremo.
+        {isStripeConfigured
+          ? 'Pago seguro con Stripe. Cifrado TLS extremo a extremo.'
+          : 'El modal funciona; configura Stripe para activar pagos con tarjeta.'}
       </div>
 
       <div className="flex gap-3">
@@ -363,7 +389,7 @@ export const PaymentStep: React.FC<Props> = ({ plan, billingCycle, serviceName, 
         </button>
         <button
           onClick={handlePay}
-          disabled={loading || (!useNewCard && !selectedPmId) || !invoiceValid}
+          disabled={loading || (useNewCard && !isStripeConfigured) || (!useNewCard && !selectedPmId) || !invoiceValid}
           className="flex-1 py-2.5 rounded-xl bg-primary text-primary-foreground font-medium text-sm hover:bg-primary/90 transition disabled:opacity-60 flex items-center justify-center gap-2"
         >
           {loading && <Loader2 className="w-4 h-4 animate-spin" />}

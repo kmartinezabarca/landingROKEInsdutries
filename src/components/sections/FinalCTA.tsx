@@ -1,102 +1,78 @@
 import React from "react";
 import { motion } from "framer-motion";
-import { ArrowRight, MessageCircle, Phone } from "lucide-react";
+import { ArrowRight, MessageCircle } from "lucide-react";
 import { Link } from "react-router-dom";
-import Container from "../common/Container";
-import Button from "../common/Button";
 import { ROUTES } from "../../utils/constants/config";
+import WhatsAppService from "../../services/whatsapp/whatsappService";
 
 const FinalCTA: React.FC = () => {
   return (
-    <section className="py-20 text-white relative overflow-hidden bg-gradient-to-br from-primary via-primary/95 to-primary/80 dark:from-slate-950 dark:via-primary/15 dark:to-slate-950">
-      <Container>
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8 }}
-          viewport={{ once: true }}
-          className="max-w-3xl mx-auto text-center"
-        >
-          <h2 className="text-4xl md:text-5xl font-bold mb-6">
-            ¿Listo para crecer tu negocio?
-          </h2>
-          <p className="text-xl text-white/90 mb-12">
-            Únete a más de 500 empresas que confían en ROKE Industries para su infraestructura. Comienza hoy y obtén soporte prioritario gratis por 3 meses.
-          </p>
+    <section className="relative min-h-[493px] overflow-hidden border-y border-[#d7dbe0] bg-[#f6f7f6] text-[#141821]">
+      <svg
+        className="pointer-events-none absolute inset-0 h-full w-full"
+        viewBox="0 0 1436 493"
+        preserveAspectRatio="none"
+        aria-hidden="true"
+      >
+        <polygon
+          points="368,0 768,0 10,442 0,416 0,217"
+          fill="#d8dde3"
+        />
+      </svg>
 
-          <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12">
-            <Button
-              size="lg"
-              className="text-lg px-8 py-4 bg-white text-primary hover:bg-white/90"
-              asChild
-            >
-              <Link to={ROUTES.HOSTING} className="flex items-center justify-center gap-2">
-                Ver planes disponibles
-                <ArrowRight className="w-5 h-5" />
-              </Link>
-            </Button>
-            <Button
-              size="lg"
-              variant="outline"
-              className="text-lg px-8 py-4 border-white text-white hover:bg-white/10"
-              asChild
-            >
-              <a href="https://wa.me/+1234567890?text=Hola%20ROKE%20Industries%2C%20quiero%20comenzar%20con%20sus%20servicios" className="flex items-center justify-center gap-2">
-                <MessageCircle className="w-5 h-5" />
-                Hablar por WhatsApp
-              </a>
-            </Button>
-          </div>
-
-          {/* Contact Info */}
+      <div className="relative z-10 grid min-h-[493px] items-center gap-10 px-[68px] lg:grid-cols-[59.4vw_1fr]">
+        <div>
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.2 }}
+            transition={{ duration: 0.65 }}
             viewport={{ once: true }}
-            className="bg-white/10 backdrop-blur-sm rounded-lg p-8 border border-white/20"
           >
-            <p className="text-white/80 mb-6">
-              Nuestro equipo de expertos está disponible para ayudarte:
+            <h2
+              className="m-0 max-w-[720px] text-[56px] font-bold leading-[0.98] tracking-[-0.055em] text-[#141821] md:text-[70px] lg:text-[72px]"
+              style={{ textWrap: "balance" } as React.CSSProperties}
+            >
+              ¿Listo para que
+              <br />
+              tu infra deje de
+              <br />
+              <span className="font-medium text-[#465363]">ser el problema?</span>
+            </h2>
+          </motion.div>
+        </div>
+
+        <div className="max-w-[540px] border-[#d7dbe0] lg:border-l lg:pl-10">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.65, delay: 0.1 }}
+            viewport={{ once: true }}
+          >
+            <p className="m-0 max-w-[520px] text-[15.5px] leading-[1.45] tracking-[-0.01em] text-[#24324b]">
+              Cuéntanos qué estás construyendo. Te respondemos en menos
+              de 24 horas con una propuesta concreta, sin compromiso.
             </p>
-            <div className="flex flex-col sm:flex-row gap-8 justify-center">
-              <a
-                href="https://wa.me/+1234567890"
-                className="flex items-center gap-3 text-white hover:text-white/80 transition-colors"
+
+            <div className="mt-5 flex flex-col gap-2.5 sm:flex-row">
+              <Link
+                to={ROUTES.CONTACT}
+                className="inline-flex items-center justify-center gap-3 rounded-[3px] bg-[#1b1e22] px-7 py-[15px] text-[14px] font-bold text-white transition-all hover:-translate-y-px hover:bg-[#101215] hover:shadow-lg"
               >
-                <MessageCircle className="w-6 h-6" />
-                <div className="text-left">
-                  <div className="text-sm text-white/70">WhatsApp</div>
-                  <div className="font-semibold">+1 234 567 890</div>
-                </div>
-              </a>
-              <a
-                href="mailto:contact@rokeindustries.com"
-                className="flex items-center gap-3 text-white hover:text-white/80 transition-colors"
+                Cotizar Ahora
+                <ArrowRight className="h-4 w-4" />
+              </Link>
+              <button
+                type="button"
+                onClick={() => WhatsAppService.openWhatsApp("Hola ROKE Industries, quiero cotizar un proyecto.")}
+                className="inline-flex items-center justify-center gap-3 rounded-[3px] bg-[#22d365] px-7 py-[15px] text-[14px] font-bold text-[#082415] transition-all hover:-translate-y-px hover:bg-[#1fc35d]"
               >
-                <Phone className="w-6 h-6" />
-                <div className="text-left">
-                  <div className="text-sm text-white/70">Email</div>
-                  <div className="font-semibold">contact@rokeindustries.com</div>
-                </div>
-              </a>
+                <MessageCircle className="h-4 w-4 fill-current" />
+                WhatsApp
+              </button>
             </div>
           </motion.div>
-
-          {/* Trust Badge */}
-          <motion.div
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            transition={{ duration: 0.8, delay: 0.4 }}
-            viewport={{ once: true }}
-            className="mt-12"
-          >
-            <p className="text-white/70 text-sm">
-              ✓ Garantía de satisfacción 30 días • ✓ Sin contrato de larga duración • ✓ Cancela cuando quieras
-            </p>
-          </motion.div>
-        </motion.div>
-      </Container>
+        </div>
+      </div>
     </section>
   );
 };

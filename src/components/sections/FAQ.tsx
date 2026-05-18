@@ -1,7 +1,9 @@
 import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { ChevronDown } from "lucide-react";
+import { ArrowRight, ChevronDown, Mail, MessageCircle } from "lucide-react";
 import Container from "../common/Container";
+import { CONFIG } from "../../utils/constants/config";
+import WhatsAppService from "../../services/whatsapp/whatsappService";
 
 interface FaqItem {
   question: string;
@@ -55,25 +57,34 @@ const FAQ: React.FC = () => {
   ];
 
   return (
-    <section className="py-20 bg-muted/20 dark:bg-slate-900/40">
+    <section className="relative overflow-hidden border-t border-border bg-background py-[80px]">
+      <div className="roke-grid-bg opacity-60" />
       <Container>
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8 }}
           viewport={{ once: true }}
-          className="max-w-3xl mx-auto"
+          className="relative z-10 mx-auto max-w-[1296px]"
         >
-          <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
-              Preguntas Frecuentes
-            </h2>
-            <p className="text-xl text-muted-foreground">
-              Respuestas a las preguntas más comunes sobre nuestros servicios
+          <div className="mb-16 grid grid-cols-1 items-end gap-12 md:grid-cols-[0.95fr_1.45fr]">
+            <div>
+              <div className="roke-eyebrow mb-6">
+                <span className="roke-eyebrow-line" />
+                <span>06 / FAQ</span>
+              </div>
+              <h2 className="m-0 font-sans text-[52px] font-bold leading-[0.98] text-foreground md:text-[64px]">
+                Preguntas<br />
+                <span className="font-medium text-muted-foreground">frecuentes.</span>
+              </h2>
+            </div>
+            <p className="max-w-[560px] text-[17px] leading-[1.55] text-muted-foreground">
+              Respuestas claras sobre despliegue, soporte, escalamiento, seguridad
+              y facturación antes de contratar infraestructura con ROKE.
             </p>
           </div>
 
-          <div className="space-y-4">
+          <div className="grid grid-cols-1 border border-border lg:grid-cols-2">
             {faqs.map((faq, index) => (
               <motion.div
                 key={index}
@@ -81,23 +92,29 @@ const FAQ: React.FC = () => {
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: 0.05 * index }}
                 viewport={{ once: true }}
-                className="bg-card border border-border rounded-lg overflow-hidden hover:border-primary/50 transition-colors"
+                className="border border-border -m-[1px] bg-card transition-colors hover:bg-muted/50"
               >
                 <button
                   onClick={() =>
                     setOpenIndex(openIndex === index ? null : index)
                   }
-                  className="w-full px-6 py-4 flex items-center justify-between hover:bg-muted/50 transition-colors"
+                  className="flex w-full items-start justify-between gap-5 px-6 py-5 text-left transition-colors"
+                  aria-expanded={openIndex === index}
                 >
-                  <h3 className="text-lg font-semibold text-foreground text-left">
-                    {faq.question}
-                  </h3>
+                  <div className="flex gap-4">
+                    <span className="pt-1 font-sans text-[11px] text-muted-foreground">
+                      / {String(index + 1).padStart(2, "0")}
+                    </span>
+                    <h3 className="text-[16px] font-bold leading-[1.35] text-foreground">
+                      {faq.question}
+                    </h3>
+                  </div>
                   <motion.div
                     animate={{ rotate: openIndex === index ? 180 : 0 }}
                     transition={{ duration: 0.3 }}
-                    className="flex-shrink-0 ml-4"
+                    className="mt-1 flex-shrink-0"
                   >
-                    <ChevronDown className="w-5 h-5 text-muted-foreground" />
+                    <ChevronDown className="h-5 w-5 text-muted-foreground" />
                   </motion.div>
                 </button>
 
@@ -110,9 +127,14 @@ const FAQ: React.FC = () => {
                       transition={{ duration: 0.3 }}
                       className="border-t border-border"
                     >
-                      <p className="px-6 py-4 text-muted-foreground">
-                        {faq.answer}
-                      </p>
+                      <div className="grid grid-cols-[72px_1fr] px-6 py-5">
+                        <div className="font-sans text-[10px] text-muted-foreground">
+                          ROKE
+                        </div>
+                        <p className="m-0 text-[14px] leading-[1.65] text-muted-foreground">
+                          {faq.answer}
+                        </p>
+                      </div>
                     </motion.div>
                   )}
                 </AnimatePresence>
@@ -126,22 +148,32 @@ const FAQ: React.FC = () => {
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.4 }}
             viewport={{ once: true }}
-            className="mt-16 text-center"
+            className="mt-16 border border-border bg-card p-8 md:grid md:grid-cols-[1fr_auto] md:items-center md:gap-10"
           >
-            <p className="text-muted-foreground mb-6">
-              ¿No encontraste tu pregunta? Nuestro equipo está listo para ayudarte.
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <a
-                href="https://wa.me/+1234567890?text=Hola%20ROKE%20Industries%2C%20tengo%20una%20pregunta%20sobre%20sus%20servicios"
-                className="inline-flex items-center justify-center px-6 py-3 bg-primary text-primary-foreground rounded-lg font-semibold hover:bg-primary/90 transition-colors"
+            <div>
+              <div className="mb-2 font-sans text-[11px] text-muted-foreground">
+                Soporte directo
+              </div>
+              <p className="m-0 max-w-[560px] text-[16px] leading-[1.55] text-muted-foreground">
+                ¿No encontraste tu pregunta? Nuestro equipo puede ayudarte a aterrizar
+                una solución concreta para tu caso.
+              </p>
+            </div>
+            <div className="mt-7 flex flex-col gap-2.5 sm:flex-row md:mt-0">
+              <button
+                type="button"
+                onClick={() => WhatsAppService.openWhatsApp("Hola ROKE Industries, tengo una pregunta sobre sus servicios.")}
+                className="inline-flex items-center justify-center gap-2 rounded-[4px] bg-foreground px-6 py-[14px] text-[14px] font-semibold text-background transition-all hover:-translate-y-px hover:shadow-lg"
               >
+                <MessageCircle className="h-4 w-4" />
                 Contactar por WhatsApp
-              </a>
+                <ArrowRight className="h-4 w-4" />
+              </button>
               <a
-                href="mailto:contact@rokeindustries.com"
-                className="inline-flex items-center justify-center px-6 py-3 border border-border rounded-lg font-semibold hover:bg-muted/50 transition-colors"
+                href={`mailto:${CONFIG.CONTACT?.EMAIL || "contact@rokeindustries.com"}`}
+                className="inline-flex items-center justify-center gap-2 rounded-[4px] border border-border px-6 py-[14px] text-[14px] font-semibold text-foreground transition-all hover:border-foreground hover:bg-muted"
               >
+                <Mail className="h-4 w-4" />
                 Enviar Email
               </a>
             </div>

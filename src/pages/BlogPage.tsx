@@ -1,369 +1,558 @@
 import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { Calendar, Clock, User, ArrowRight, Tag, AlertCircle, Search, Loader2 } from "lucide-react";
+import { Clock, ArrowRight, AlertCircle, Search, Loader2, Mail } from "lucide-react";
 import { Link } from "react-router-dom";
-import Container from "../components/common/Container";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "../components/common/Card";
-import Button from "../components/common/Button";
 import { getBlogPosts, getBlogCategories } from "../services/blogService";
 
-// Logo de ROKE Industries como imagen por defecto
-const DEFAULT_IMAGE = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 300'%3E%3Crect fill='%23f0f0f0' width='400' height='300'/%3E%3Ctext x='50%25' y='50%25' font-size='48' fill='%23999' text-anchor='middle' dominant-baseline='middle' font-family='Arial, sans-serif' font-weight='bold'%3EROKE Industries%3C/text%3E%3C/svg%3E";
-
 interface BlogPost {
-  uuid: string;
-  slug: string;
-  title: string;
-  excerpt: string;
-  image?: string;
-  isFeatured?: boolean;
+  uuid: string; slug: string; title: string; excerpt: string;
+  image?: string; isFeatured?: boolean;
   category?: { name: string; uuid?: string };
-  readTime?: number;
-  publishedAt?: string;
-  authorName?: string;
-  author?: { name: string };
-}
-
-interface PostCardProps {
-  post: BlogPost;
-  isFeatured?: boolean;
+  readTime?: number; publishedAt?: string;
+  authorName?: string; author?: { name: string };
 }
 
 const BlogPage: React.FC = () => {
-  const [blogPosts, setBlogPosts] = useState<BlogPost[]>([]);
-  const [categories, setCategories] = useState<string[]>([]);
+  const [blogPosts, setBlogPosts]               = useState<BlogPost[]>([]);
+  const [categories, setCategories]             = useState<string[]>(["Todos"]);
   const [selectedCategory, setSelectedCategory] = useState<string>("Todos");
-  const [searchQuery, setSearchQuery] = useState<string>("");
-  const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string | null>(null);
+  const [searchQuery, setSearchQuery]           = useState<string>("");
+  const [loading, setLoading]                   = useState<boolean>(true);
+  const [error, setError]                       = useState<string | null>(null);
 
-  /**
-   * Carga los posts del blog desde la API
-   */
   useEffect(() => {
-    const loadBlogData = async () => {
+    const load = async () => {
       try {
-        setLoading(true);
-        setError(null);
-
-        // Cargar categorías
-        const categoriesResponse = await getBlogCategories();
-        const categoriesList = categoriesResponse.data || [];
-        setCategories(["Todos", ...categoriesList.map((cat: { name: string }) => cat.name)]);
-
-        // Cargar posts
-        const postsResponse = await getBlogPosts();
-        const posts = postsResponse.data || [];
-        setBlogPosts(posts);
-      } catch (err) {
-        console.error("Error loading blog data:", err);
-        setError("No se pudieron cargar los artículos del blog. Por favor, intenta más tarde.");
-      } finally {
-        setLoading(false);
-      }
+        setLoading(true); setError(null);
+        const [catRes, postsRes] = await Promise.all([getBlogCategories(), getBlogPosts()]);
+        setCategories(["Todos", ...(catRes.data || []).map((c: { name: string }) => c.name)]);
+        setBlogPosts(postsRes.data || []);
+      } catch {
+        setError("No se pudieron cargar los artículos. Por favor, intenta más tarde.");
+      } finally { setLoading(false); }
     };
-
-    loadBlogData();
+    load();
   }, []);
 
-  /**
-   * Filtra los posts según la categoría y búsqueda
-   */
-  const filteredPosts = blogPosts.filter((post) => {
-    const matchesCategory =
-      selectedCategory === "Todos" || post.category?.name === selectedCategory;
-    const matchesSearch =
+  const filteredPosts = blogPosts.filter(post => {
+    const matchCat = selectedCategory === "Todos" || post.category?.name === selectedCategory;
+    const matchSearch = !searchQuery ||
       post.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
       post.excerpt.toLowerCase().includes(searchQuery.toLowerCase());
-    return matchesCategory && matchesSearch;
+    return matchCat && matchSearch;
   });
 
-  /**
-   * Obtiene los posts destacados
-   */
-  const featuredPosts = blogPosts.filter((post) => post.isFeatured).slice(0, 2);
+  const featuredPost = blogPosts.find(p => p.isFeatured);
 
-  /**
-   * Formatea la fecha para mostrar
-   */
   const formatDate = (dateString?: string): string => {
     if (!dateString) return "";
     try {
-      return new Date(dateString).toLocaleDateString("es-ES", {
-        year: "numeric",
-        month: "long",
-        day: "numeric",
-      });
-    } catch {
-      return dateString;
-    }
-  };
-
-  /**
-   * Renderiza un post en la tarjeta
-   */
-  const PostCard: React.FC<PostCardProps> = ({ post, isFeatured = false }) => {
-    const imageUrl = post.image || DEFAULT_IMAGE;
-    const authorName = post.authorName || post.author?.name || "ROKE Industries";
-
-    return (
-      <Card className="h-full group hover:shadow-xl transition-all duration-300 overflow-hidden">
-        <div className="aspect-video bg-gradient-to-br from-slate-200 to-slate-300 rounded-t-lg overflow-hidden relative">
-          <img
-            src={imageUrl}
-            alt={post.title}
-            onError={(e) => {
-              (e.target as HTMLImageElement).src = DEFAULT_IMAGE;
-            }}
-            className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-            loading="lazy"
-          />
-          {post.isFeatured && (
-            <div className="absolute top-4 right-4 bg-gradient-to-r from-primary to-primary/80 text-white px-3 py-1 rounded-full text-xs font-bold shadow-lg">
-              Destacado
-            </div>
-          )}
-        </div>
-
-        <CardHeader className={isFeatured ? "pb-4" : "pb-3"}>
-          <div className={`flex items-center gap-2 text-sm text-muted-foreground mb-3 flex-wrap ${isFeatured ? "gap-3" : ""}`}>
-            {post.category && (
-              <span className="bg-gradient-to-r from-primary/10 to-primary/5 text-primary px-3 py-1 rounded-full text-xs font-semibold border border-primary/20">
-                {post.category.name}
-              </span>
-            )}
-            <div className="flex items-center gap-1 text-xs">
-              <Clock className="w-3.5 h-3.5" />
-              <span>{post.readTime ? `${post.readTime} min` : "5 min"}</span>
-            </div>
-            {isFeatured && (
-              <div className="flex items-center gap-1 text-xs">
-                <Calendar className="w-3.5 h-3.5" />
-                <span>{formatDate(post.publishedAt)}</span>
-              </div>
-            )}
-          </div>
-
-          <CardTitle className={`${isFeatured ? "text-2xl" : "text-lg"} group-hover:text-primary transition-colors duration-300 ${!isFeatured ? "line-clamp-2" : ""}`}>
-            {post.title}
-          </CardTitle>
-        </CardHeader>
-
-        <CardContent className={isFeatured ? "pt-0 pb-4" : "pt-0 pb-3"}>
-          <p className={`text-muted-foreground ${isFeatured ? "mb-4 line-clamp-2" : "text-sm mb-4 line-clamp-2"}`}>
-            {post.excerpt}
-          </p>
-
-          <div className={`flex items-center justify-between ${isFeatured ? "text-sm" : "text-xs"} text-muted-foreground mb-4`}>
-            <div className="flex items-center gap-1.5">
-              <User className={`${isFeatured ? "w-4 h-4" : "w-3 h-3"}`} />
-              <span className="font-medium">{authorName}</span>
-            </div>
-            {!isFeatured && (
-              <div className="flex items-center gap-1">
-                <Calendar className="w-3 h-3" />
-                {formatDate(post.publishedAt)}
-              </div>
-            )}
-          </div>
-
-          <Link
-            to={`/blog/${post.slug}`}
-            className="inline-flex items-center text-primary hover:text-primary/80 transition-colors font-semibold group/link"
-          >
-            Leer más
-            <ArrowRight className="w-4 h-4 ml-2 group-hover/link:translate-x-1 transition-transform" />
-          </Link>
-        </CardContent>
-      </Card>
-    );
+      const d = new Date(dateString);
+      return `${String(d.getDate()).padStart(2,'0')} · ${d.toLocaleString('es-ES',{month:'short'}).toUpperCase()} · ${d.getFullYear()}`;
+    } catch { return dateString; }
   };
 
   return (
-    <div className="min-h-screen bg-background">
-      {/* Header */}
-      <section className="relative h-[400px] md:h-[500px] flex items-center justify-center text-center text-white overflow-hidden">
+    <div className="min-h-screen" style={{ background: 'var(--roke-bg)' }}>
+
+      {/* ── Hero ── */}
+      <section
+        className="relative overflow-hidden"
+        style={{ padding: '96px 0 80px' }}
+      >
+        <div className="roke-grid-bg" />
+        {/* Slash diagonal motif */}
         <div
-          className="absolute inset-0 bg-cover bg-center z-0 bg-fixed"
+          className="roke-slash-band"
           style={{
-            backgroundImage:
-              "url('/assets/images/banners/banner-blog.jpg')",
+            position: 'absolute',
+            top: '110px', right: '-200px',
+            width: '1800px', height: '160px',
+            transform: 'rotate(-30deg)',
+            transformOrigin: '50% 50%',
+            pointerEvents: 'none',
           }}
         />
-        <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/60 to-black/70 z-10" />
-        <Container className="relative z-20">
+        <div className="max-w-[1296px] mx-auto px-6 md:px-14 relative z-10">
           <motion.div
-            initial={{ opacity: 0, y: 30 }}
+            initial={{ opacity: 0, y: 24 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, ease: "easeOut" }}
-            className="text-center"
+            transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
           >
-            <motion.div
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.6, delay: 0.2 }}
-              className="mb-4"
+            <div className="flex items-center gap-3.5 mb-6">
+              <div className="w-8 h-px" style={{ background: 'var(--roke-text-dimmer)' }} />
+              <span className="font-mono text-[11px] tracking-[0.16em] uppercase flex items-center gap-2"
+                style={{ color: 'var(--roke-text-dimmer)' }}>
+                BLOG / Roke Industries
+                <span className="inline-block w-1.5 h-1.5" style={{ background: 'var(--roke-text)' }} />
+              </span>
+            </div>
+            <h1
+              className="font-bold leading-[0.96] tracking-[-0.04em] mb-7"
+              style={{ fontSize: 'clamp(52px, 6.4vw, 92px)', color: 'var(--roke-text)' }}
             >
-              <Tag className="w-12 h-12 mx-auto text-primary mb-4 opacity-80" />
-            </motion.div>
-            <h1 className="text-5xl md:text-6xl lg:text-7xl font-extrabold tracking-tight mb-6 text-white drop-shadow-lg">
-              Blog
+              Ideas, guías<br />
+              <span style={{ color: 'var(--roke-text-dim)', fontWeight: 500 }}>y tecnología.</span>
             </h1>
-            <p className="text-lg md:text-xl text-white/90 max-w-3xl mx-auto drop-shadow-md">
-              Mantente actualizado con las últimas tendencias en tecnología,
-              hosting, gaming y desarrollo web.
+            <p className="text-[19px] leading-[1.5]" style={{ color: 'var(--roke-text-dim)', maxWidth: '580px' }}>
+              Tendencias en hosting, gaming, cloud y desarrollo web — escritas por el equipo ROKE.
+              Sin relleno, sin clickbait, solo lo que sirve.
             </p>
           </motion.div>
-        </Container>
+        </div>
       </section>
 
-      <Container className="py-20">
-        {/* Error Message */}
-        {error && (
-          <motion.div
-            initial={{ opacity: 0, y: -10 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="mb-12 p-6 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-xl flex items-start gap-4 shadow-sm"
+      {/* ── Filter bar (sticky) ── */}
+      <div
+        className="sticky z-20"
+        style={{
+          top: '64px',
+          background: 'var(--roke-bg)',
+          borderTop: '1px solid var(--roke-border-strong)',
+          borderBottom: '1px solid var(--roke-border-strong)',
+        }}
+      >
+        <div
+          className="max-w-[1296px] mx-auto px-6 md:px-14 py-4"
+          style={{ display: 'grid', gridTemplateColumns: '1fr auto auto', gap: '24px', alignItems: 'center' }}
+        >
+          {/* Search */}
+          <div
+            className="flex items-center gap-2.5 px-3.5 py-2.5 rounded-[4px] w-full max-w-[480px]"
+            style={{ border: '1px solid var(--roke-border-strong)', background: 'var(--roke-surface)' }}
           >
-            <AlertCircle className="w-6 h-6 text-red-600 dark:text-red-400 flex-shrink-0 mt-0.5" />
-            <div>
-              <h3 className="font-semibold text-red-900 dark:text-red-200 mb-1">
-                Error al cargar el blog
-              </h3>
-              <p className="text-red-800 dark:text-red-300 text-sm">{error}</p>
-            </div>
-          </motion.div>
-        )}
+            <Search className="w-3.5 h-3.5 flex-shrink-0" style={{ color: 'var(--roke-text-dimmer)' }} />
+            <input
+              type="text"
+              placeholder="Buscar artículos, guías, tutoriales…"
+              value={searchQuery}
+              onChange={e => setSearchQuery(e.target.value)}
+              className="flex-1 bg-transparent border-none outline-none text-[13.5px] tracking-[0.01em]"
+              style={{ color: 'var(--roke-text)', fontFamily: 'inherit' }}
+            />
+            <span
+              className="font-mono text-[10px] px-1.5 py-0.5 rounded-[3px] tracking-[0.04em] hidden md:block"
+              style={{ color: 'var(--roke-text-dimmer)', border: '1px solid var(--roke-border-strong)' }}
+            >⌘ K</span>
+          </div>
 
-        {/* Featured Posts */}
-        {!loading && featuredPosts.length > 0 && (
-          <motion.section
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            className="mb-16"
-          >
-            <h2 className="text-3xl md:text-4xl font-bold mb-8 text-center">
-              Artículos Destacados
-            </h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-              {featuredPosts.map((post) => (
-                <motion.div
-                  key={post.uuid}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.6 }}
+          {/* Segmented category tabs */}
+          {categories.length > 1 && (
+            <div
+              className="flex overflow-hidden rounded-[4px]"
+              style={{ border: '1px solid var(--roke-border-strong)' }}
+            >
+              {categories.map((cat, i) => (
+                <button
+                  key={cat}
+                  onClick={() => setSelectedCategory(cat)}
+                  className="font-semibold text-[12.5px] px-4 py-2 tracking-[0.02em] transition-all duration-150 cursor-pointer whitespace-nowrap"
+                  style={{
+                    background: selectedCategory === cat ? 'var(--roke-primary-bg)' : 'transparent',
+                    color: selectedCategory === cat ? 'var(--roke-primary-fg)' : 'var(--roke-text-dim)',
+                    border: 'none',
+                    borderLeft: i > 0 ? '1px solid var(--roke-border-strong)' : 'none',
+                    fontFamily: 'inherit',
+                  }}
                 >
-                  <PostCard post={post} isFeatured={true} />
-                </motion.div>
+                  {cat}
+                </button>
               ))}
             </div>
-            <div className="border-t border-border mt-12 pt-12" />
-          </motion.section>
-        )}
+          )}
 
-        {/* Search and Filters */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.1 }}
-          className="mb-12"
-        >
-          <div className="flex flex-col md:flex-row gap-4 mb-8">
-            {/* Search Bar */}
-            <div className="flex-1 relative">
-              <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-muted-foreground" />
-              <input
-                type="text"
-                placeholder="Buscar artículos..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-12 pr-4 py-3 rounded-lg border border-input bg-background focus:outline-none focus:ring-2 focus:ring-primary transition-all"
-              />
-            </div>
-          </div>
-
-          {/* Category Filter */}
-          <div className="flex flex-wrap gap-3">
-            {categories.map((category) => (
-              <motion.button
-                key={category}
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                onClick={() => setSelectedCategory(category)}
-                className={`px-4 py-2 rounded-full font-medium transition-all duration-300 ${
-                  selectedCategory === category
-                    ? "bg-gradient-to-r from-primary to-primary/80 text-white shadow-lg"
-                    : "bg-muted hover:bg-muted/80 text-foreground border border-border"
-                }`}
-              >
-                {category}
-              </motion.button>
-            ))}
-          </div>
-        </motion.div>
-
-        {/* Loading State */}
-        {loading && (
-          <div className="flex items-center justify-center py-20">
-            <div className="text-center">
-              <Loader2 className="w-12 h-12 animate-spin text-primary mx-auto mb-4" />
-              <p className="text-muted-foreground">Cargando artículos...</p>
-            </div>
-          </div>
-        )}
-
-        {/* Blog Posts Grid */}
-        {!loading && filteredPosts.length > 0 && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.6, delay: 0.2 }}
-            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
+          {/* Count */}
+          <span
+            className="font-mono text-[11px] tracking-[0.1em] uppercase whitespace-nowrap"
+            style={{ color: 'var(--roke-text-dimmer)' }}
           >
-            {filteredPosts.map((post, index) => (
-              <motion.div
-                key={post.uuid}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: index * 0.05 }}
-              >
-                <PostCard post={post} />
-              </motion.div>
-            ))}
+            {loading ? '— ARTÍCULOS' : `${filteredPosts.length} ${filteredPosts.length === 1 ? 'ARTÍCULO' : 'ARTÍCULOS'}`}
+          </span>
+        </div>
+      </div>
+
+      {/* ── Content ── */}
+      <div className="max-w-[1296px] mx-auto px-6 md:px-14">
+
+        {/* Error */}
+        {error && (
+          <motion.div
+            initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }}
+            className="mt-12 p-5 flex items-start gap-4 rounded-[4px]"
+            style={{ border: '1px solid rgba(239,68,68,0.3)', background: 'rgba(239,68,68,0.06)' }}
+          >
+            <AlertCircle className="w-5 h-5 flex-shrink-0 mt-0.5 text-red-500" />
+            <div>
+              <p className="font-semibold text-[14px] mb-1" style={{ color: 'var(--roke-text)' }}>Error al cargar el blog</p>
+              <p className="text-[13px]" style={{ color: 'var(--roke-text-dim)' }}>{error}</p>
+            </div>
           </motion.div>
         )}
 
-        {/* No Results */}
-        {!loading && filteredPosts.length === 0 && (
+        {/* Loading */}
+        {loading && (
+          <div className="flex items-center justify-center py-32">
+            <div className="text-center">
+              <Loader2 className="w-8 h-8 animate-spin mx-auto mb-4" style={{ color: 'var(--roke-text-dimmer)' }} />
+              <p className="font-mono text-[13px]" style={{ color: 'var(--roke-text-dimmer)' }}>Cargando artículos...</p>
+            </div>
+          </div>
+        )}
+
+        {/* ── Featured post ── */}
+        {!loading && featuredPost && (
+          <section className="py-[80px]">
+            <div
+              className="flex items-center gap-3.5 font-mono text-[11px] tracking-[0.16em] uppercase mb-7"
+              style={{ color: 'var(--roke-text-dimmer)' }}
+            >
+              <div className="w-8 h-px" style={{ background: 'var(--roke-text-dimmer)' }} />
+              <span>Destacados / lectura recomendada</span>
+            </div>
+            <FeaturedCard post={featuredPost} formatDate={formatDate} />
+          </section>
+        )}
+
+        {/* ── Posts grid ── */}
+        {!loading && filteredPosts.length > 0 && (
+          <section style={{ paddingTop: featuredPost ? 0 : '80px', paddingBottom: '80px' }}>
+            <div
+              className="flex items-center gap-3.5 font-mono text-[11px] tracking-[0.16em] uppercase mb-7"
+              style={{ color: 'var(--roke-text-dimmer)' }}
+            >
+              <div className="w-8 h-px" style={{ background: 'var(--roke-text-dimmer)' }} />
+              <span>
+                {selectedCategory !== 'Todos' ? `${selectedCategory} / ` : 'Todos los artículos / '}
+                {filteredPosts.length}
+              </span>
+            </div>
+            <motion.div
+              initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.4 }}
+              className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3"
+              style={{ border: '1px solid var(--roke-border-strong)' }}
+            >
+              {filteredPosts.map((post, i) => (
+                <PostCard key={post.uuid} post={post} index={i} formatDate={formatDate} />
+              ))}
+            </motion.div>
+          </section>
+        )}
+
+        {/* No results */}
+        {!loading && filteredPosts.length === 0 && !error && (
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="text-center py-16"
+            initial={{ opacity: 0 }} animate={{ opacity: 1 }}
+            className="py-28 text-center"
+            style={{ border: '1px solid var(--roke-border-strong)', margin: '80px 0' }}
           >
-            <Tag className="w-16 h-16 mx-auto text-muted-foreground/30 mb-4" />
-            <h3 className="text-2xl font-semibold mb-2">No hay artículos</h3>
-            <p className="text-muted-foreground mb-6">
+            <div className="font-mono text-[11px] tracking-[0.16em] uppercase mb-5" style={{ color: 'var(--roke-text-dimmer)' }}>
+              0 RESULTADOS
+            </div>
+            <h3 className="text-[22px] font-bold mb-3" style={{ color: 'var(--roke-text)' }}>No hay artículos</h3>
+            <p className="text-[14px] mb-6" style={{ color: 'var(--roke-text-dim)' }}>
               {searchQuery
                 ? "No encontramos artículos que coincidan con tu búsqueda."
                 : "No hay artículos disponibles en esta categoría."}
             </p>
             {searchQuery && (
-              <Button
+              <button
                 onClick={() => setSearchQuery("")}
-                variant="outline"
+                className="px-5 py-2.5 text-[13px] font-semibold tracking-[0.02em] transition-colors rounded-[4px]"
+                style={{ border: '1px solid var(--roke-border-strong)', color: 'var(--roke-text-dim)', background: 'transparent', fontFamily: 'inherit', cursor: 'pointer' }}
               >
                 Limpiar búsqueda
-              </Button>
+              </button>
             )}
           </motion.div>
         )}
-      </Container>
+      </div>
+
+      {/* ── Newsletter ── */}
+      <NewsletterBand />
+    </div>
+  );
+};
+
+/* ── FeaturedCard ─────────────────────────────────────────── */
+
+interface FeaturedCardProps { post: BlogPost; formatDate: (d?: string) => string }
+
+const FeaturedCard: React.FC<FeaturedCardProps> = ({ post, formatDate }) => {
+  const authorName = post.authorName || post.author?.name || "ROKE Industries";
+  const initials = authorName.split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase();
+
+  return (
+    <motion.article
+      initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
+      transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+      className="grid overflow-hidden group"
+      style={{
+        gridTemplateColumns: '1.4fr 1fr',
+        border: '1px solid var(--roke-border-strong)',
+        background: 'var(--roke-surface)',
+      }}
+    >
+      {/* Left: image */}
+      <div
+        className="relative overflow-hidden"
+        style={{ aspectRatio: '4/3', background: 'var(--roke-surface-2)' }}
+      >
+        {post.image ? (
+          <img
+            src={post.image} alt={post.title}
+            onError={e => { (e.target as HTMLImageElement).style.display = 'none'; }}
+            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+            loading="lazy"
+          />
+        ) : (
+          <div
+            className="w-full h-full"
+            style={{
+              background: 'linear-gradient(135deg, var(--roke-surface-2) 0%, var(--roke-bg) 100%)',
+            }}
+          />
+        )}
+        <div
+          className="absolute top-5 left-5 font-mono text-[10px] tracking-[0.18em] uppercase px-3 py-1.5 z-10"
+          style={{ background: 'var(--roke-text)', color: 'var(--roke-bg)' }}
+        >
+          Destacado
+        </div>
+      </div>
+
+      {/* Right: body */}
+      <div
+        className="flex flex-col justify-between gap-6"
+        style={{ padding: '44px 44px 36px' }}
+      >
+        <div>
+          <div className="flex items-center gap-3 mb-4">
+            {post.category && (
+              <span
+                className="font-mono text-[10.5px] tracking-[0.1em] uppercase px-2.5 py-1"
+                style={{ color: 'var(--roke-text)', border: '1px solid var(--roke-border-strong)' }}
+              >
+                {post.category.name}
+              </span>
+            )}
+            <span className="flex items-center gap-1.5 font-mono text-[11px]" style={{ color: 'var(--roke-text-dimmer)' }}>
+              <Clock className="w-3 h-3" />{post.readTime || 5} min de lectura
+            </span>
+          </div>
+          <h2
+            className="font-bold leading-[1.05] tracking-[-0.025em] mb-[18px]"
+            style={{ fontSize: '38px', color: 'var(--roke-text)' }}
+          >
+            {post.title}
+          </h2>
+          <p
+            className="text-[16px] leading-[1.55] line-clamp-3"
+            style={{ color: 'var(--roke-text-dim)' }}
+          >
+            {post.excerpt}
+          </p>
+        </div>
+
+        <div
+          className="flex items-center justify-between pt-5 mt-auto"
+          style={{ borderTop: '1px solid var(--roke-border)' }}
+        >
+          <div className="flex items-center gap-2.5">
+            <div
+              className="w-8 h-8 rounded-full flex items-center justify-center font-bold text-[12px]"
+              style={{
+                background: 'var(--roke-surface-2)',
+                border: '1px solid var(--roke-border-strong)',
+                color: 'var(--roke-text)',
+              }}
+            >
+              {initials}
+            </div>
+            <div className="flex flex-col leading-[1.2]">
+              <span className="font-semibold text-[13px]" style={{ color: 'var(--roke-text)' }}>{authorName}</span>
+              <span className="font-mono text-[10.5px] tracking-[0.05em] mt-0.5" style={{ color: 'var(--roke-text-dimmer)' }}>
+                {formatDate(post.publishedAt)}
+              </span>
+            </div>
+          </div>
+          <Link
+            to={`/blog/${post.slug}`}
+            className="inline-flex items-center gap-2 font-semibold text-[13px] tracking-[0.04em] uppercase group/link"
+            style={{ color: 'var(--roke-text)', textDecoration: 'none' }}
+          >
+            Leer artículo
+            <ArrowRight className="w-3.5 h-3.5 group-hover/link:translate-x-1 transition-transform" />
+          </Link>
+        </div>
+      </div>
+    </motion.article>
+  );
+};
+
+/* ── PostCard ─────────────────────────────────────────────── */
+
+interface PostCardProps { post: BlogPost; index: number; formatDate: (d?: string) => string }
+
+const PostCard: React.FC<PostCardProps> = ({ post, index, formatDate }) => (
+  <motion.div
+    initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
+    transition={{ duration: 0.4, delay: (index % 3) * 0.07 }}
+    className="-m-px flex flex-col group"
+    style={{
+      border: '1px solid var(--roke-border-strong)',
+      background: 'var(--roke-surface)',
+      transition: 'background 0.18s ease',
+    }}
+    onMouseEnter={e => (e.currentTarget.style.background = 'var(--roke-surface-2)')}
+    onMouseLeave={e => (e.currentTarget.style.background = 'var(--roke-surface)')}
+  >
+    <Link to={`/blog/${post.slug}`} className="flex flex-col flex-1" style={{ textDecoration: 'none', color: 'inherit' }}>
+      {/* Media */}
+      <div
+        className="overflow-hidden relative"
+        style={{
+          aspectRatio: '16/10',
+          background: 'var(--roke-surface-2)',
+          borderBottom: '1px solid var(--roke-border)',
+        }}
+      >
+        {post.image ? (
+          <img
+            src={post.image} alt={post.title}
+            onError={e => { (e.target as HTMLImageElement).style.display = 'none'; }}
+            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+            loading="lazy"
+          />
+        ) : (
+          <div
+            className="w-full h-full"
+            style={{ background: 'linear-gradient(135deg, var(--roke-surface-2) 0%, var(--roke-bg) 100%)' }}
+          />
+        )}
+      </div>
+
+      {/* Body */}
+      <div className="flex flex-col gap-3.5 flex-1" style={{ padding: '22px 24px 24px' }}>
+        <div className="flex items-center gap-3">
+          {post.category && (
+            <span
+              className="font-mono text-[10.5px] tracking-[0.1em] uppercase px-2.5 py-1"
+              style={{ color: 'var(--roke-text)', border: '1px solid var(--roke-border-strong)' }}
+            >
+              {post.category.name}
+            </span>
+          )}
+          <span className="flex items-center gap-1.5 font-mono text-[11px]" style={{ color: 'var(--roke-text-dimmer)' }}>
+            <Clock className="w-2.5 h-2.5" />{post.readTime || 5} min
+          </span>
+        </div>
+        <h3
+          className="font-bold leading-[1.15] tracking-[-0.015em] line-clamp-2"
+          style={{ fontSize: '21px', color: 'var(--roke-text)', margin: 0 }}
+        >
+          {post.title}
+        </h3>
+        <p
+          className="text-[14px] leading-[1.5] flex-1"
+          style={{
+            color: 'var(--roke-text-dim)', margin: 0,
+            display: '-webkit-box', WebkitLineClamp: 2,
+            WebkitBoxOrient: 'vertical', overflow: 'hidden',
+          }}
+        >
+          {post.excerpt}
+        </p>
+        <div
+          className="flex items-center justify-between pt-3.5 mt-auto font-mono text-[11px] tracking-[0.04em]"
+          style={{ borderTop: '1px solid var(--roke-border)', color: 'var(--roke-text-dimmer)' }}
+        >
+          <span>{formatDate(post.publishedAt)}</span>
+          <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" style={{ color: 'var(--roke-text)' }} />
+        </div>
+      </div>
+    </Link>
+  </motion.div>
+);
+
+/* ── Newsletter band ──────────────────────────────────────── */
+
+const NewsletterBand: React.FC = () => {
+  const [email, setEmail] = useState('');
+  const [sent, setSent] = useState(false);
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!email) return;
+    setSent(true);
+    setEmail('');
+    setTimeout(() => setSent(false), 4000);
+  };
+
+  return (
+    <div
+      className="relative overflow-hidden my-[80px] mx-auto"
+      style={{
+        maxWidth: '1296px',
+        padding: '56px',
+        background: 'var(--roke-surface)',
+        border: '1px solid var(--roke-border-strong)',
+        display: 'grid',
+        gridTemplateColumns: '1.2fr 1fr',
+        gap: '56px',
+        alignItems: 'center',
+      }}
+    >
+      {/* Slash motif */}
+      <div
+        className="roke-slash-band absolute pointer-events-none"
+        style={{
+          top: '-50px', right: '-200px',
+          width: '1000px', height: '100px',
+          transform: 'rotate(-30deg)',
+        }}
+      />
+
+      <div className="relative z-10">
+        <h3
+          className="font-bold leading-[1.05] tracking-[-0.025em] mb-3.5"
+          style={{ fontSize: '36px', color: 'var(--roke-text)', margin: '0 0 14px' }}
+        >
+          Suscríbete al newsletter.
+        </h3>
+        <p className="text-[15px] leading-[1.55]" style={{ color: 'var(--roke-text-dim)', margin: 0 }}>
+          Una vez por mes: 5 artículos, 3 herramientas y 1 caso de estudio. Sin spam, sin afiliados, sin sorpresas.
+        </p>
+      </div>
+
+      <form onSubmit={handleSubmit} className="flex flex-col gap-3 relative z-10">
+        <div
+          className="flex overflow-hidden rounded-[4px]"
+          style={{ border: '1px solid var(--roke-border-strong)', background: 'var(--roke-bg)' }}
+        >
+          <input
+            type="email"
+            required
+            placeholder="tu@correo.com"
+            value={email}
+            onChange={e => setEmail(e.target.value)}
+            className="flex-1 bg-transparent border-none outline-none text-[14px]"
+            style={{ padding: '14px 16px', color: 'var(--roke-text)', fontFamily: 'inherit' }}
+          />
+          <button
+            type="submit"
+            className="flex items-center gap-2 font-semibold text-[13.5px] tracking-[0.02em] cursor-pointer border-none"
+            style={{ padding: '14px 22px', background: 'var(--roke-primary-bg)', color: 'var(--roke-primary-fg)', fontFamily: 'inherit' }}
+          >
+            {sent ? '¡Enviado!' : <><Mail className="w-3.5 h-3.5" /> Suscribirme</>}
+          </button>
+        </div>
+        <span
+          className="font-mono text-[10.5px] tracking-[0.04em]"
+          style={{ color: 'var(--roke-text-dimmer)' }}
+        >
+          PRIVACIDAD GARANTIZADA · CANCELA CON 1 CLICK
+        </span>
+      </form>
     </div>
   );
 };

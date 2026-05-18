@@ -1,42 +1,14 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import {
-  Code,
-  Key,
-  Zap,
-  Shield,
-  BookOpen,
-  Terminal,
-  Copy,
-  Check,
-  ExternalLink,
-  Play
-} from 'lucide-react';
-import Container from '../components/common/Container';
+import { Code, Key, Zap, Shield, BookOpen, Terminal, Copy, Check, ExternalLink } from 'lucide-react';
 
-interface ApiEndpoint {
-  method: string;
-  path: string;
-  description: string;
-  response: string;
-  request?: string;
-}
-
-interface ApiFeature {
-  icon: React.ReactNode;
-  title: string;
-  description: string;
-}
-
-interface CodeExample {
-  language: string;
-  code: string;
-}
+interface ApiEndpoint { method: string; path: string; description: string; response: string; request?: string }
+interface CodeExample  { language: string; code: string }
 
 const APIPage: React.FC = () => {
   const [copiedCode, setCopiedCode] = useState<string | null>(null);
 
-  const copyToClipboard = (text: string, id: string): void => {
+  const copyToClipboard = (text: string, id: string) => {
     navigator.clipboard.writeText(text);
     setCopiedCode(id);
     setTimeout(() => setCopiedCode(null), 2000);
@@ -44,357 +16,286 @@ const APIPage: React.FC = () => {
 
   const endpoints: ApiEndpoint[] = [
     {
-      method: 'GET',
-      path: '/api/v1/servers',
-      description: 'Obtener lista de servidores',
-      response: `{
-  "servers": [
-    {
-      "id": "srv_123",
-      "name": "Minecraft Server #1",
-      "status": "online",
-      "players": 15,
-      "max_players": 50,
-      "uptime": "99.8%"
-    }
-  ]
-}`
+      method: 'GET', path: '/api/v1/servers', description: 'Obtener lista de servidores activos y su estado en tiempo real.',
+      response: `{\n  "servers": [\n    {\n      "id": "srv_123",\n      "name": "Minecraft Server #1",\n      "status": "online",\n      "players": 15,\n      "max_players": 50,\n      "uptime": "99.8%"\n    }\n  ]\n}`,
     },
     {
-      method: 'POST',
-      path: '/api/v1/servers',
-      description: 'Crear nuevo servidor',
-      request: `{
-  "name": "Mi Servidor",
-  "game": "minecraft",
-  "plan": "premium",
-  "region": "us-east"
-}`,
-      response: `{
-  "server": {
-    "id": "srv_456",
-    "name": "Mi Servidor",
-    "status": "creating",
-    "ip": "192.168.1.100",
-    "port": 25565
-  }
-}`
+      method: 'POST', path: '/api/v1/servers', description: 'Crear y aprovisionar un nuevo servidor de forma automática.',
+      request: `{\n  "name": "Mi Servidor",\n  "game": "minecraft",\n  "plan": "premium",\n  "region": "us-east"\n}`,
+      response: `{\n  "server": {\n    "id": "srv_456",\n    "name": "Mi Servidor",\n    "status": "creating",\n    "ip": "192.168.1.100",\n    "port": 25565\n  }\n}`,
     },
     {
-      method: 'GET',
-      path: '/api/v1/hosting/stats',
-      description: 'Estadísticas de hosting',
-      response: `{
-  "stats": {
-    "cpu_usage": 45.2,
-    "memory_usage": 67.8,
-    "disk_usage": 23.1,
-    "bandwidth": "1.2TB",
-    "uptime": "99.99%"
-  }
-}`
-    }
+      method: 'GET', path: '/api/v1/hosting/stats', description: 'Consultar estadísticas de rendimiento del hosting en tiempo real.',
+      response: `{\n  "stats": {\n    "cpu_usage": 45.2,\n    "memory_usage": 67.8,\n    "disk_usage": 23.1,\n    "bandwidth": "1.2TB",\n    "uptime": "99.99%"\n  }\n}`,
+    },
   ];
 
-  const features: ApiFeature[] = [
-    {
-      icon: <Zap className="w-6 h-6" />,
-      title: "API RESTful",
-      description: "Interfaz REST moderna y fácil de usar con respuestas JSON."
-    },
-    {
-      icon: <Shield className="w-6 h-6" />,
-      title: "Autenticación Segura",
-      description: "Autenticación basada en tokens API con encriptación SSL."
-    },
-    {
-      icon: <Code className="w-6 h-6" />,
-      title: "SDKs Disponibles",
-      description: "Librerías oficiales para Python, JavaScript, PHP y más."
-    },
-    {
-      icon: <BookOpen className="w-6 h-6" />,
-      title: "Documentación Completa",
-      description: "Guías detalladas, ejemplos y referencias de API."
-    }
+  const features = [
+    { icon: Zap,      num: '01', title: 'API RESTful',          desc: 'Interfaz REST moderna y fácil de usar con respuestas JSON estándar.' },
+    { icon: Shield,   num: '02', title: 'Autenticación Segura', desc: 'Autenticación basada en tokens API con encriptación SSL/TLS.' },
+    { icon: Code,     num: '03', title: 'SDKs Disponibles',     desc: 'Librerías oficiales para Python, JavaScript, PHP y más.' },
+    { icon: BookOpen, num: '04', title: 'Documentación',        desc: 'Guías detalladas, ejemplos interactivos y referencias completas.' },
   ];
 
   const codeExamples: CodeExample[] = [
     {
       language: 'JavaScript',
-      code: `// Obtener lista de servidores
-const response = await fetch('https://api.rokeindustries.com/v1/servers', {
-  headers: {
-    'Authorization': 'Bearer YOUR_API_KEY',
-    'Content-Type': 'application/json'
-  }
-});
-
-const data = await response.json();
-console.log(data.servers);`
+      code: `const response = await fetch('https://api.rokeindustries.com/v1/servers', {\n  headers: {\n    'Authorization': 'Bearer YOUR_API_KEY',\n    'Content-Type': 'application/json'\n  }\n});\n\nconst data = await response.json();\nconsole.log(data.servers);`,
     },
     {
       language: 'Python',
-      code: `import requests
-
-# Crear nuevo servidor
-url = "https://api.rokeindustries.com/v1/servers"
-headers = {
-    "Authorization": "Bearer YOUR_API_KEY",
-    "Content-Type": "application/json"
-}
-data = {
-    "name": "Mi Servidor",
-    "game": "minecraft",
-    "plan": "premium"
-}
-
-response = requests.post(url, headers=headers, json=data)
-print(response.json())`
+      code: `import requests\n\nurl = "https://api.rokeindustries.com/v1/servers"\nheaders = {\n    "Authorization": "Bearer YOUR_API_KEY",\n    "Content-Type": "application/json"\n}\ndata = { "name": "Mi Servidor", "game": "minecraft", "plan": "premium" }\n\nresponse = requests.post(url, headers=headers, json=data)\nprint(response.json())`,
     },
     {
       language: 'cURL',
-      code: `# Obtener estadísticas de hosting
-curl -X GET "https://api.rokeindustries.com/v1/hosting/stats" \\
-  -H "Authorization: Bearer YOUR_API_KEY" \\
-  -H "Content-Type: application/json"`
-    }
+      code: `curl -X GET "https://api.rokeindustries.com/v1/hosting/stats" \\\n  -H "Authorization: Bearer YOUR_API_KEY" \\\n  -H "Content-Type: application/json"`,
+    },
   ];
 
-  return (
-    <div className="min-h-screen bg-background dark:bg-slate-950">
-      <Container className="py-20">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-          className="max-w-6xl mx-auto"
-        >
-          {/* Header */}
-          <div className="text-center mb-16">
-            <div className="flex justify-center mb-6">
-              <div className="p-4 bg-primary/10 rounded-full">
-                <Code className="w-12 h-12 text-primary" />
-              </div>
-            </div>
-            <h1 className="text-4xl md:text-5xl font-bold mb-6">
-              API de Roke Industries
-            </h1>
-            <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-              Integra nuestros servicios de hosting y gaming en tus aplicaciones con nuestra API RESTful potente y fácil de usar.
-            </p>
-          </div>
+  const rateLimits = [
+    { plan: 'Básico',     requests: '1,000',  unit: 'req/hora' },
+    { plan: 'Premium',    requests: '5,000',  unit: 'req/hora' },
+    { plan: 'Enterprise', requests: '∞',      unit: 'Sin límite' },
+  ];
 
-          {/* Quick Start */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.2 }}
-            className="bg-card rounded-lg p-8 mb-12 border"
-          >
-            <div className="flex items-center mb-6">
-              <div className="p-3 bg-primary/10 rounded-lg mr-4">
-                <Play className="w-6 h-6" />
-              </div>
-              <h2 className="text-2xl font-semibold">Inicio Rápido</h2>
+  const methodColor = (m: string) =>
+    m === 'GET'  ? 'border-green-500/40 text-green-600 dark:text-green-400' :
+    m === 'POST' ? 'border-blue-500/40 text-blue-600 dark:text-blue-400' :
+                   'border-border text-muted-foreground';
+
+  return (
+    <div className="min-h-screen bg-background">
+
+      {/* ── Header ── */}
+      <section className="py-[80px] md:py-[100px] border-b border-border relative">
+        <div className="roke-grid-bg opacity-40" />
+        <div className="max-w-[1296px] mx-auto px-6 md:px-14 relative z-10">
+          <motion.div initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}>
+            <div className="flex items-center gap-3.5 font-mono text-[11px] text-muted-foreground mb-6">
+              <div className="w-8 h-[1px] bg-muted-foreground" />
+              <span>Desarrolladores · API v1</span>
             </div>
-            <div className="grid md:grid-cols-2 gap-8">
-              <div>
-                <h3 className="text-lg font-semibold mb-4">1. Obtén tu API Key</h3>
-                <p className="text-muted-foreground mb-4">
-                  Genera tu clave API desde tu panel de control para comenzar a usar nuestros servicios.
-                </p>
-                <button className="flex items-center px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors">
-                  <Key className="w-4 h-4 mr-2" />
-                  Generar API Key
+            <div className="grid grid-cols-1 md:grid-cols-[1fr_1.4fr] gap-14 items-end">
+              <h1 className="font-sans text-[52px] md:text-[64px] font-bold leading-[0.98] tracking-[-0.035em] text-foreground m-0">
+                API de <span className="text-muted-foreground font-medium">ROKE Industries.</span>
+              </h1>
+              <p className="text-[17px] leading-[1.55] text-muted-foreground max-w-[520px] pb-1.5">
+                Integra nuestros servicios de hosting y gaming en tus aplicaciones con nuestra API RESTful potente y fácil de usar.
+              </p>
+            </div>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* ── Quick start ── */}
+      <section className="py-[80px] border-b border-border">
+        <div className="max-w-[1296px] mx-auto px-6 md:px-14">
+          <div className="flex items-center gap-3.5 font-mono text-[11px] text-muted-foreground mb-10">
+            <div className="w-8 h-[1px] bg-muted-foreground" />
+            <span>Inicio Rápido</span>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 border border-border">
+            {/* Step 1 */}
+            <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.5 }}
+              className="p-10 border border-border -m-[1px] bg-card">
+              <div className="font-mono text-[11px] text-muted-foreground mb-4">01</div>
+              <div className="flex items-center gap-4 mb-5">
+                <div className="roke-icon-box w-12 h-12 border border-border flex items-center justify-center text-foreground bg-background">
+                  <Key className="w-5 h-5" />
+                </div>
+                <h3 className="text-[20px] font-bold text-foreground tracking-[-0.01em]">Obtén tu API Key</h3>
+              </div>
+              <p className="text-[14px] text-muted-foreground leading-relaxed mb-6">
+                Genera tu clave API desde tu panel de control. Cada key otorga acceso completo a los endpoints según tu plan.
+              </p>
+              <button className="inline-flex items-center gap-2 px-5 py-3 bg-foreground text-background text-[13px] font-semibold hover:-translate-y-px hover:shadow-lg transition-all">
+                <Key className="w-4 h-4" /> Generar API Key
+              </button>
+            </motion.div>
+
+            {/* Step 2 */}
+            <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.5, delay: 0.1 }}
+              className="p-10 border border-border -m-[1px] bg-card">
+              <div className="font-mono text-[11px] text-muted-foreground mb-4">02</div>
+              <div className="flex items-center gap-4 mb-5">
+                <div className="roke-icon-box w-12 h-12 border border-border flex items-center justify-center text-foreground bg-background">
+                  <Terminal className="w-5 h-5" />
+                </div>
+                <h3 className="text-[20px] font-bold text-foreground tracking-[-0.01em]">Haz tu primera llamada</h3>
+              </div>
+              <p className="text-[13px] text-muted-foreground mb-4">Base URL</p>
+              <div className="bg-muted border border-border p-4 font-mono text-[13px] flex items-center justify-between group">
+                <code className="text-foreground">https://api.rokeindustries.com/v1</code>
+                <button onClick={() => copyToClipboard('https://api.rokeindustries.com/v1', 'base-url')}
+                  className="w-7 h-7 border border-border flex items-center justify-center hover:border-foreground/40 transition-colors ml-4 flex-shrink-0">
+                  {copiedCode === 'base-url' ? <Check className="w-3.5 h-3.5 text-green-600" /> : <Copy className="w-3.5 h-3.5 text-muted-foreground" />}
                 </button>
               </div>
-              <div>
-                <h3 className="text-lg font-semibold mb-4">2. Haz tu Primera Llamada</h3>
-                <div className="bg-muted rounded-lg p-4 font-mono text-sm">
-                  <div className="flex items-center justify-between mb-2">
-                    <span className="text-muted-foreground">Base URL</span>
-                    <button
-                      onClick={() => copyToClipboard('https://api.rokeindustries.com/v1', 'base-url')}
-                      className="p-1 hover:bg-background rounded"
-                    >
-                      {copiedCode === 'base-url' ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
-                    </button>
-                  </div>
-                  <code>https://api.rokeindustries.com/v1</code>
-                </div>
-              </div>
-            </div>
-          </motion.div>
+            </motion.div>
+          </div>
+        </div>
+      </section>
 
-          {/* Features */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.3 }}
-            className="mb-12"
-          >
-            <h2 className="text-3xl font-bold text-center mb-12">Características de la API</h2>
-            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-              {features.map((feature, index) => (
-                <div key={index} className="bg-card rounded-lg p-6 border text-center">
-                  <div className="flex justify-center mb-4">
-                    <div className="p-3 bg-primary/10 rounded-lg">
-                      {feature.icon}
+      {/* ── Features ── */}
+      <section className="py-[80px] md:py-[120px] border-b border-border relative">
+        <div className="roke-slash-bg" />
+        <div className="max-w-[1296px] mx-auto px-6 md:px-14 relative z-10">
+          <div className="flex items-center gap-3.5 font-mono text-[11px] text-muted-foreground mb-10">
+            <div className="w-8 h-[1px] bg-muted-foreground" />
+            <span>Características</span>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 border border-border">
+            {features.map((f, i) => {
+              const Icon = f.icon;
+              return (
+                <motion.div key={i}
+                  initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
+                  transition={{ duration: 0.5, delay: i * 0.08 }}
+                  className="p-9 border border-border -m-[1px] bg-card hover:bg-muted/20 transition-colors flex flex-col gap-5">
+                  <div className="flex items-start justify-between">
+                    <span className="font-mono text-[11px] text-muted-foreground">{f.num}</span>
+                    <div className="roke-icon-box w-12 h-12 border border-border flex items-center justify-center text-foreground bg-background">
+                      <Icon className="w-5 h-5" />
                     </div>
                   </div>
-                  <h3 className="text-lg font-semibold mb-2">{feature.title}</h3>
-                  <p className="text-muted-foreground text-sm">{feature.description}</p>
+                  <h3 className="text-[17px] font-bold text-foreground tracking-[-0.01em]">{f.title}</h3>
+                  <p className="text-[13px] text-muted-foreground leading-relaxed">{f.desc}</p>
+                </motion.div>
+              );
+            })}
+          </div>
+        </div>
+      </section>
+
+      {/* ── Endpoints ── */}
+      <section className="py-[80px] md:py-[100px] border-b border-border bg-muted/10">
+        <div className="max-w-[1296px] mx-auto px-6 md:px-14">
+          <div className="flex items-center gap-3.5 font-mono text-[11px] text-muted-foreground mb-10">
+            <div className="w-8 h-[1px] bg-muted-foreground" />
+            <span>Endpoints</span>
+          </div>
+          <div className="border border-border divide-y divide-border">
+            {endpoints.map((ep, i) => (
+              <motion.div key={i}
+                initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: i * 0.08 }}
+                className="p-8">
+                <div className="flex items-center gap-4 mb-4">
+                  <span className={`px-3 py-1 border text-[11px] font-mono ${methodColor(ep.method)}`}>{ep.method}</span>
+                  <code className="font-mono text-[13px] bg-muted border border-border px-3 py-1.5 text-foreground">{ep.path}</code>
                 </div>
-              ))}
-            </div>
-          </motion.div>
-
-          {/* Endpoints */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.4 }}
-            className="bg-card rounded-lg p-8 mb-12 border"
-          >
-            <h2 className="text-2xl font-semibold mb-6">Endpoints Principales</h2>
-            <div className="space-y-6">
-              {endpoints.map((endpoint, index) => (
-                <div key={index} className="border rounded-lg p-6">
-                  <div className="flex items-center mb-4">
-                    <span className={`px-3 py-1 rounded text-sm font-medium mr-3 ${
-                      endpoint.method === 'GET' ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200' :
-                      endpoint.method === 'POST' ? 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200' :
-                      'bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-200'
-                    }`}>
-                      {endpoint.method}
-                    </span>
-                    <code className="font-mono text-sm bg-muted px-2 py-1 rounded">{endpoint.path}</code>
-                  </div>
-                  <p className="text-muted-foreground mb-4">{endpoint.description}</p>
-
-                  {endpoint.request && (
-                    <div className="mb-4">
-                      <h4 className="font-semibold mb-2">Request Body:</h4>
-                      <div className="bg-muted rounded-lg p-4 relative">
-                        <button
-                          onClick={() => copyToClipboard(endpoint.request!, `request-${index}`)}
-                          className="absolute top-2 right-2 p-2 hover:bg-background rounded"
-                        >
-                          {copiedCode === `request-${index}` ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
+                <p className="text-[14px] text-muted-foreground mb-6">{ep.description}</p>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {ep.request && (
+                    <div>
+                      <div className="flex items-center justify-between mb-2">
+                        <span className="font-mono text-[11px] text-muted-foreground">REQUEST BODY</span>
+                        <button onClick={() => copyToClipboard(ep.request!, `req-${i}`)}
+                          className="w-7 h-7 border border-border flex items-center justify-center hover:border-foreground/40 transition-colors">
+                          {copiedCode === `req-${i}` ? <Check className="w-3.5 h-3.5 text-green-600" /> : <Copy className="w-3.5 h-3.5 text-muted-foreground" />}
                         </button>
-                        <pre className="text-sm overflow-x-auto">
-                          <code>{endpoint.request}</code>
-                        </pre>
                       </div>
+                      <pre className="bg-muted border border-border p-4 text-[12px] font-mono text-foreground overflow-x-auto leading-relaxed"><code>{ep.request}</code></pre>
                     </div>
                   )}
-
-                  <div>
-                    <h4 className="font-semibold mb-2">Response:</h4>
-                    <div className="bg-muted rounded-lg p-4 relative">
-                      <button
-                        onClick={() => copyToClipboard(endpoint.response, `response-${index}`)}
-                        className="absolute top-2 right-2 p-2 hover:bg-background rounded"
-                      >
-                        {copiedCode === `response-${index}` ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
+                  <div className={ep.request ? '' : 'md:col-span-2'}>
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="font-mono text-[11px] text-muted-foreground">RESPONSE</span>
+                      <button onClick={() => copyToClipboard(ep.response, `res-${i}`)}
+                        className="w-7 h-7 border border-border flex items-center justify-center hover:border-foreground/40 transition-colors">
+                        {copiedCode === `res-${i}` ? <Check className="w-3.5 h-3.5 text-green-600" /> : <Copy className="w-3.5 h-3.5 text-muted-foreground" />}
                       </button>
-                      <pre className="text-sm overflow-x-auto">
-                        <code>{endpoint.response}</code>
-                      </pre>
                     </div>
+                    <pre className="bg-muted border border-border p-4 text-[12px] font-mono text-foreground overflow-x-auto leading-relaxed"><code>{ep.response}</code></pre>
                   </div>
                 </div>
-              ))}
-            </div>
-          </motion.div>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
 
-          {/* Code Examples */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.5 }}
-            className="bg-card rounded-lg p-8 mb-12 border"
-          >
-            <h2 className="text-2xl font-semibold mb-6">Ejemplos de Código</h2>
-            <div className="space-y-6">
-              {codeExamples.map((example, index) => (
-                <div key={index}>
-                  <div className="flex items-center justify-between mb-3">
-                    <h3 className="text-lg font-semibold">{example.language}</h3>
-                    <button
-                      onClick={() => copyToClipboard(example.code, `code-${index}`)}
-                      className="flex items-center px-3 py-1 text-sm border rounded hover:bg-muted transition-colors"
-                    >
-                      {copiedCode === `code-${index}` ? <Check className="w-4 h-4 mr-1" /> : <Copy className="w-4 h-4 mr-1" />}
-                      Copiar
-                    </button>
+      {/* ── Code examples ── */}
+      <section className="py-[80px] md:py-[100px] border-b border-border relative">
+        <div className="roke-slash-bg" />
+        <div className="max-w-[1296px] mx-auto px-6 md:px-14 relative z-10">
+          <div className="flex items-center gap-3.5 font-mono text-[11px] text-muted-foreground mb-10">
+            <div className="w-8 h-[1px] bg-muted-foreground" />
+            <span>Ejemplos de Código</span>
+          </div>
+          <div className="border border-border divide-y divide-border">
+            {codeExamples.map((ex, i) => (
+              <motion.div key={i}
+                initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: i * 0.08 }}
+                className="p-8">
+                <div className="flex items-center justify-between mb-5">
+                  <div className="flex items-center gap-3">
+                    <div className="w-2 h-2 bg-foreground/60" />
+                    <span className="font-mono text-[13px] font-semibold text-foreground">{ex.language}</span>
                   </div>
-                  <div className="bg-muted rounded-lg p-4">
-                    <pre className="text-sm overflow-x-auto">
-                      <code>{example.code}</code>
-                    </pre>
-                  </div>
+                  <button onClick={() => copyToClipboard(ex.code, `code-${i}`)}
+                    className="flex items-center gap-2 px-3 py-1.5 border border-border text-[12px] text-muted-foreground hover:border-foreground/40 hover:text-foreground transition-colors font-mono">
+                    {copiedCode === `code-${i}` ? <><Check className="w-3.5 h-3.5" />Copiado</> : <><Copy className="w-3.5 h-3.5" />Copiar</>}
+                  </button>
                 </div>
-              ))}
-            </div>
-          </motion.div>
+                <pre className="bg-muted border border-border p-5 text-[12.5px] font-mono text-foreground overflow-x-auto leading-[1.7]"><code>{ex.code}</code></pre>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
 
-          {/* Rate Limits */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.6 }}
-            className="bg-card rounded-lg p-8 mb-12 border"
-          >
-            <h2 className="text-2xl font-semibold mb-6">Límites de Velocidad</h2>
-            <div className="grid md:grid-cols-3 gap-6">
-              <div className="text-center">
-                <div className="text-3xl font-bold text-blue-500 mb-2">1000</div>
-                <div className="text-sm text-muted-foreground">Requests por hora</div>
-                <div className="text-xs text-muted-foreground mt-1">Plan Básico</div>
-              </div>
-              <div className="text-center">
-                <div className="text-3xl font-bold text-green-500 mb-2">5000</div>
-                <div className="text-sm text-muted-foreground">Requests por hora</div>
-                <div className="text-xs text-muted-foreground mt-1">Plan Premium</div>
-              </div>
-              <div className="text-center">
-                <div className="text-3xl font-bold text-purple-500 mb-2">∞</div>
-                <div className="text-sm text-muted-foreground">Requests por hora</div>
-                <div className="text-xs text-muted-foreground mt-1">Plan Enterprise</div>
-              </div>
-            </div>
-          </motion.div>
+      {/* ── Rate limits ── */}
+      <section className="border-b border-border bg-muted/10">
+        <div className="max-w-[1296px] mx-auto px-6 md:px-14">
+          <div className="flex items-center gap-3.5 font-mono text-[11px] text-muted-foreground py-8 border-b border-border">
+            <div className="w-8 h-[1px] bg-muted-foreground" />
+            <span>Límites de Velocidad</span>
+          </div>
+          <div className="grid grid-cols-3 border-r border-border">
+            {rateLimits.map((r, i) => (
+              <motion.div key={i} initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: i * 0.08 }}
+                className="py-10 px-8 border-l border-border">
+                <div className="font-mono text-[11px] text-muted-foreground mb-3">{r.plan}</div>
+                <div className="text-[48px] font-bold text-foreground leading-none tracking-[-0.04em] mb-1">
+                  {r.requests}
+                </div>
+                <div className="text-[13px] text-muted-foreground font-mono">{r.unit}</div>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
 
-          {/* Documentation Links */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.7 }}
-            className="bg-gradient-to-br from-primary/10 via-primary/5 to-primary/[0.03] dark:from-slate-900 dark:via-primary/15 dark:to-slate-950 rounded-lg p-8 text-center border border-primary/10 dark:border-primary/20"
-          >
-            <h3 className="text-2xl font-semibold mb-4">¿Necesitas Más Información?</h3>
-            <p className="text-muted-foreground mb-6">
-              Explora nuestra documentación completa, guías de integración y ejemplos avanzados.
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <button className="flex items-center px-6 py-3 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors">
-                <BookOpen className="w-4 h-4 mr-2" />
-                Documentación Completa
+      {/* ── CTA ── */}
+      <section className="py-[80px] md:py-[100px] border-b border-border bg-foreground text-background">
+        <div className="max-w-[1296px] mx-auto px-6 md:px-14">
+          <div className="grid grid-cols-1 md:grid-cols-[1fr_auto] gap-10 items-center">
+            <div>
+              <div className="flex items-center gap-3.5 font-mono text-[11px] text-background/50 mb-5">
+                <div className="w-8 h-[1px] bg-background/40" />
+                <span>Recursos</span>
+              </div>
+              <h3 className="text-[36px] md:text-[44px] font-bold text-background tracking-[-0.03em] leading-tight mb-4">
+                ¿Necesitas más <span className="text-background/50 font-medium">información?</span>
+              </h3>
+              <p className="text-[15px] text-background/60 leading-relaxed max-w-lg">
+                Explora nuestra documentación completa, guías de integración y ejemplos avanzados.
+              </p>
+            </div>
+            <div className="flex flex-col gap-3">
+              <button className="inline-flex items-center gap-2 px-7 py-4 bg-background text-foreground font-semibold text-[14px] hover:-translate-y-px hover:shadow-lg transition-all">
+                <BookOpen className="w-4 h-4" /> Documentación completa
               </button>
-              <button className="flex items-center px-6 py-3 border border-primary text-primary rounded-lg hover:bg-primary/10 transition-colors">
-                <Terminal className="w-4 h-4 mr-2" />
-                Playground API
-              </button>
-              <button className="flex items-center px-6 py-3 border border-primary text-primary rounded-lg hover:bg-primary/10 transition-colors">
-                <ExternalLink className="w-4 h-4 mr-2" />
-                Postman Collection
+              <button className="inline-flex items-center gap-2 px-7 py-4 border border-background/30 text-background/80 hover:border-background hover:text-background font-semibold text-[14px] transition-colors">
+                <ExternalLink className="w-4 h-4" /> Postman Collection
               </button>
             </div>
-          </motion.div>
-        </motion.div>
-      </Container>
+          </div>
+        </div>
+      </section>
     </div>
   );
 };

@@ -13,8 +13,8 @@ export default defineConfig({
   },
   server: {
     host: true,
-    port: 5174,
-    strictPort: true,
-    allowedHosts: ['.manus.computer']
+    port: process.env.PORT ? Number(process.env.PORT) : 5174,
+    strictPort: false,
+    allowedHosts: 'all'
   }
 })

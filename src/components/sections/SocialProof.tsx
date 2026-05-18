@@ -1,219 +1,178 @@
 import React from "react";
 import { motion } from "framer-motion";
-import { Star, Users, Zap, Award } from "lucide-react";
-import {
-  FaLinux,
-  FaDocker,
-  FaAws,
-  FaNode,
-  FaPython,
-  FaReact,
-  FaAws as FaAmazonAws
-} from "react-icons/fa";
-import { SiKubernetes, SiPostgresql } from "react-icons/si";
-import Container from "../common/Container";
 
-interface Stat {
-  icon: React.ElementType;
-  number: string;
-  label: string;
-  description: string;
-}
+const testimonials = [
+  {
+    name: "Carlos Mendoza",
+    company: "TechStart MX",
+    role: "CTO",
+    text: "ROKE Industries transformó nuestra infraestructura. El soporte es excepcional y los precios son muy competitivos.",
+    rating: 5,
+  },
+  {
+    name: "María García",
+    company: "Gaming Studio LA",
+    role: "Fundadora",
+    text: "Los servidores gaming son increíblemente rápidos. Nuestros jugadores notaron la diferencia inmediatamente.",
+    rating: 5,
+  },
+  {
+    name: "Roberto López",
+    company: "E-commerce Solutions",
+    role: "Director de Tecnología",
+    text: "Escalamos nuestro negocio sin preocupaciones. La infraestructura de ROKE crece con nosotros.",
+    rating: 5,
+  },
+];
 
-interface Testimonial {
-  name: string;
-  company: string;
-  text: string;
-  rating: number;
-}
-
-interface Technology {
-  name: string;
-  icon: React.ElementType;
-  color: string;
-}
+/* Inline star SVG — no dependency on Lucide */
+const StarIcon = () => (
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="#f5a623" stroke="none" aria-hidden="true">
+    <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+  </svg>
+);
 
 const SocialProof: React.FC = () => {
-  const stats: Stat[] = [
-    {
-      icon: Users,
-      number: "500+",
-      label: "Clientes Activos",
-      description: "Empresas confiando en nuestra infraestructura",
-    },
-    {
-      icon: Award,
-      number: "99.9%",
-      label: "Uptime Garantizado",
-      description: "Infraestructura redundante y confiable",
-    },
-    {
-      icon: Zap,
-      number: "24h",
-      label: "Despliegue Rápido",
-      description: "Tus servidores listos en un día",
-    },
-    {
-      icon: Star,
-      number: "4.9/5",
-      label: "Calificación Promedio",
-      description: "Satisfacción de nuestros clientes",
-    },
-  ];
-
-  const testimonials: Testimonial[] = [
-    {
-      name: "Carlos Mendoza",
-      company: "TechStart MX",
-      text: "ROKE Industries transformó nuestra infraestructura. El soporte es excepcional y los precios son muy competitivos.",
-      rating: 5,
-    },
-    {
-      name: "María García",
-      company: "Gaming Studio LA",
-      text: "Los servidores gaming son increíblemente rápidos. Nuestros jugadores notaron la diferencia inmediatamente.",
-      rating: 5,
-    },
-    {
-      name: "Roberto López",
-      company: "E-commerce Solutions",
-      text: "Escalamos nuestro negocio sin preocupaciones. La infraestructura de ROKE crece con nosotros.",
-      rating: 5,
-    },
-  ];
-
-  const technologies: Technology[] = [
-    { name: "Linux", icon: FaLinux, color: "hover:text-[#FCC624]" },
-    { name: "Docker", icon: FaDocker, color: "hover:text-[#2496ED]" },
-    { name: "Kubernetes", icon: SiKubernetes, color: "hover:text-[#326CE5]" },
-    { name: "AWS", icon: FaAws, color: "hover:text-[#FF9900]" },
-    { name: "Node.js", icon: FaNode, color: "hover:text-[#339933]" },
-    { name: "Python", icon: FaPython, color: "hover:text-[#3776AB]" },
-    { name: "React", icon: FaReact, color: "hover:text-[#61DAFB]" },
-    { name: "PostgreSQL", icon: SiPostgresql, color: "hover:text-[#4169E1]" },
-  ];
-
   return (
-    <section className="py-20 bg-muted/20 dark:bg-slate-900/30">
-      <Container>
-        {/* Stats Grid */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8 }}
-          viewport={{ once: true }}
-          className="mb-20"
-        >
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-            {stats.map((stat, index) => {
-              const Icon = stat.icon;
-              return (
-                <motion.div
-                  key={stat.label}
-                  initial={{ opacity: 0, y: 30 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.6, delay: 0.1 * index }}
-                  viewport={{ once: true }}
-                  className="bg-card border border-border rounded-lg p-6 text-center hover:border-primary/50 transition-colors"
-                >
-                  <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mx-auto mb-4">
-                    <Icon className="w-6 h-6 text-primary" />
-                  </div>
-                  <div className="text-3xl font-bold text-primary mb-2">
-                    {stat.number}
-                  </div>
-                  <h3 className="text-lg font-semibold text-foreground mb-2">
-                    {stat.label}
-                  </h3>
-                  <p className="text-sm text-muted-foreground">
-                    {stat.description}
-                  </p>
-                </motion.div>
-              );
-            })}
-          </div>
-        </motion.div>
+    <section className="roke-section-services">
+      <div style={{ maxWidth: 1296, margin: "0 auto" }}>
 
-        {/* Testimonials */}
-        <motion.div
+        {/* ── Header ── */}
+        <motion.header
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.2 }}
+          transition={{ duration: 0.7 }}
           viewport={{ once: true }}
-          className="mb-20"
+          className="roke-section-header"
         >
-          <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4 text-center">
-            Lo que dicen nuestros clientes
-          </h2>
-          <p className="text-xl text-muted-foreground max-w-3xl mx-auto text-center mb-12">
-            Empresas reales que confían en ROKE Industries para su infraestructura crítica.
+          <div>
+            {/* Eyebrow */}
+            <div className="roke-eyebrow">
+              <span className="roke-eyebrow-line" />
+              <span>03 / CLIENTES</span>
+            </div>
+
+            {/* Title */}
+            <h2
+              style={{
+                fontFamily: '"Montserrat", system-ui, sans-serif',
+                fontSize: 64,
+                fontWeight: 700,
+                lineHeight: 0.98,
+                letterSpacing: "-0.035em",
+                color: "var(--roke-text)",
+                margin: 0,
+              }}
+            >
+              Clientes{" "}
+              <span style={{ color: "var(--roke-text-dim)", fontWeight: 500 }}>
+                reales.
+              </span>
+            </h2>
+          </div>
+
+          {/* Subtitle */}
+          <p
+            style={{
+              fontSize: 17,
+              lineHeight: 1.55,
+              color: "var(--roke-text-dim)",
+              margin: 0,
+              paddingBottom: 6,
+              maxWidth: 520,
+            }}
+          >
+            Empresas reales que confían en ROKE Industries para su
+            infraestructura crítica.
           </p>
+        </motion.header>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {testimonials.map((testimonial, index) => (
-              <motion.div
-                key={testimonial.name}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: 0.1 * index }}
-                viewport={{ once: true }}
-                className="bg-card border border-border rounded-lg p-8 hover:border-primary/50 transition-colors"
+        {/* ── Testimonials grid ── */}
+        <div className="roke-3col-grid">
+          {testimonials.map((t, i) => (
+            <motion.article
+              key={t.name}
+              initial={{ opacity: 0, y: 24 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.45, delay: 0.08 * i }}
+              viewport={{ once: true }}
+              style={{
+                padding: "36px 36px 32px",
+                border: "1px solid var(--roke-border-strong)",
+                margin: -1,
+                background: "var(--roke-surface)",
+                display: "flex",
+                flexDirection: "column",
+                gap: 20,
+                transition: "background 0.18s ease",
+              }}
+              onMouseEnter={(e) =>
+                ((e.currentTarget as HTMLElement).style.background =
+                  "var(--roke-surface-2)")
+              }
+              onMouseLeave={(e) =>
+                ((e.currentTarget as HTMLElement).style.background =
+                  "var(--roke-surface)")
+              }
+            >
+              {/* Stars */}
+              <div style={{ display: "flex", gap: 4 }}>
+                {[...Array(t.rating)].map((_, si) => (
+                  <StarIcon key={si} />
+                ))}
+              </div>
+
+              {/* Quote */}
+              <p
+                style={{
+                  fontSize: 15,
+                  lineHeight: 1.55,
+                  color: "var(--roke-text)",
+                  margin: 0,
+                  flexGrow: 1,
+                }}
               >
-                <div className="flex gap-1 mb-4">
-                  {[...Array(testimonial.rating)].map((_, i) => (
-                    <Star
-                      key={i}
-                      className="w-5 h-5 fill-yellow-400 text-yellow-400"
-                    />
-                  ))}
-                </div>
-                <p className="text-foreground mb-6 italic">"{testimonial.text}"</p>
-                <div>
-                  <p className="font-semibold text-foreground">
-                    {testimonial.name}
-                  </p>
-                  <p className="text-sm text-muted-foreground">
-                    {testimonial.company}
-                  </p>
-                </div>
-              </motion.div>
-            ))}
-          </div>
-        </motion.div>
+                {t.text}
+              </p>
 
-        {/* Technologies */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.4 }}
-          viewport={{ once: true }}
-          className="text-center"
-        >
-          <h3 className="text-2xl font-bold text-foreground mb-8">
-            Tecnologías que utilizamos
-          </h3>
-          <div className="flex flex-wrap justify-center gap-4">
-            {technologies.map((tech, index) => {
-              const Icon = tech.icon;
-              return (
-                <motion.div
-                  key={tech.name}
-                  initial={{ opacity: 0, scale: 0.8 }}
-                  whileInView={{ opacity: 1, scale: 1 }}
-                  transition={{ duration: 0.4, delay: 0.05 * index }}
-                  viewport={{ once: true }}
-                  className={`bg-card border border-border rounded-lg px-6 py-3 flex items-center gap-3 transition-all duration-300 group ${tech.color} hover:border-current hover:shadow-md`}
+              {/* Author */}
+              <div
+                style={{
+                  paddingTop: 20,
+                  borderTop: "1px solid var(--roke-border)",
+                  display: "flex",
+                  flexDirection: "column",
+                  gap: 3,
+                }}
+              >
+                <span
+                  style={{
+                    fontFamily: '"Montserrat", system-ui, sans-serif',
+                    fontWeight: 700,
+                    fontSize: 14,
+                    letterSpacing: "-0.01em",
+                    color: "var(--roke-text)",
+                  }}
                 >
-                  <Icon className="w-6 h-6 text-muted-foreground group-hover:text-current transition-colors" />
-                  <span className="font-semibold text-foreground group-hover:text-current transition-colors">
-                    {tech.name}
-                  </span>
-                </motion.div>
-              );
-            })}
-          </div>
-        </motion.div>
-      </Container>
+                  {t.name}
+                </span>
+                <span
+                  style={{
+                    fontFamily: '"JetBrains Mono", monospace',
+                    fontSize: 11,
+                    letterSpacing: "0.08em",
+                    color: "var(--roke-text-dimmer)",
+                    textTransform: "uppercase",
+                  }}
+                >
+                  {t.role} · {t.company}
+                </span>
+              </div>
+            </motion.article>
+          ))}
+        </div>
+
+      </div>
     </section>
   );
 };
