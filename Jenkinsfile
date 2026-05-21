@@ -113,19 +113,28 @@ pipeline {
         }
 
         stage('Validar branch') {
-            when { expression { params.DEPLOY_ENV != 'none' } }
-            steps {
-                script {
-                    def branch = env.GIT_BRANCH
-                    if (params.DEPLOY_ENV == 'production' && branch != 'master') {
-                        error("Produccion solo desde master. Branch actual: ${branch}")
-                    }
-                    if (params.DEPLOY_ENV == 'dev' && branch != 'develop') {
-                        error("DEV solo desde develop. Branch actual: ${branch}")
-                    }
-                }
+    when { expression { params.DEPLOY_ENV != 'none' } }
+    steps {
+        script {
+            def branch = env.GIT_BRANCH?.replaceAll('origin/', '').trim()
+                      ?: env.BRANCH_NAME?.trim()
+                      ?: sh(returnStdout: true,
+                            script: "git name-rev --name-only HEAD | sed 's|remotes/origin/||'").trim()
+
+            echo "Branch detectado: ${branch}"
+            echo "Env seleccionado: ${params.DEPLOY_ENV}"
+
+            if (params.DEPLOY_ENV == 'production' && branch != 'master') {
+                error("Produccion solo desde master. Branch actual: ${branch}")
             }
+            if (params.DEPLOY_ENV == 'dev' && branch != 'develop') {
+                error("DEV solo desde develop. Branch actual: ${branch}")
+            }
+
+            echo "Validacion OK — Branch: ${branch} | Env: ${params.DEPLOY_ENV}"
         }
+    }
+}
 
         stage('Load Environment') {
             when { expression { params.DEPLOY_ENV != 'none' } }
