@@ -3,15 +3,15 @@
 // ==========================
 def notify(status, extra="") {
     def colorMap = [
-        "START": 3447003,
-        "SUCCESS": 3066993,
-        "FAILURE": 15158332,
-        "WARNING": 15844367,
+        "START":    3447003,
+        "SUCCESS":  3066993,
+        "FAILURE":  15158332,
+        "WARNING":  15844367,
         "CRITICAL": 10038562
     ]
 
     def color = colorMap[status] ?: 3447003
-    def url = params.DEPLOY_ENV == 'production' ? env.PROD_URL : env.STAGING_URL
+    def url = params.DEPLOY_ENV == 'production' ? env.PROD_URL : env.DEV_URL
 
     def isProd = params.DEPLOY_ENV == 'production'
     def mention = (status in ["FAILURE","CRITICAL"] && isProd) ? "<@&TU_ROLE_ID>" : ""
@@ -20,7 +20,7 @@ def notify(status, extra="") {
     {
       "content": "${mention}",
       "embeds": [{
-        "title": "🚀 Deploy ${status}",
+        "title": "🚀 Deploy Landing ${status}",
         "color": ${color},
         "fields": [
           {"name":"Proyecto","value":"${env.JOB_NAME}","inline":true},
@@ -40,9 +40,9 @@ def notify(status, extra="") {
     """
 
     sh """
-      curl -s -H 'Content-Type: application/json' \
-           -X POST \
-           -d '${payload}' \
+      curl -s -H 'Content-Type: application/json' \\
+           -X POST \\
+           -d '${payload}' \\
            ${env.DISCORD_WEBHOOK}
     """
 }
@@ -60,15 +60,18 @@ pipeline {
     }
 
     environment {
-        PROD_URL     = 'https://rokeindustries.com'
-        PROD_MX_URL  = 'https://rokeindustries.com.mx'
-        STAGING_URL  = 'https://rokeindustries.dev'
+        // ── Producción (Dell — local) ──────────────────────────
+        PROD_URL      = 'https://rokeindustries.com'
+        PROD_MX_URL   = 'https://rokeindustries.com.mx'
+        PROD_PATH     = '/opt/apps/landing'
+        ENV_PROD_PATH = '/opt/apps/landing/.env.production'
 
-        STAGING_PATH = '/opt/apps/staging/landing'
-        PROD_PATH    = '/opt/apps/landing'
-
-        ENV_STAGING_PATH = '/opt/apps/staging/landing/.env.staging'
-        ENV_PROD_PATH    = '/opt/apps/landing/.env.production'
+        // ── DEV (Mac Mini — remoto vía Tailscale) ─────────────
+        DEV_URL       = 'https://rokeindustries.dev'
+        DEV_HOST      = '100.72.162.112'
+        DEV_USER      = 'rokedev'
+        DEV_PATH      = '/opt/apps/landing-dev'
+        ENV_DEV_PATH  = '/opt/apps/landing-dev/.env.dev'
 
         DISCORD_WEBHOOK = 'https://discord.com/api/webhooks/1501364059117715558/W_w1xbGHR_jifhNtdE9koiPjoaiXB2fYEJ62mAsMn9zSeOnQxLXasOWpPN9a-Is35Wsd'
     }
@@ -81,7 +84,7 @@ pipeline {
     }
 
     parameters {
-        choice(name: 'DEPLOY_ENV', choices: ['none', 'staging', 'production'])
+        choice(name: 'DEPLOY_ENV', choices: ['none', 'dev', 'production'])
         booleanParam(name: 'RUN_LINT', defaultValue: true)
         booleanParam(name: 'RUN_FORMAT_CHECK', defaultValue: false)
         booleanParam(name: 'SKIP_TESTS', defaultValue: true)
@@ -93,9 +96,9 @@ pipeline {
             steps {
                 checkout scm
                 script {
-                    env.GIT_BRANCH = sh(script:"git rev-parse --abbrev-ref HEAD", returnStdout:true).trim()
-                    env.GIT_COMMIT = sh(script:"git rev-parse HEAD", returnStdout:true).trim()
-                    env.GIT_AUTHOR_NAME = sh(script:"git log -1 --pretty=format:'%an'", returnStdout:true).trim()
+                    env.GIT_BRANCH      = sh(script: "git rev-parse --abbrev-ref HEAD", returnStdout: true).trim()
+                    env.GIT_COMMIT      = sh(script: "git rev-parse HEAD", returnStdout: true).trim()
+                    env.GIT_AUTHOR_NAME = sh(script: "git log -1 --pretty=format:'%an'", returnStdout: true).trim()
                 }
                 sh '''
                     echo "Branch:  $(git rev-parse --abbrev-ref HEAD)"
@@ -109,18 +112,41 @@ pipeline {
             steps { script { notify("START") } }
         }
 
+        stage('Validar branch') {
+            when { expression { params.DEPLOY_ENV != 'none' } }
+            steps {
+                script {
+                    def branch = env.GIT_BRANCH
+                    if (params.DEPLOY_ENV == 'production' && branch != 'master') {
+                        error("Produccion solo desde master. Branch actual: ${branch}")
+                    }
+                    if (params.DEPLOY_ENV == 'dev' && branch != 'develop') {
+                        error("DEV solo desde develop. Branch actual: ${branch}")
+                    }
+                }
+            }
+        }
+
         stage('Load Environment') {
             when { expression { params.DEPLOY_ENV != 'none' } }
             steps {
                 script {
-                    def envPath = params.DEPLOY_ENV == 'staging'
-                        ? env.ENV_STAGING_PATH
-                        : env.ENV_PROD_PATH
-
-                    sh """
-                        cp ${envPath} .env
-                        echo ".env cargado desde: ${envPath}"
-                    """
+                    if (params.DEPLOY_ENV == 'production') {
+                        sh "cp ${ENV_PROD_PATH} .env"
+                        sh "echo '.env cargado desde: ${ENV_PROD_PATH}'"
+                    } else {
+                        // DEV — jalar .env desde el Mac Mini
+                        withCredentials([sshUserPrivateKey(
+                            credentialsId: 'mac-mini-deploy-key',
+                            keyFileVariable: 'SSH_KEY'
+                        )]) {
+                            sh """
+                                scp -i \$SSH_KEY -o StrictHostKeyChecking=no \
+                                    ${DEV_USER}@${DEV_HOST}:${ENV_DEV_PATH} .env
+                                echo ".env cargado desde Mac Mini: ${ENV_DEV_PATH}"
+                            """
+                        }
+                    }
                 }
             }
         }
@@ -151,7 +177,9 @@ pipeline {
         stage('Build') {
             steps {
                 script {
-                    def buildCmd = params.DEPLOY_ENV == 'staging' ? 'pnpm run build:staging' : 'pnpm run build'
+                    def buildCmd = params.DEPLOY_ENV == 'dev'
+                        ? 'pnpm run build:staging'
+                        : 'pnpm run build'
 
                     sh """
                         ${buildCmd}
@@ -159,7 +187,7 @@ pipeline {
                         test -f dist/index.html
                     """
 
-                    env.BUILD_SIZE = sh(script:"du -sh dist | cut -f1", returnStdout:true).trim()
+                    env.BUILD_SIZE = sh(script: "du -sh dist | cut -f1", returnStdout: true).trim()
                 }
             }
             post {
@@ -180,29 +208,55 @@ pipeline {
             }
         }
 
-        stage('Deploy Staging') {
-            when { expression { params.DEPLOY_ENV == 'staging' } }
+        // ── Deploy DEV → Mac Mini (remoto via SSH) ─────────────────────
+        stage('Deploy DEV') {
+            when { expression { params.DEPLOY_ENV == 'dev' } }
             steps {
-                sh '''
-                    rm -rf ${STAGING_PATH}/assets
-                    cp -rf dist/. ${STAGING_PATH}/
-                    test -f ${STAGING_PATH}/index.html
-                '''
-                echo "Disponible en: ${STAGING_URL}"
+                withCredentials([sshUserPrivateKey(
+                    credentialsId: 'mac-mini-deploy-key',
+                    keyFileVariable: 'SSH_KEY'
+                )]) {
+                    // Crear directorio si no existe
+                    sh """
+                        ssh -i \$SSH_KEY -o StrictHostKeyChecking=no \
+                            ${DEV_USER}@${DEV_HOST} \
+                            "mkdir -p ${DEV_PATH}"
+                    """
+
+                    // Sincronizar build al Mac Mini
+                    sh """
+                        rsync -az --delete \
+                            -e "ssh -i \$SSH_KEY -o StrictHostKeyChecking=no" \
+                            dist/ \
+                            ${DEV_USER}@${DEV_HOST}:${DEV_PATH}/
+                    """
+
+                    // Verificar y recargar Nginx
+                    sh """
+                        ssh -i \$SSH_KEY -o StrictHostKeyChecking=no \
+                            ${DEV_USER}@${DEV_HOST} bash << 'REMOTE'
+                                set -e
+                                test -f ${DEV_PATH}/index.html && echo "Deploy DEV exitoso"
+                                sudo systemctl reload nginx
+REMOTE
+                    """
+                }
+                echo "Disponible en: ${DEV_URL}"
             }
         }
 
+        // ── Deploy PRODUCCIÓN → Dell (local) ───────────────────────────
         stage('Deploy Production') {
             when { expression { params.DEPLOY_ENV == 'production' } }
             steps {
-                sh '''
+                sh """
                     mkdir -p /opt/backups/landing
-                    cp -r ${PROD_PATH} /opt/backups/landing/landing_$(date +%Y%m%d_%H%M%S) 2>/dev/null || true
+                    cp -r ${PROD_PATH} /opt/backups/landing/landing_\$(date +%Y%m%d_%H%M%S) 2>/dev/null || true
                     rm -rf ${PROD_PATH}/assets
                     cp -rf dist/. ${PROD_PATH}/
                     test -f ${PROD_PATH}/index.html
                     sudo /usr/bin/systemctl reload nginx
-                '''
+                """
                 echo "Disponible en: ${PROD_URL} y ${PROD_MX_URL}"
             }
         }
@@ -211,14 +265,10 @@ pipeline {
     post {
         success {
             script {
-                // historial
-                sh '''
-                    echo "$(date) | ${BUILD_NUMBER} | ${DEPLOY_ENV} | SUCCESS" >> /opt/apps/landing/deploy.log
-                '''
-
+                sh """
+                    echo "\$(date) | ${BUILD_NUMBER} | ${params.DEPLOY_ENV} | SUCCESS" >> /opt/apps/landing/deploy.log
+                """
                 notify("SUCCESS")
-
-                // alerta build lento
                 def durationSec = currentBuild.duration / 1000
                 if (durationSec > 120) {
                     notify("WARNING", "Build lento: ${durationSec}s")
@@ -228,13 +278,10 @@ pipeline {
 
         failure {
             script {
-                sh '''
-                    echo "$(date) | ${BUILD_NUMBER} | ${DEPLOY_ENV} | FAILURE" >> /opt/apps/landing/deploy.log
-                '''
-
+                sh """
+                    echo "\$(date) | ${BUILD_NUMBER} | ${params.DEPLOY_ENV} | FAILURE" >> /opt/apps/landing/deploy.log
+                """
                 notify("FAILURE", "Revisar logs en Jenkins")
-
-                // fallo consecutivo
                 def prev = currentBuild.previousBuild
                 if (prev && prev.result == "FAILURE") {
                     notify("CRITICAL", "🔥 Fallos consecutivos detectados")
