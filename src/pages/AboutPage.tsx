@@ -42,22 +42,31 @@ const AboutPage: React.FC = () => {
   return (
     <div className="min-h-screen bg-[var(--roke-bg)]">
 
-      {/* ── Hero banner ── */}
-      <section className="relative h-[420px] md:h-[500px] flex items-center justify-center text-center text-white overflow-hidden">
-        <div className="absolute inset-0 bg-cover bg-center z-0 bg-fixed" style={{ backgroundImage: "url(/assets/about-hero.png)" }} />
-        <div className="absolute inset-0 bg-black/65 z-10" />
-        <div className="relative z-20 max-w-[1296px] mx-auto px-6 md:px-14">
-          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7 }}>
-            <div className="flex items-center justify-center gap-3.5 text-[11px] text-white/50 mb-6 font-mono uppercase tracking-widest">
-              <div className="w-8 h-[1px] bg-white/40" />
-              <span>ROKE Industries · Sobre Nosotros</span>
-              <div className="w-8 h-[1px] bg-white/40" />
+      {/* ── Hero ── */}
+      <section
+        className="relative overflow-hidden border-b border-[var(--roke-border-strong)]"
+        style={{ background: "var(--roke-bg)", paddingTop: 72, paddingBottom: 72 }}
+      >
+        <div className="roke-grid-bg opacity-40" />
+        <div className="max-w-[1296px] mx-auto px-6 md:px-14 relative z-10">
+          <motion.div
+            initial={{ opacity: 0, y: 24 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+            className="max-w-[820px]"
+          >
+            <div className="roke-eyebrow">
+              <span className="roke-eyebrow-line" />
+              <span>SOBRE NOSOTROS</span>
             </div>
-            <h1 className="text-[52px] md:text-[72px] font-bold leading-[0.95] tracking-[-0.035em] mb-6">
+            <h1
+              className="font-sans font-bold leading-[0.95] tracking-[-0.04em] m-0 mb-5"
+              style={{ fontSize: "clamp(48px, 6.5vw, 76px)", color: "var(--roke-text)" }}
+            >
               Construimos la infraestructura<br />
-              <span className="text-white/50 font-medium">que no puede fallar.</span>
+              <span style={{ color: "var(--roke-text-dim)", fontWeight: 500 }}>que no puede fallar.</span>
             </h1>
-            <p className="text-[17px] text-white/70 max-w-2xl mx-auto leading-relaxed">
+            <p className="text-[17px] leading-[1.5] m-0 max-w-[520px]" style={{ color: "var(--roke-text-dim)" }}>
               Un equipo de ingenieros apasionados comprometidos con impulsar el crecimiento digital de nuestros clientes.
             </p>
           </motion.div>
@@ -65,7 +74,7 @@ const AboutPage: React.FC = () => {
       </section>
 
       {/* ── Stats grid ── */}
-      <section className="border-t border-[var(--roke-border-strong)]">
+      <section>
         <div className="max-w-[1296px] mx-auto px-6 md:px-14">
           <div className="grid grid-cols-2 md:grid-cols-4 border-b border-[var(--roke-border-strong)]">
             {stats.map((stat, index) => {
