@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Check, ArrowRight, MessageCircle, Mail, ChevronDown } from "lucide-react";
+import { Check, ArrowRight, MessageCircle, Mail, ChevronDown, AlertCircle } from "lucide-react";
 import { useServicePlans } from "../hooks/useServicePlans";
 import { useBillingCycles } from "../hooks/useBillingCycles";
 import { useCheckout } from "../contexts/CheckoutContext";
@@ -105,27 +105,142 @@ const HostingPage: React.FC = () => {
     [availableBillingCycles, activeBillingCycleSlug]
   );
 
+  /* Hero reutilizable (se muestra también en carga y error) */
+  const hero = (
+    <section
+      className="relative overflow-hidden border-b border-border"
+      style={{ background: "var(--roke-bg)", paddingTop: 72, paddingBottom: 72 }}
+    >
+      <div className="roke-grid-bg" />
+      <div className="max-w-[1296px] mx-auto px-6 md:px-14 relative z-10">
+        <motion.div
+          initial={{ opacity: 0, y: 24 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+        >
+          <div className="roke-eyebrow mb-6">
+            <span className="roke-eyebrow-line" />
+            <span>PLANES Y PRECIOS</span>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-[1.1fr_1fr] gap-12 items-center">
+            <div>
+              <h1
+                className="font-sans font-bold leading-[0.95] tracking-[-0.04em] m-0 mb-5"
+                style={{ fontSize: "clamp(48px, 6.5vw, 76px)", color: "var(--roke-text)" }}
+              >
+                Infraestructura<br />
+                <span style={{ color: "var(--roke-text-dim)", fontWeight: 500 }}>lista en horas.</span>
+              </h1>
+              <p
+                className="text-[17px] leading-[1.5] m-0 mb-7 max-w-[460px]"
+                style={{ color: "var(--roke-text-dim)" }}
+              >
+                Elige el plan que se ajuste a tu proyecto. Sin contratos de permanencia,
+                sin costos ocultos, con soporte humano en español 24/7.
+              </p>
+
+              <motion.button
+                whileHover={{ y: -2, boxShadow: "0 12px 32px -8px rgba(0,0,0,0.25)" }}
+                whileTap={{ scale: 0.98 }}
+                onClick={() => document.getElementById("planes")?.scrollIntoView({ behavior: "smooth" })}
+                className="inline-flex items-center gap-2 px-6 py-3.5 font-semibold text-[14px] rounded-[4px] cursor-pointer transition-all"
+                style={{ background: "var(--roke-primary-bg)", color: "var(--roke-primary-fg)" }}
+              >
+                Ver todos los planes
+                <ArrowRight className="w-4 h-4" />
+              </motion.button>
+            </div>
+
+            {/* Mini stats — 4 en grid 2×2, compactos */}
+            <div className="grid grid-cols-2 gap-px border border-border overflow-hidden">
+              {[
+                { value: "99.9%",  label: "Uptime SLA" },
+                { value: "< 24h",  label: "Tiempo de despliegue" },
+                { value: "42 ms",  label: "Latencia promedio" },
+                { value: "24 / 7", label: "Soporte en español" },
+              ].map((s, i) => (
+                <motion.div
+                  key={s.label}
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ duration: 0.4, delay: 0.1 + i * 0.07 }}
+                  className="flex flex-col justify-center px-6 py-7"
+                  style={{ background: "var(--roke-surface)" }}
+                >
+                  <div
+                    className="font-sans font-bold tracking-[-0.03em] leading-none mb-1.5"
+                    style={{ fontSize: 28, color: "var(--roke-text)", fontVariantNumeric: "tabular-nums" }}
+                  >
+                    {s.value}
+                  </div>
+                  <div
+                    style={{
+                      fontFamily: '"JetBrains Mono", monospace',
+                      fontSize: 10,
+                      letterSpacing: "0.14em",
+                      color: "var(--roke-text-dimmer)",
+                      textTransform: "uppercase",
+                    }}
+                  >
+                    {s.label}
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+          </div>
+        </motion.div>
+      </div>
+    </section>
+  );
+
   if (isLoading) {
     return (
-      <section className="roke-section-services" style={{ background: "var(--roke-bg)" }}>
-        <div className="max-w-[1296px] mx-auto px-6 md:px-14">
-          <div className="roke-eyebrow mb-8">
-            <span className="roke-eyebrow-line" />
-            <span>Cargando planes…</span>
+      <div>
+        {hero}
+        <section className="roke-section-services" style={{ background: "var(--roke-bg)" }}>
+          <div className="max-w-[1296px] mx-auto px-6 md:px-14">
+            <div className="roke-eyebrow mb-8">
+              <span className="roke-eyebrow-line" />
+              <span>Cargando planes…</span>
+            </div>
+            <PlanGridSkeleton count={3} />
           </div>
-          <PlanGridSkeleton count={3} />
-        </div>
-      </section>
+        </section>
+      </div>
     );
   }
 
   if (isError) {
     return (
-      <section className="roke-section-services">
-        <div className="max-w-[1296px] mx-auto">
-          <p style={{ color: "var(--roke-text-dim)", fontSize: 14 }}>Error al cargar los planes.</p>
-        </div>
-      </section>
+      <div>
+        {hero}
+        <section className="roke-section-services" style={{ background: "var(--roke-bg)" }}>
+          <div className="max-w-[1296px] mx-auto px-6 md:px-14 flex justify-center">
+            <div
+              className="w-full max-w-[520px] p-10 flex flex-col items-center text-center gap-4 rounded-[4px]"
+              style={{ border: "1px solid rgba(239,68,68,0.3)", background: "rgba(239,68,68,0.06)" }}
+            >
+              <div className="w-12 h-12 rounded-full flex items-center justify-center" style={{ background: "rgba(239,68,68,0.12)" }}>
+                <AlertCircle className="w-6 h-6 text-red-500" />
+              </div>
+              <p className="font-semibold text-[16px]" style={{ color: "var(--roke-text)" }}>
+                No pudimos cargar los planes
+              </p>
+              <p className="text-[14px] leading-[1.5]" style={{ color: "var(--roke-text-dim)" }}>
+                Ocurrió un error al obtener la información. Por favor, intenta de nuevo en unos momentos.
+              </p>
+              <button
+                onClick={() => window.location.reload()}
+                className="mt-2 px-5 py-2.5 font-semibold text-[13px] rounded-[4px] cursor-pointer hover:opacity-90 transition-opacity"
+                style={{ background: "var(--roke-primary-bg)", color: "var(--roke-primary-fg)" }}
+              >
+                Reintentar
+              </button>
+            </div>
+          </div>
+        </section>
+      </div>
     );
   }
 
@@ -133,91 +248,7 @@ const HostingPage: React.FC = () => {
     <div>
 
       {/* ════ HERO — compacto, específico ════ */}
-      <section
-        className="relative overflow-hidden border-b border-border"
-        style={{ background: "var(--roke-bg)", paddingTop: 72, paddingBottom: 72 }}
-      >
-        <div className="roke-grid-bg opacity-40" />
-        <div className="max-w-[1296px] mx-auto px-6 md:px-14 relative z-10">
-          <motion.div
-            initial={{ opacity: 0, y: 24 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-          >
-            <div className="roke-eyebrow mb-6">
-              <span className="roke-eyebrow-line" />
-              <span>PLANES Y PRECIOS</span>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-[1.1fr_1fr] gap-12 items-center">
-              <div>
-                <h1
-                  className="font-sans font-bold leading-[0.95] tracking-[-0.04em] m-0 mb-5"
-                  style={{ fontSize: "clamp(48px, 6.5vw, 76px)", color: "var(--roke-text)" }}
-                >
-                  Infraestructura<br />
-                  <span style={{ color: "var(--roke-text-dim)", fontWeight: 500 }}>lista en horas.</span>
-                </h1>
-                <p
-                  className="text-[17px] leading-[1.5] m-0 mb-7 max-w-[460px]"
-                  style={{ color: "var(--roke-text-dim)" }}
-                >
-                  Elige el plan que se ajuste a tu proyecto. Sin contratos de permanencia,
-                  sin costos ocultos, con soporte humano en español 24/7.
-                </p>
-
-                <motion.button
-                  whileHover={{ y: -2, boxShadow: "0 12px 32px -8px rgba(0,0,0,0.25)" }}
-                  whileTap={{ scale: 0.98 }}
-                  onClick={() => document.getElementById("planes")?.scrollIntoView({ behavior: "smooth" })}
-                  className="inline-flex items-center gap-2 px-6 py-3.5 font-semibold text-[14px] rounded-[4px] cursor-pointer transition-all"
-                  style={{ background: "var(--roke-primary-bg)", color: "var(--roke-primary-fg)" }}
-                >
-                  Ver todos los planes
-                  <ArrowRight className="w-4 h-4" />
-                </motion.button>
-              </div>
-
-              {/* Mini stats — 4 en grid 2×2, compactos */}
-              <div className="grid grid-cols-2 gap-px border border-border overflow-hidden">
-                {[
-                  { value: "99.9%",  label: "Uptime SLA" },
-                  { value: "< 24h",  label: "Tiempo de despliegue" },
-                  { value: "42 ms",  label: "Latencia promedio" },
-                  { value: "24 / 7", label: "Soporte en español" },
-                ].map((s, i) => (
-                  <motion.div
-                    key={s.label}
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    transition={{ duration: 0.4, delay: 0.1 + i * 0.07 }}
-                    className="flex flex-col justify-center px-6 py-7"
-                    style={{ background: "var(--roke-surface)" }}
-                  >
-                    <div
-                      className="font-sans font-bold tracking-[-0.03em] leading-none mb-1.5"
-                      style={{ fontSize: 28, color: "var(--roke-text)", fontVariantNumeric: "tabular-nums" }}
-                    >
-                      {s.value}
-                    </div>
-                    <div
-                      style={{
-                        fontFamily: '"JetBrains Mono", monospace',
-                        fontSize: 10,
-                        letterSpacing: "0.14em",
-                        color: "var(--roke-text-dimmer)",
-                        textTransform: "uppercase",
-                      }}
-                    >
-                      {s.label}
-                    </div>
-                  </motion.div>
-                ))}
-              </div>
-            </div>
-          </motion.div>
-        </div>
-      </section>
+      {hero}
 
       {/* ════ PLANES — protagonista ════ */}
       <section id="planes" className="roke-section-services" style={{ background: "var(--roke-bg)" }}>

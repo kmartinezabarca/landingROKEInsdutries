@@ -47,7 +47,7 @@ const AboutPage: React.FC = () => {
         className="relative overflow-hidden border-b border-[var(--roke-border-strong)]"
         style={{ background: "var(--roke-bg)", paddingTop: 72, paddingBottom: 72 }}
       >
-        <div className="roke-grid-bg opacity-40" />
+        <div className="roke-grid-bg" />
         {/* Figura diagonal (igual que el hero del Blog) */}
         <div
           className="roke-slash-band"

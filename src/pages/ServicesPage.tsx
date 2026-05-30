@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { motion } from "framer-motion";
-import { Check, ArrowRight, MessageCircle, Mail } from "lucide-react";
+import { Check, ArrowRight, MessageCircle, Mail, AlertCircle } from "lucide-react";
 import { useServicePlans } from "../hooks/useServicePlans";
 import { useCategories } from "../hooks/useCategories";
 import { useBillingCycles } from "../hooks/useBillingCycles";
@@ -231,27 +231,120 @@ const ServicesPage: React.FC = () => {
     return "grid-cols-1 md:grid-cols-2 lg:grid-cols-3";
   };
 
+  /* Hero reutilizable (se muestra también en carga y error) */
+  const hero = (
+    <section
+      className="relative overflow-hidden border-b border-border"
+      style={{ background: "var(--roke-bg)", paddingTop: 72, paddingBottom: 72 }}
+    >
+      <div className="roke-grid-bg" />
+      <div className="max-w-[1296px] mx-auto px-6 md:px-14 relative z-10">
+        <motion.div
+          initial={{ opacity: 0, y: 24 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+          className="grid grid-cols-1 md:grid-cols-[1.1fr_1fr] gap-12 items-center"
+        >
+          <div>
+            <div className="roke-eyebrow mb-6">
+              <span className="roke-eyebrow-line" />
+              <span>SERVICIOS</span>
+            </div>
+            <h1
+              className="font-sans font-bold leading-[0.95] tracking-[-0.04em] m-0 mb-5"
+              style={{ fontSize: "clamp(48px, 6.5vw, 76px)", color: "var(--roke-text)" }}
+            >
+              Cuatro líneas.<br />
+              <span style={{ color: "var(--roke-text-dim)", fontWeight: 500 }}>Un equipo.</span>
+            </h1>
+            <p
+              className="text-[17px] leading-[1.5] m-0 max-w-[460px]"
+              style={{ color: "var(--roke-text-dim)" }}
+            >
+              Infraestructura, gaming, desarrollo y hardware. Todo bajo el mismo SLA,
+              el mismo equipo y el mismo canal de soporte.
+            </p>
+          </div>
+
+          {/* Index de las 4 líneas */}
+          <div className="grid grid-cols-2 gap-px border border-border overflow-hidden" style={{ background: "var(--roke-border-strong)" }}>
+            {serviceLines.map((s, i) => (
+              <motion.button
+                key={s.num}
+                type="button"
+                onClick={() => handleServiceCTA(s.scrollToPlans ? s.categoryKeyword : null)}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 0.4, delay: 0.1 + i * 0.07 }}
+                className="flex flex-col justify-between p-5 text-left transition-colors cursor-pointer"
+                style={{ background: "var(--roke-surface)" }}
+                onMouseEnter={(e) => ((e.currentTarget as HTMLElement).style.background = "var(--roke-surface-2)")}
+                onMouseLeave={(e) => ((e.currentTarget as HTMLElement).style.background = "var(--roke-surface)")}
+              >
+                <div className="flex items-start justify-between mb-4">
+                  <div style={{ color: "var(--roke-text)" }}><s.Icon /></div>
+                  <span style={{ fontFamily: '"JetBrains Mono", monospace', fontSize: 11, color: "var(--roke-text-dimmer)", letterSpacing: "0.14em" }}>
+                    / {s.num}
+                  </span>
+                </div>
+                <span className="font-sans font-semibold leading-tight text-left" style={{ fontSize: 14, color: "var(--roke-text)" }}>
+                  {s.title}
+                </span>
+              </motion.button>
+            ))}
+          </div>
+        </motion.div>
+      </div>
+    </section>
+  );
+
   if (isLoading) {
     return (
-      <section className="roke-section-services" style={{ background: "var(--roke-bg)" }}>
-        <div className="max-w-[1296px] mx-auto px-6 md:px-14">
-          <div className="roke-eyebrow mb-8">
-            <span className="roke-eyebrow-line" />
-            <span>Cargando servicios…</span>
+      <div>
+        {hero}
+        <section className="roke-section-services" style={{ background: "var(--roke-bg)" }}>
+          <div className="max-w-[1296px] mx-auto px-6 md:px-14">
+            <div className="roke-eyebrow mb-8">
+              <span className="roke-eyebrow-line" />
+              <span>Cargando servicios…</span>
+            </div>
+            <PlanGridSkeleton count={3} />
           </div>
-          <PlanGridSkeleton count={3} />
-        </div>
-      </section>
+        </section>
+      </div>
     );
   }
 
   if (isError) {
     return (
-      <section className="roke-section-services">
-        <div className="max-w-[1296px] mx-auto">
-          <p style={{ color: "var(--roke-text-dim)", fontSize: 14 }}>Error al cargar los servicios.</p>
-        </div>
-      </section>
+      <div>
+        {hero}
+        <section className="roke-section-services" style={{ background: "var(--roke-bg)" }}>
+          <div className="max-w-[1296px] mx-auto px-6 md:px-14 flex justify-center">
+            <div
+              className="w-full max-w-[520px] p-10 flex flex-col items-center text-center gap-4 rounded-[4px]"
+              style={{ border: "1px solid rgba(239,68,68,0.3)", background: "rgba(239,68,68,0.06)" }}
+            >
+              <div className="w-12 h-12 rounded-full flex items-center justify-center" style={{ background: "rgba(239,68,68,0.12)" }}>
+                <AlertCircle className="w-6 h-6 text-red-500" />
+              </div>
+              <p className="font-semibold text-[16px]" style={{ color: "var(--roke-text)" }}>
+                No pudimos cargar los servicios
+              </p>
+              <p className="text-[14px] leading-[1.5]" style={{ color: "var(--roke-text-dim)" }}>
+                Ocurrió un error al obtener la información. Por favor, intenta de nuevo en unos momentos.
+              </p>
+              <button
+                onClick={() => window.location.reload()}
+                className="mt-2 px-5 py-2.5 font-semibold text-[13px] rounded-[4px] cursor-pointer hover:opacity-90 transition-opacity"
+                style={{ background: "var(--roke-primary-bg)", color: "var(--roke-primary-fg)" }}
+              >
+                Reintentar
+              </button>
+            </div>
+          </div>
+        </section>
+      </div>
     );
   }
 
@@ -259,69 +352,7 @@ const ServicesPage: React.FC = () => {
     <div>
 
       {/* ════ HERO ════ */}
-      <section
-        className="relative overflow-hidden border-b border-border"
-        style={{ background: "var(--roke-bg)", paddingTop: 72, paddingBottom: 72 }}
-      >
-        <div className="roke-grid-bg opacity-40" />
-        <div className="max-w-[1296px] mx-auto px-6 md:px-14 relative z-10">
-          <motion.div
-            initial={{ opacity: 0, y: 24 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-            className="grid grid-cols-1 md:grid-cols-[1.1fr_1fr] gap-12 items-center"
-          >
-            <div>
-              <div className="roke-eyebrow mb-6">
-                <span className="roke-eyebrow-line" />
-                <span>SERVICIOS</span>
-              </div>
-              <h1
-                className="font-sans font-bold leading-[0.95] tracking-[-0.04em] m-0 mb-5"
-                style={{ fontSize: "clamp(48px, 6.5vw, 76px)", color: "var(--roke-text)" }}
-              >
-                Cuatro líneas.<br />
-                <span style={{ color: "var(--roke-text-dim)", fontWeight: 500 }}>Un equipo.</span>
-              </h1>
-              <p
-                className="text-[17px] leading-[1.5] m-0 max-w-[460px]"
-                style={{ color: "var(--roke-text-dim)" }}
-              >
-                Infraestructura, gaming, desarrollo y hardware. Todo bajo el mismo SLA,
-                el mismo equipo y el mismo canal de soporte.
-              </p>
-            </div>
-
-            {/* Index de las 4 líneas */}
-            <div className="grid grid-cols-2 gap-px border border-border overflow-hidden" style={{ background: "var(--roke-border-strong)" }}>
-              {serviceLines.map((s, i) => (
-                <motion.button
-                  key={s.num}
-                  type="button"
-                  onClick={() => handleServiceCTA(s.scrollToPlans ? s.categoryKeyword : null)}
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  transition={{ duration: 0.4, delay: 0.1 + i * 0.07 }}
-                  className="flex flex-col justify-between p-5 text-left transition-colors cursor-pointer"
-                  style={{ background: "var(--roke-surface)" }}
-                  onMouseEnter={(e) => ((e.currentTarget as HTMLElement).style.background = "var(--roke-surface-2)")}
-                  onMouseLeave={(e) => ((e.currentTarget as HTMLElement).style.background = "var(--roke-surface)")}
-                >
-                  <div className="flex items-start justify-between mb-4">
-                    <div style={{ color: "var(--roke-text)" }}><s.Icon /></div>
-                    <span style={{ fontFamily: '"JetBrains Mono", monospace', fontSize: 11, color: "var(--roke-text-dimmer)", letterSpacing: "0.14em" }}>
-                      / {s.num}
-                    </span>
-                  </div>
-                  <span className="font-sans font-semibold leading-tight text-left" style={{ fontSize: 14, color: "var(--roke-text)" }}>
-                    {s.title}
-                  </span>
-                </motion.button>
-              ))}
-            </div>
-          </motion.div>
-        </div>
-      </section>
+      {hero}
 
       {/* ════ LÍNEAS DE SERVICIO ════ */}
       <section className="border-b border-border" style={{ background: "var(--roke-surface)" }}>
