@@ -40,7 +40,7 @@ const AboutPage: React.FC = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-[var(--roke-bg)]">
 
       {/* ── Hero banner ── */}
       <section className="relative h-[420px] md:h-[500px] flex items-center justify-center text-center text-white overflow-hidden">
@@ -65,9 +65,9 @@ const AboutPage: React.FC = () => {
       </section>
 
       {/* ── Stats grid ── */}
-      <section className="border-t border-border">
+      <section className="border-t border-[var(--roke-border-strong)]">
         <div className="max-w-[1296px] mx-auto px-6 md:px-14">
-          <div className="grid grid-cols-2 md:grid-cols-4 border-b border-border">
+          <div className="grid grid-cols-2 md:grid-cols-4 border-b border-[var(--roke-border-strong)]">
             {stats.map((stat, index) => {
               const Icon = stat.icon;
               return (
@@ -77,16 +77,16 @@ const AboutPage: React.FC = () => {
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ duration: 0.5, delay: index * 0.08 }}
-                  className="py-12 px-8 border-r border-border last:border-r-0 flex flex-col gap-4"
+                  className="py-12 px-8 border-r border-[var(--roke-border-strong)] last:border-r-0 flex flex-col gap-4"
                 >
                   <div className="flex items-start justify-between">
-                    <span className="font-mono text-[11px] text-muted-foreground">0{index + 1}</span>
-                    <div className="roke-icon-box w-10 h-10 border border-border rounded-[4px] flex items-center justify-center text-foreground bg-background">
+                    <span className="font-mono text-[11px] text-[var(--roke-text-dimmer)]">0{index + 1}</span>
+                    <div className="roke-icon-box w-10 h-10 border border-[var(--roke-border-strong)] rounded-[4px] flex items-center justify-center text-[var(--roke-text)] bg-[var(--roke-surface)]">
                       <Icon className="w-4 h-4" />
                     </div>
                   </div>
-                  <div className="text-[48px] md:text-[56px] font-bold leading-none tracking-[-0.04em] text-foreground">{stat.number}</div>
-                  <div className="text-[13px] text-muted-foreground">{stat.label}</div>
+                  <div className="text-[48px] md:text-[56px] font-bold leading-none tracking-[-0.04em] text-[var(--roke-text)]">{stat.number}</div>
+                  <div className="text-[13px] text-[var(--roke-text-dimmer)]">{stat.label}</div>
                 </motion.div>
               );
             })}
@@ -95,7 +95,7 @@ const AboutPage: React.FC = () => {
       </section>
 
       {/* ── Misión / Visión / Valores ── */}
-      <section className="py-[120px] border-t border-border relative">
+      <section className="py-[120px] border-t border-[var(--roke-border-strong)] relative">
         <div className="roke-slash-bg" />
         <div className="max-w-[1296px] mx-auto px-6 md:px-14 relative z-10">
 
@@ -108,21 +108,21 @@ const AboutPage: React.FC = () => {
             className="grid grid-cols-1 md:grid-cols-[1fr_1.4fr] gap-14 items-end mb-16"
           >
             <div>
-              <div className="flex items-center gap-3.5 font-mono text-[11px] text-muted-foreground mb-6">
-                <div className="w-8 h-[1px] bg-muted-foreground" />
+              <div className="flex items-center gap-3.5 font-mono text-[11px] text-[var(--roke-text-dimmer)] mb-6">
+                <div className="w-8 h-[1px] bg-[var(--roke-text-dimmer)]" />
                 <span>Principios</span>
               </div>
-              <h2 className="font-sans text-[52px] md:text-[64px] font-bold leading-[0.98] tracking-[-0.035em] text-foreground m-0">
-                Nuestros <span className="text-muted-foreground font-medium">principios.</span>
+              <h2 className="font-sans text-[52px] md:text-[64px] font-bold leading-[0.98] tracking-[-0.035em] text-[var(--roke-text)] m-0">
+                Nuestros <span className="text-[var(--roke-text-dim)] font-medium">principios.</span>
               </h2>
             </div>
-            <p className="text-[17px] leading-[1.55] text-muted-foreground max-w-[520px] pb-1.5">
+            <p className="text-[17px] leading-[1.55] text-[var(--roke-text-dim)] max-w-[520px] pb-1.5">
               Los valores que guían cada decisión y acción en ROKE Industries, desde el primer circuito hasta la nube más grande.
             </p>
           </motion.div>
 
           {/* MVV grid */}
-          <div className="grid grid-cols-1 md:grid-cols-3 border border-border mb-16">
+          <div className="grid grid-cols-1 md:grid-cols-3 border border-[var(--roke-border-strong)] mb-16">
             {[
               { icon: Target, label: "Misión",  num: "01", text: "Proporcionar soluciones tecnológicas confiables y accesibles que impulsen el crecimiento digital de nuestros clientes, democratizando el acceso a tecnologías avanzadas." },
               { icon: Eye,    label: "Visión",  num: "02", text: "Ser la empresa líder en servicios de hosting y tecnología en América Latina, reconocida por nuestra excelencia, innovación constante y compromiso con el éxito." },
@@ -134,22 +134,22 @@ const AboutPage: React.FC = () => {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.5, delay: i * 0.1 }}
-                className="p-9 border border-border -m-[1px] bg-card hover:bg-muted/30 transition-colors duration-200 flex flex-col gap-4"
+                className="p-9 border border-[var(--roke-border-strong)] -m-[1px] bg-[var(--roke-surface)] hover:bg-[var(--roke-surface-2)] transition-colors duration-200 flex flex-col gap-4"
               >
                 <div className="flex items-start justify-between mb-2">
-                  <span className="font-mono text-[11px] text-muted-foreground">{num}</span>
-                  <div className="roke-icon-box w-14 h-14 border border-border rounded-[6px] flex items-center justify-center text-foreground bg-background">
+                  <span className="font-mono text-[11px] text-[var(--roke-text-dimmer)]">{num}</span>
+                  <div className="roke-icon-box w-14 h-14 border border-[var(--roke-border-strong)] rounded-[6px] flex items-center justify-center text-[var(--roke-text)] bg-[var(--roke-surface)]">
                     <Icon className="w-6 h-6" />
                   </div>
                 </div>
-                <h3 className="text-[22px] font-bold text-foreground tracking-[-0.01em] leading-tight m-0">{label}</h3>
-                <p className="text-[14.5px] leading-[1.5] text-muted-foreground m-0">{text}</p>
+                <h3 className="text-[22px] font-bold text-[var(--roke-text)] tracking-[-0.01em] leading-tight m-0">{label}</h3>
+                <p className="text-[14.5px] leading-[1.5] text-[var(--roke-text-dim)] m-0">{text}</p>
               </motion.div>
             ))}
           </div>
 
           {/* Values sub-grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 border border-border">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 border border-[var(--roke-border-strong)]">
             {values.map((value, index) => {
               const Icon = value.icon;
               return (
@@ -159,16 +159,16 @@ const AboutPage: React.FC = () => {
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ duration: 0.5, delay: index * 0.08 }}
-                  className="p-8 border border-border -m-[1px] bg-card hover:bg-muted/30 transition-colors duration-200 flex flex-col gap-3"
+                  className="p-8 border border-[var(--roke-border-strong)] -m-[1px] bg-[var(--roke-surface)] hover:bg-[var(--roke-surface-2)] transition-colors duration-200 flex flex-col gap-3"
                 >
                   <div className="flex items-start justify-between mb-1">
-                    <span className="font-mono text-[11px] text-muted-foreground">0{index + 1}</span>
-                    <div className="roke-icon-box w-10 h-10 border border-border rounded-[4px] flex items-center justify-center text-foreground bg-background">
+                    <span className="font-mono text-[11px] text-[var(--roke-text-dimmer)]">0{index + 1}</span>
+                    <div className="roke-icon-box w-10 h-10 border border-[var(--roke-border-strong)] rounded-[4px] flex items-center justify-center text-[var(--roke-text)] bg-[var(--roke-surface)]">
                       <Icon className="w-4 h-4" />
                     </div>
                   </div>
-                  <h4 className="text-[18px] font-bold text-foreground tracking-[-0.01em] m-0">{value.title}</h4>
-                  <p className="text-[13.5px] leading-[1.5] text-muted-foreground m-0">{value.description}</p>
+                  <h4 className="text-[18px] font-bold text-[var(--roke-text)] tracking-[-0.01em] m-0">{value.title}</h4>
+                  <p className="text-[13.5px] leading-[1.5] text-[var(--roke-text-dim)] m-0">{value.description}</p>
                 </motion.div>
               );
             })}
@@ -177,7 +177,7 @@ const AboutPage: React.FC = () => {
       </section>
 
       {/* ── Timeline ── */}
-      <section className="py-[120px] border-t border-border bg-muted/10 relative">
+      <section className="py-[120px] border-t border-[var(--roke-border-strong)] bg-[var(--roke-surface)] relative">
         <div className="roke-grid-bg opacity-30" />
         <div className="max-w-[1296px] mx-auto px-6 md:px-14 relative z-10">
 
@@ -189,20 +189,20 @@ const AboutPage: React.FC = () => {
             className="grid grid-cols-1 md:grid-cols-[1fr_1.4fr] gap-14 items-end mb-16"
           >
             <div>
-              <div className="flex items-center gap-3.5 font-mono text-[11px] text-muted-foreground mb-6">
-                <div className="w-8 h-[1px] bg-muted-foreground" />
+              <div className="flex items-center gap-3.5 font-mono text-[11px] text-[var(--roke-text-dimmer)] mb-6">
+                <div className="w-8 h-[1px] bg-[var(--roke-text-dimmer)]" />
                 <span>Historia</span>
               </div>
-              <h2 className="font-sans text-[52px] md:text-[64px] font-bold leading-[0.98] tracking-[-0.035em] text-foreground m-0">
-                Cómo llegamos <span className="text-muted-foreground font-medium">aquí.</span>
+              <h2 className="font-sans text-[52px] md:text-[64px] font-bold leading-[0.98] tracking-[-0.035em] text-[var(--roke-text)] m-0">
+                Cómo llegamos <span className="text-[var(--roke-text-dim)] font-medium">aquí.</span>
               </h2>
             </div>
-            <p className="text-[17px] leading-[1.55] text-muted-foreground max-w-[520px] pb-1.5">
+            <p className="text-[17px] leading-[1.55] text-[var(--roke-text-dim)] max-w-[520px] pb-1.5">
               Un recorrido por los hitos más importantes que consolidaron nuestra experiencia técnica y dieron vida a ROKE Industries.
             </p>
           </motion.div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 border border-border">
+          <div className="grid grid-cols-1 md:grid-cols-2 border border-[var(--roke-border-strong)]">
             {timeline.map((item, index) => {
               const Icon = item.icon;
               return (
@@ -212,16 +212,16 @@ const AboutPage: React.FC = () => {
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ duration: 0.5, delay: index * 0.1 }}
-                  className="p-9 border border-border -m-[1px] bg-card hover:bg-muted/30 transition-colors duration-200 flex flex-col gap-4"
+                  className="p-9 border border-[var(--roke-border-strong)] -m-[1px] bg-[var(--roke-surface)] hover:bg-[var(--roke-surface-2)] transition-colors duration-200 flex flex-col gap-4"
                 >
                   <div className="flex items-start justify-between">
-                    <span className="font-mono text-[11px] text-muted-foreground uppercase tracking-widest">{item.year}</span>
-                    <div className="roke-icon-box w-12 h-12 border border-border rounded-[6px] flex items-center justify-center text-foreground bg-background">
+                    <span className="font-mono text-[11px] text-[var(--roke-text-dimmer)] uppercase tracking-widest">{item.year}</span>
+                    <div className="roke-icon-box w-12 h-12 border border-[var(--roke-border-strong)] rounded-[6px] flex items-center justify-center text-[var(--roke-text)] bg-[var(--roke-surface)]">
                       <Icon className="w-5 h-5" />
                     </div>
                   </div>
-                  <h3 className="text-[22px] font-bold text-foreground tracking-[-0.01em] leading-tight m-0">{item.title}</h3>
-                  <p className="text-[14.5px] leading-[1.5] text-muted-foreground m-0">{item.description}</p>
+                  <h3 className="text-[22px] font-bold text-[var(--roke-text)] tracking-[-0.01em] leading-tight m-0">{item.title}</h3>
+                  <p className="text-[14.5px] leading-[1.5] text-[var(--roke-text-dim)] m-0">{item.description}</p>
                 </motion.div>
               );
             })}
@@ -230,7 +230,7 @@ const AboutPage: React.FC = () => {
       </section>
 
       {/* ── Equipo ── */}
-      <section className="py-[120px] border-t border-border relative">
+      <section className="py-[120px] border-t border-[var(--roke-border-strong)] relative">
         <div className="roke-slash-bg" />
         <div className="max-w-[1296px] mx-auto px-6 md:px-14 relative z-10">
 
@@ -242,20 +242,20 @@ const AboutPage: React.FC = () => {
             className="grid grid-cols-1 md:grid-cols-[1fr_1.4fr] gap-14 items-end mb-16"
           >
             <div>
-              <div className="flex items-center gap-3.5 font-mono text-[11px] text-muted-foreground mb-6">
-                <div className="w-8 h-[1px] bg-muted-foreground" />
+              <div className="flex items-center gap-3.5 font-mono text-[11px] text-[var(--roke-text-dimmer)] mb-6">
+                <div className="w-8 h-[1px] bg-[var(--roke-text-dimmer)]" />
                 <span>Equipo Directivo</span>
               </div>
-              <h2 className="font-sans text-[52px] md:text-[64px] font-bold leading-[0.98] tracking-[-0.035em] text-foreground m-0">
-                Las personas <span className="text-muted-foreground font-medium">detrás.</span>
+              <h2 className="font-sans text-[52px] md:text-[64px] font-bold leading-[0.98] tracking-[-0.035em] text-[var(--roke-text)] m-0">
+                Las personas <span className="text-[var(--roke-text-dim)] font-medium">detrás.</span>
               </h2>
             </div>
-            <p className="text-[17px] leading-[1.55] text-muted-foreground max-w-[520px] pb-1.5">
+            <p className="text-[17px] leading-[1.55] text-[var(--roke-text-dim)] max-w-[520px] pb-1.5">
               Conoce a los líderes visionarios que impulsan la innovación y excelencia en ROKE Industries día a día.
             </p>
           </motion.div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 border border-border">
+          <div className="grid grid-cols-1 md:grid-cols-2 border border-[var(--roke-border-strong)]">
             {team.map((member, index) => (
               <motion.div
                 key={member.name}
@@ -263,31 +263,31 @@ const AboutPage: React.FC = () => {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.5, delay: index * 0.15 }}
-                className="p-10 border border-border -m-[1px] bg-card hover:bg-muted/20 transition-colors duration-200 flex flex-col gap-6"
+                className="p-10 border border-[var(--roke-border-strong)] -m-[1px] bg-[var(--roke-surface)] hover:bg-[var(--roke-surface-2)] transition-colors duration-200 flex flex-col gap-6"
               >
                 {/* Photo + name */}
                 <div className="flex items-center gap-5">
                   <img
                     src={member.image}
                     alt={member.name}
-                    className="w-20 h-20 rounded-full object-cover border border-border"
+                    className="w-20 h-20 rounded-full object-cover border border-[var(--roke-border-strong)]"
                   />
                   <div>
-                    <div className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground mb-1">{member.position}</div>
-                    <h3 className="text-[24px] font-bold text-foreground tracking-[-0.02em] leading-tight">{member.name}</h3>
+                    <div className="font-mono text-[10px] uppercase tracking-widest text-[var(--roke-text-dimmer)] mb-1">{member.position}</div>
+                    <h3 className="text-[24px] font-bold text-[var(--roke-text)] tracking-[-0.02em] leading-tight">{member.name}</h3>
                   </div>
                 </div>
 
-                <p className="text-[14.5px] leading-[1.6] text-muted-foreground">{member.description}</p>
+                <p className="text-[14.5px] leading-[1.6] text-[var(--roke-text-dim)]">{member.description}</p>
 
-                <div className="flex gap-2.5 mt-auto pt-2 border-t border-border">
+                <div className="flex gap-2.5 mt-auto pt-2 border-t border-[var(--roke-border-strong)]">
                   <a href={member.linkedin} target="_blank" rel="noopener noreferrer"
-                    className="w-9 h-9 border border-border flex items-center justify-center text-muted-foreground hover:text-foreground hover:border-foreground transition-colors"
+                    className="w-9 h-9 border border-[var(--roke-border-strong)] flex items-center justify-center text-[var(--roke-text-dimmer)] hover:text-[var(--roke-text)] hover:border-[var(--roke-text)] transition-colors"
                     aria-label={`LinkedIn de ${member.name}`}>
                     <FaLinkedin className="w-3.5 h-3.5" />
                   </a>
                   <a href={member.twitter}
-                    className="w-9 h-9 border border-border flex items-center justify-center text-muted-foreground hover:text-foreground hover:border-foreground transition-colors"
+                    className="w-9 h-9 border border-[var(--roke-border-strong)] flex items-center justify-center text-[var(--roke-text-dimmer)] hover:text-[var(--roke-text)] hover:border-[var(--roke-text)] transition-colors"
                     aria-label={`Twitter de ${member.name}`}>
                     <FaXTwitter className="w-3.5 h-3.5" />
                   </a>
@@ -298,8 +298,8 @@ const AboutPage: React.FC = () => {
         </div>
       </section>
 
-      {/* ── Careers CTA ── */}
-      <section className="py-[120px] border-t border-border bg-foreground text-background relative overflow-hidden">
+      {/* ── Careers CTA (sección invertida) ── */}
+      <section className="py-[120px] border-t border-[var(--roke-border-strong)] bg-foreground text-background relative overflow-hidden">
         <div className="max-w-[1296px] mx-auto px-6 md:px-14">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
