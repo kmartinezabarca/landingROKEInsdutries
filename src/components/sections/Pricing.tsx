@@ -3,6 +3,9 @@ import { motion } from "framer-motion";
 import { Check, ArrowRight } from "lucide-react";
 import { Link } from "react-router-dom";
 import Button from "../common/Button";
+import { AlertCircle } from "lucide-react";
+import TiltArticle from "../common/TiltArticle";
+import { PlanGridSkeleton } from "../common/Skeletons";
 import { ROUTES } from "../../utils/constants/config";
 import { useServicePlans } from "../../hooks/useServicePlans";
 import { useBillingCycles } from "../../hooks/useBillingCycles";
@@ -89,7 +92,11 @@ const Pricing: React.FC = () => {
     return (
       <section className="roke-section-services">
         <div className="max-w-[1296px] mx-auto">
-          <p style={{ fontFamily: '"JetBrains Mono", monospace', fontSize: 11, color: "var(--roke-text-dimmer)" }}>Cargando planes…</p>
+          <div className="roke-eyebrow mb-8">
+            <span className="roke-eyebrow-line" />
+            <span>Cargando planes…</span>
+          </div>
+          <PlanGridSkeleton count={3} />
         </div>
       </section>
     );
@@ -98,8 +105,28 @@ const Pricing: React.FC = () => {
   if (isError) {
     return (
       <section className="roke-section-services">
-        <div className="max-w-[1296px] mx-auto text-center">
-          <p style={{ color: "var(--roke-text-dim)", fontSize: 14 }}>Error al cargar los planes.</p>
+        <div className="max-w-[1296px] mx-auto flex justify-center">
+          <div
+            className="w-full max-w-[520px] p-10 flex flex-col items-center text-center gap-4 rounded-[4px]"
+            style={{ border: "1px solid rgba(239,68,68,0.3)", background: "rgba(239,68,68,0.06)" }}
+          >
+            <div className="w-12 h-12 rounded-full flex items-center justify-center" style={{ background: "rgba(239,68,68,0.12)" }}>
+              <AlertCircle className="w-6 h-6 text-red-500" />
+            </div>
+            <p className="font-semibold text-[16px]" style={{ color: "var(--roke-text)" }}>
+              No pudimos cargar los planes
+            </p>
+            <p className="text-[14px] leading-[1.5]" style={{ color: "var(--roke-text-dim)" }}>
+              Ocurrió un error al obtener la información. Por favor, intenta de nuevo en unos momentos.
+            </p>
+            <button
+              onClick={() => window.location.reload()}
+              className="mt-2 px-5 py-2.5 font-semibold text-[13px] rounded-[4px] cursor-pointer hover:opacity-90 transition-opacity"
+              style={{ background: "var(--roke-primary-bg)", color: "var(--roke-primary-fg)" }}
+            >
+              Reintentar
+            </button>
+          </div>
         </div>
       </section>
     );
@@ -281,18 +308,10 @@ const Pricing: React.FC = () => {
 
           <div className="roke-3col-grid">
             {enterprisePlans.map((plan, index) => (
-              <motion.article
+              <TiltArticle
                 key={plan.name}
+                index={index}
                 className="mi-sheen"
-                initial={{ opacity: 0, y: 24 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                whileHover={{
-                  y: -4,
-                  boxShadow: "0 20px 48px -12px rgba(0,0,0,0.13)",
-                  transition: { duration: 0.2, ease: "easeOut" },
-                }}
-                transition={{ duration: 0.5, delay: 0.1 * index, ease: [0.22, 1, 0.36, 1] }}
-                viewport={{ once: true, amount: 0.2 }}
                 style={{
                   padding: "36px 36px 32px",
                   border: "1px solid var(--roke-border-strong)",
@@ -304,12 +323,6 @@ const Pricing: React.FC = () => {
                   cursor: "default",
                   transition: "background 0.18s ease",
                 }}
-                onMouseEnter={(e) =>
-                  ((e.currentTarget as HTMLElement).style.background = "var(--roke-surface-2)")
-                }
-                onMouseLeave={(e) =>
-                  ((e.currentTarget as HTMLElement).style.background = "var(--roke-surface)")
-                }
               >
                 {/* Head: number top-right */}
                 <div style={{ display: "flex", justifyContent: "flex-end", marginBottom: 8 }}>
@@ -371,7 +384,7 @@ const Pricing: React.FC = () => {
                 }}>
                   {plan.description}
                 </p>
-              </motion.article>
+              </TiltArticle>
             ))}
           </div>
 

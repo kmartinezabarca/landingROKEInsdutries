@@ -4,6 +4,7 @@ import { ArrowRight } from "lucide-react";
 import { Link } from "react-router-dom";
 import { ROUTES } from "../../utils/constants/config";
 import { useServices } from "../../hooks/useServices";
+import TiltArticle from "../common/TiltArticle";
 
 interface ServiceItem {
   id?: number;
@@ -213,14 +214,10 @@ const Services: React.FC = () => {
             const Icon = iconMap[service.iconName] || SvgDefault;
             const linkLabel = linkLabels[service.iconName] || "Saber más";
             return (
-              <motion.article
+              <TiltArticle
                 key={service.id || service.title}
+                index={index}
                 className="mi-sheen mi-glow"
-                initial={{ opacity: 0, y: 44, scale: 0.96, filter: "blur(10px)" }}
-                whileInView={{ opacity: 1, y: 0, scale: 1, filter: "blur(0px)" }}
-                whileHover={{ y: -6 }}
-                transition={{ duration: 0.6, delay: 0.1 * index, ease: [0.22, 1, 0.36, 1] }}
-                viewport={{ once: true, amount: 0.25 }}
                 style={{
                   padding: "36px 36px 32px",
                   border: "1px solid var(--roke-border-strong)",
@@ -233,14 +230,6 @@ const Services: React.FC = () => {
                   transition: "background 0.18s ease",
                   cursor: "default",
                 }}
-                onMouseEnter={(e) =>
-                  ((e.currentTarget as HTMLElement).style.background =
-                    "var(--roke-surface-2)")
-                }
-                onMouseLeave={(e) =>
-                  ((e.currentTarget as HTMLElement).style.background =
-                    "var(--roke-surface)")
-                }
               >
                 {/* Head row: icon LEFT, num RIGHT */}
                 <div
@@ -374,7 +363,7 @@ const Services: React.FC = () => {
                     style={{ width: 14, height: 14, transition: "transform 0.18s ease" }}
                   />
                 </Link>
-              </motion.article>
+              </TiltArticle>
             );
           })}
         </div>

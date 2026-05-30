@@ -1,5 +1,6 @@
 import React from "react";
 import { motion } from "framer-motion";
+import TiltArticle from "../common/TiltArticle";
 
 const testimonials = [
   {
@@ -90,14 +91,10 @@ const SocialProof: React.FC = () => {
         {/* ── Testimonials grid ── */}
         <div className="roke-3col-grid">
           {testimonials.map((t, i) => (
-            <motion.article
+            <TiltArticle
               key={t.name}
+              index={i}
               className="mi-sheen mi-glow"
-              initial={{ opacity: 0, y: 44, scale: 0.96, filter: "blur(10px)" }}
-              whileInView={{ opacity: 1, y: 0, scale: 1, filter: "blur(0px)" }}
-              whileHover={{ y: -6 }}
-              transition={{ duration: 0.6, delay: 0.1 * i, ease: [0.22, 1, 0.36, 1] }}
-              viewport={{ once: true, amount: 0.25 }}
               style={{
                 padding: "36px 36px 32px",
                 border: "1px solid var(--roke-border-strong)",
@@ -108,14 +105,6 @@ const SocialProof: React.FC = () => {
                 gap: 20,
                 transition: "background 0.18s ease",
               }}
-              onMouseEnter={(e) =>
-                ((e.currentTarget as HTMLElement).style.background =
-                  "var(--roke-surface-2)")
-              }
-              onMouseLeave={(e) =>
-                ((e.currentTarget as HTMLElement).style.background =
-                  "var(--roke-surface)")
-              }
             >
               {/* Stars */}
               <div style={{ display: "flex", gap: 4 }}>
@@ -170,7 +159,7 @@ const SocialProof: React.FC = () => {
                   {t.role} · {t.company}
                 </span>
               </div>
-            </motion.article>
+            </TiltArticle>
           ))}
         </div>
 
