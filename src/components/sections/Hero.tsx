@@ -1,13 +1,17 @@
-import React from "react";
+import React, { Suspense, lazy } from "react";
 import { motion } from "framer-motion";
 import { ArrowRight, MessageCircle } from "lucide-react";
 import { Link } from "react-router-dom";
 import { ROUTES } from "../../utils/constants/config";
 import WhatsAppService from "../../services/whatsapp/whatsappService";
+import TiltCard from "../common/TiltCard";
+import { CountUp } from "../ui/scroll-motion";
+
+const HeroScene = lazy(() => import("../three/HeroScene"));
 
 const statItems = [
-  { label: "UPTIME · 30D", value: "99.97", unit: "%", trend: "↑ +0.04 vs prev." },
-  { label: "LATENCIA · P95", value: "42", unit: "ms", trend: "↓ -8ms vs prev." },
+  { label: "UPTIME · 30D", to: 99.97, decimals: 2, unit: "%", trend: "↑ +0.04 vs prev." },
+  { label: "LATENCIA · P95", to: 42, decimals: 0, unit: "ms", trend: "↓ -8ms vs prev." },
 ];
 
 const serviceItems = [
@@ -66,6 +70,13 @@ const Hero: React.FC = () => {
     <section className="relative overflow-hidden border-b border-[var(--roke-border-strong)] bg-[var(--roke-bg)] text-[var(--roke-text)]">
       <div className="roke-slash-bg" />
       <div className="pointer-events-none absolute inset-0" style={gridStyle} />
+
+      {/* Escenario WebGL (red de infraestructura 3D, parallax con el cursor) */}
+      <div className="pointer-events-none absolute inset-0 z-0 opacity-[0.6] dark:opacity-[0.55]">
+        <Suspense fallback={null}>
+          <HeroScene />
+        </Suspense>
+      </div>
 
       <RokeMark className="pointer-events-none absolute bottom-[-160px] right-[-180px] hidden h-[720px] w-[720px] text-[var(--roke-text)] opacity-[0.035] dark:opacity-[0.045] lg:block" />
 
@@ -144,7 +155,7 @@ const Hero: React.FC = () => {
           transition={{ duration: 0.6, delay: 0.15 }}
           className="mt-14 hidden lg:absolute lg:left-[767px] lg:top-[140px] lg:mt-0 lg:block lg:w-[592px]"
         >
-          <div className="roke-hero-panel-wrap">
+          <TiltCard className="roke-hero-panel-wrap" max={6}>
             <div className="roke-hero-panel-slash" />
             <div className="roke-hero-panel">
               <div className="roke-hero-panel-head">
@@ -171,7 +182,7 @@ const Hero: React.FC = () => {
                         {stat.label}
                       </div>
                       <div className="roke-hero-stat-value">
-                        <span>{stat.value}</span>
+                        <CountUp to={stat.to} decimals={stat.decimals} />
                         <span className="roke-hero-stat-unit">{stat.unit}</span>
                       </div>
                       <div className="roke-hero-stat-trend is-ok">
@@ -187,11 +198,14 @@ const Hero: React.FC = () => {
                     <span className="roke-hero-sparkline-value">2.41M</span>
                   </div>
                   <svg viewBox="0 0 480 38" preserveAspectRatio="none" className="text-[var(--roke-text)]">
-                    <path
+                    <motion.path
                       d="M0 28 L20 24 L40 30 L60 22 L80 26 L100 18 L120 22 L140 14 L160 18 L180 10 L200 14 L220 8 L240 12 L260 18 L280 10 L300 6 L320 14 L340 8 L360 4 L380 10 L400 14 L420 8 L440 12 L460 6 L480 10"
                       fill="none"
                       stroke="currentColor"
                       strokeWidth="1.5"
+                      initial={{ pathLength: 0, opacity: 0.3 }}
+                      animate={{ pathLength: 1, opacity: 1 }}
+                      transition={{ duration: 1.8, ease: "easeInOut", delay: 0.4 }}
                     />
                   </svg>
                 </div>
@@ -209,7 +223,7 @@ const Hero: React.FC = () => {
                 </div>
               </div>
             </div>
-          </div>
+          </TiltCard>
         </motion.div>
 
         <motion.div
