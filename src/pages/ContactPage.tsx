@@ -60,10 +60,10 @@ const ContactPage: React.FC = () => {
     WhatsAppService.openWhatsApp(message);
   };
 
-  const inputBase = "w-full px-4 py-3 border bg-background text-foreground text-[14px] focus:outline-none focus:border-foreground transition-colors placeholder:text-muted-foreground/50";
+  const inputBase = "w-full px-4 py-3 border bg-[var(--roke-surface)] text-[var(--roke-text)] text-[14px] focus:outline-none focus:border-[var(--roke-text)] transition-colors placeholder:text-[var(--roke-text-dimmer)]";
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-[var(--roke-bg)]">
 
       {/* ── Hero banner ── */}
       <section className="relative h-[420px] md:h-[500px] flex items-center justify-center text-center text-white overflow-hidden">
@@ -88,9 +88,9 @@ const ContactPage: React.FC = () => {
       </section>
 
       {/* ── Contact info strip ── */}
-      <section className="border-t border-border">
+      <section className="border-t border-[var(--roke-border-strong)]">
         <div className="max-w-[1296px] mx-auto px-6 md:px-14">
-          <div className="grid grid-cols-2 md:grid-cols-4 border-b border-border">
+          <div className="grid grid-cols-2 md:grid-cols-4 border-b border-[var(--roke-border-strong)]">
             {contactInfo.map((info, index) => {
               const Icon = info.icon;
               return (
@@ -100,17 +100,17 @@ const ContactPage: React.FC = () => {
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ duration: 0.5, delay: index * 0.08 }}
-                  className="py-10 px-8 border-r border-border last:border-r-0 flex flex-col gap-3"
+                  className="py-10 px-8 border-r border-[var(--roke-border-strong)] last:border-r-0 flex flex-col gap-3"
                 >
                   <div className="flex items-start justify-between">
-                    <span className="font-mono text-[11px] text-muted-foreground">0{index + 1}</span>
-                    <div className="roke-icon-box w-10 h-10 border border-border rounded-[4px] flex items-center justify-center text-foreground bg-background">
+                    <span className="font-mono text-[11px] text-[var(--roke-text-dimmer)]">0{index + 1}</span>
+                    <div className="roke-icon-box w-10 h-10 border border-[var(--roke-border-strong)] rounded-[4px] flex items-center justify-center text-[var(--roke-text)] bg-[var(--roke-surface)]">
                       <Icon className="w-4 h-4" />
                     </div>
                   </div>
-                  <div className="text-[13px] font-semibold text-foreground">{info.title}</div>
-                  <div className="text-[13px] text-foreground/80 font-medium leading-snug">{info.value}</div>
-                  <div className="text-[12px] text-muted-foreground">{info.description}</div>
+                  <div className="text-[13px] font-semibold text-[var(--roke-text)]">{info.title}</div>
+                  <div className="text-[13px] text-[var(--roke-text-dim)] font-medium leading-snug">{info.value}</div>
+                  <div className="text-[12px] text-[var(--roke-text-dimmer)]">{info.description}</div>
                 </motion.div>
               );
             })}
@@ -119,7 +119,7 @@ const ContactPage: React.FC = () => {
       </section>
 
       {/* ── Form + FAQ ── */}
-      <section className="py-[120px] border-t border-border relative">
+      <section className="py-[120px] border-t border-[var(--roke-border-strong)] relative">
         <div className="roke-slash-bg" />
         <div className="max-w-[1296px] mx-auto px-6 md:px-14 relative z-10">
 
@@ -132,20 +132,20 @@ const ContactPage: React.FC = () => {
             className="grid grid-cols-1 md:grid-cols-[1fr_1.4fr] gap-14 items-end mb-16"
           >
             <div>
-              <div className="flex items-center gap-3.5 font-mono text-[11px] text-muted-foreground mb-6">
-                <div className="w-8 h-[1px] bg-muted-foreground" />
+              <div className="flex items-center gap-3.5 font-mono text-[11px] text-[var(--roke-text-dimmer)] mb-6">
+                <div className="w-8 h-[1px] bg-[var(--roke-text-dimmer)]" />
                 <span>Formulario</span>
               </div>
-              <h2 className="font-sans text-[52px] md:text-[64px] font-bold leading-[0.98] tracking-[-0.035em] text-foreground m-0">
-                Envíanos un <span className="text-muted-foreground font-medium">mensaje.</span>
+              <h2 className="font-sans text-[52px] md:text-[64px] font-bold leading-[0.98] tracking-[-0.035em] text-[var(--roke-text)] m-0">
+                Envíanos un <span className="text-[var(--roke-text-dim)] font-medium">mensaje.</span>
               </h2>
             </div>
-            <p className="text-[17px] leading-[1.55] text-muted-foreground max-w-[520px] pb-1.5">
+            <p className="text-[17px] leading-[1.55] text-[var(--roke-text-dim)] max-w-[520px] pb-1.5">
               Completa el formulario y te responderemos en menos de 24 horas. También puedes contactarnos directamente por WhatsApp.
             </p>
           </motion.div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-[1.4fr_1fr] gap-0 border border-border">
+          <div className="grid grid-cols-1 lg:grid-cols-[1.4fr_1fr] gap-0 border border-[var(--roke-border-strong)]">
 
             {/* Form */}
             <motion.div
@@ -153,7 +153,7 @@ const ContactPage: React.FC = () => {
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.7 }}
-              className="p-10 border-r border-border"
+              className="p-10 border-r border-[var(--roke-border-strong)]"
             >
               {formStatus === 'success' && (
                 <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }}
@@ -177,16 +177,16 @@ const ContactPage: React.FC = () => {
               )}
 
               <form onSubmit={handleSubmit} className="space-y-0">
-                <div className="grid grid-cols-1 md:grid-cols-2 border border-border">
-                  <div className="border-r border-border border-b md:border-b-0 p-0">
-                    <label className="block px-4 pt-4 text-[11px] font-mono uppercase tracking-widest text-muted-foreground">Nombre *</label>
+                <div className="grid grid-cols-1 md:grid-cols-2 border border-[var(--roke-border-strong)]">
+                  <div className="border-r border-[var(--roke-border-strong)] border-b md:border-b-0 p-0">
+                    <label className="block px-4 pt-4 text-[11px] font-mono uppercase tracking-widest text-[var(--roke-text-dimmer)]">Nombre *</label>
                     <input type="text" name="name" value={formData.name} onChange={handleInputChange}
                       className={`${inputBase} px-4 pb-4 pt-2 border-0 ${errors.name ? 'text-red-500' : ''}`}
                       placeholder="Tu nombre completo" />
                     {errors.name && <p className="px-4 pb-3 text-red-500 text-[12px]">{errors.name}</p>}
                   </div>
                   <div className="border-b p-0">
-                    <label className="block px-4 pt-4 text-[11px] font-mono uppercase tracking-widest text-muted-foreground">Email *</label>
+                    <label className="block px-4 pt-4 text-[11px] font-mono uppercase tracking-widest text-[var(--roke-text-dimmer)]">Email *</label>
                     <input type="email" name="email" value={formData.email} onChange={handleInputChange}
                       className={`${inputBase} px-4 pb-4 pt-2 border-0 ${errors.email ? 'text-red-500' : ''}`}
                       placeholder="tu@email.com" />
@@ -194,24 +194,24 @@ const ContactPage: React.FC = () => {
                   </div>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 border border-border -mt-[1px]">
-                  <div className="border-r border-border border-b md:border-b-0 p-0">
-                    <label className="block px-4 pt-4 text-[11px] font-mono uppercase tracking-widest text-muted-foreground">Teléfono *</label>
+                <div className="grid grid-cols-1 md:grid-cols-2 border border-[var(--roke-border-strong)] -mt-[1px]">
+                  <div className="border-r border-[var(--roke-border-strong)] border-b md:border-b-0 p-0">
+                    <label className="block px-4 pt-4 text-[11px] font-mono uppercase tracking-widest text-[var(--roke-text-dimmer)]">Teléfono *</label>
                     <input type="tel" name="phone" value={formData.phone} onChange={handleInputChange}
                       className={`${inputBase} px-4 pb-4 pt-2 border-0 ${errors.phone ? 'text-red-500' : ''}`}
                       placeholder="+52 (234) 567-8900" />
                     {errors.phone && <p className="px-4 pb-3 text-red-500 text-[12px]">{errors.phone}</p>}
                   </div>
                   <div className="p-0">
-                    <label className="block px-4 pt-4 text-[11px] font-mono uppercase tracking-widest text-muted-foreground">Empresa</label>
+                    <label className="block px-4 pt-4 text-[11px] font-mono uppercase tracking-widest text-[var(--roke-text-dimmer)]">Empresa</label>
                     <input type="text" name="company" value={formData.company} onChange={handleInputChange}
                       className={`${inputBase} px-4 pb-4 pt-2 border-0`}
                       placeholder="Nombre de tu empresa" />
                   </div>
                 </div>
 
-                <div className="border border-border -mt-[1px]">
-                  <label className="block px-4 pt-4 text-[11px] font-mono uppercase tracking-widest text-muted-foreground">Servicio de interés *</label>
+                <div className="border border-[var(--roke-border-strong)] -mt-[1px]">
+                  <label className="block px-4 pt-4 text-[11px] font-mono uppercase tracking-widest text-[var(--roke-text-dimmer)]">Servicio de interés *</label>
                   <select name="service" value={formData.service} onChange={handleInputChange}
                     className={`${inputBase} px-4 pb-4 pt-2 border-0 ${errors.service ? 'text-red-500' : ''}`}>
                     <option value="">Selecciona un servicio</option>
@@ -220,8 +220,8 @@ const ContactPage: React.FC = () => {
                   {errors.service && <p className="px-4 pb-3 text-red-500 text-[12px]">{errors.service}</p>}
                 </div>
 
-                <div className="border border-border -mt-[1px]">
-                  <label className="block px-4 pt-4 text-[11px] font-mono uppercase tracking-widest text-muted-foreground">Mensaje *</label>
+                <div className="border border-[var(--roke-border-strong)] -mt-[1px]">
+                  <label className="block px-4 pt-4 text-[11px] font-mono uppercase tracking-widest text-[var(--roke-text-dimmer)]">Mensaje *</label>
                   <textarea name="message" value={formData.message} onChange={handleInputChange} rows={5}
                     className={`${inputBase} px-4 pb-4 pt-2 border-0 resize-none ${errors.message ? 'text-red-500' : ''}`}
                     placeholder="Cuéntanos sobre tu proyecto o consulta..." />
@@ -230,15 +230,15 @@ const ContactPage: React.FC = () => {
 
                 <div className="flex flex-col sm:flex-row gap-0 pt-6">
                   <button type="submit" disabled={formStatus === 'loading'}
-                    className="flex-1 flex items-center justify-center gap-2 py-4 bg-foreground text-background font-semibold text-[14px] hover:-translate-y-px hover:shadow-lg transition-all disabled:opacity-60">
+                    className="flex-1 flex items-center justify-center gap-2 py-4 bg-[var(--roke-text)] text-[var(--roke-bg)] font-semibold text-[14px] hover:-translate-y-px hover:shadow-lg transition-all disabled:opacity-60">
                     {formStatus === 'loading' ? (
-                      <><div className="w-4 h-4 border-2 border-background/30 border-t-background rounded-full animate-spin" />Enviando...</>
+                      <><div className="w-4 h-4 border-2 border-[var(--roke-bg)]/30 border-t-[var(--roke-bg)] rounded-full animate-spin" />Enviando...</>
                     ) : (
                       <><Send className="w-4 h-4" />Enviar Mensaje</>
                     )}
                   </button>
                   <button type="button" onClick={handleWhatsAppContact}
-                    className="flex-1 flex items-center justify-center gap-2 py-4 border border-border text-muted-foreground hover:text-foreground hover:border-foreground font-semibold text-[14px] transition-colors sm:border-l-0">
+                    className="flex-1 flex items-center justify-center gap-2 py-4 border border-[var(--roke-border-strong)] text-[var(--roke-text-dimmer)] hover:text-[var(--roke-text)] hover:border-[var(--roke-text)] font-semibold text-[14px] transition-colors sm:border-l-0">
                     <MessageCircle className="w-4 h-4" />
                     WhatsApp
                   </button>
@@ -252,29 +252,29 @@ const ContactPage: React.FC = () => {
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.7, delay: 0.1 }}
-              className="p-10 bg-muted/10"
+              className="p-10 bg-[var(--roke-surface)]"
             >
-              <div className="flex items-center gap-3.5 font-mono text-[11px] text-muted-foreground mb-8">
-                <div className="w-8 h-[1px] bg-muted-foreground" />
+              <div className="flex items-center gap-3.5 font-mono text-[11px] text-[var(--roke-text-dimmer)] mb-8">
+                <div className="w-8 h-[1px] bg-[var(--roke-text-dimmer)]" />
                 <span>FAQ</span>
               </div>
-              <h3 className="text-[28px] font-bold text-foreground tracking-[-0.02em] mb-10 leading-tight">
+              <h3 className="text-[28px] font-bold text-[var(--roke-text)] tracking-[-0.02em] mb-10 leading-tight">
                 Preguntas<br />frecuentes.
               </h3>
 
-              <div className="space-y-0 border border-border">
+              <div className="space-y-0 border border-[var(--roke-border-strong)]">
                 {[
                   { q: '¿Cuánto tiempo para recibir respuesta?', a: 'Respondemos todos los mensajes en menos de 24 horas durante días laborales.' },
                   { q: '¿Ofrecen consultas gratuitas?', a: 'Sí, ofrecemos una consulta inicial gratuita de 30 minutos para evaluar tus necesidades.' },
                   { q: '¿Trabajan con empresas internacionales?', a: 'Absolutamente. Tenemos experiencia trabajando con clientes de todo el mundo.' },
                   { q: '¿Tienen soporte en español?', a: 'Sí, todo nuestro equipo técnico atiende exclusivamente en español, 24/7.' },
                 ].map((faq, i) => (
-                  <div key={i} className="p-6 border-b border-border last:border-b-0">
+                  <div key={i} className="p-6 border-b border-[var(--roke-border-strong)] last:border-b-0">
                     <div className="flex gap-4">
-                      <span className="font-mono text-[11px] text-muted-foreground mt-0.5 flex-shrink-0">0{i + 1}</span>
+                      <span className="font-mono text-[11px] text-[var(--roke-text-dimmer)] mt-0.5 flex-shrink-0">0{i + 1}</span>
                       <div>
-                        <h4 className="font-semibold text-[14px] text-foreground mb-2 leading-snug">{faq.q}</h4>
-                        <p className="text-[13.5px] text-muted-foreground leading-relaxed">{faq.a}</p>
+                        <h4 className="font-semibold text-[14px] text-[var(--roke-text)] mb-2 leading-snug">{faq.q}</h4>
+                        <p className="text-[13.5px] text-[var(--roke-text-dim)] leading-relaxed">{faq.a}</p>
                       </div>
                     </div>
                   </div>
