@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { Clock, ArrowRight, AlertCircle, Search, Loader2, Mail } from "lucide-react";
+import { Clock, ArrowRight, AlertCircle, Search, Mail } from "lucide-react";
 import { Link } from "react-router-dom";
 import { getBlogPosts, getBlogCategories } from "../services/blogService";
+import { PostGridSkeleton } from "../components/common/Skeletons";
 
 interface BlogPost {
   uuid: string; slug: string; title: string; excerpt: string;
@@ -191,12 +192,16 @@ const BlogPage: React.FC = () => {
 
         {/* Loading */}
         {loading && (
-          <div className="flex items-center justify-center py-32">
-            <div className="text-center">
-              <Loader2 className="w-8 h-8 animate-spin mx-auto mb-4" style={{ color: 'var(--roke-text-dimmer)' }} />
-              <p className="font-mono text-[13px]" style={{ color: 'var(--roke-text-dimmer)' }}>Cargando artículos...</p>
+          <section className="py-[80px]">
+            <div
+              className="flex items-center gap-3.5 font-mono text-[11px] tracking-[0.16em] uppercase mb-7"
+              style={{ color: 'var(--roke-text-dimmer)' }}
+            >
+              <div className="w-8 h-px" style={{ background: 'var(--roke-text-dimmer)' }} />
+              <span>Cargando artículos…</span>
             </div>
-          </div>
+            <PostGridSkeleton count={6} />
+          </section>
         )}
 
         {/* ── Featured post ── */}

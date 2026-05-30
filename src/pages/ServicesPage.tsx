@@ -11,6 +11,7 @@ import {
 } from "../utils/serviceCatalog";
 import { CONFIG, ROUTES } from "../utils/constants/config";
 import WhatsAppService from "../services/whatsapp/whatsappService";
+import { PlanGridSkeleton } from "../components/common/Skeletons";
 
 /* ── SVG icons ───────────────────────────────────────── */
 const SvgServer = () => (
@@ -232,11 +233,13 @@ const ServicesPage: React.FC = () => {
 
   if (isLoading) {
     return (
-      <section className="roke-section-services">
-        <div className="max-w-[1296px] mx-auto">
-          <p style={{ fontFamily: '"JetBrains Mono", monospace', fontSize: 11, color: "var(--roke-text-dimmer)" }}>
-            Cargando servicios…
-          </p>
+      <section className="roke-section-services" style={{ background: "var(--roke-bg)" }}>
+        <div className="max-w-[1296px] mx-auto px-6 md:px-14">
+          <div className="roke-eyebrow mb-8">
+            <span className="roke-eyebrow-line" />
+            <span>Cargando servicios…</span>
+          </div>
+          <PlanGridSkeleton count={3} />
         </div>
       </section>
     );

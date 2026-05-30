@@ -71,6 +71,20 @@ const ContactPage: React.FC = () => {
         style={{ background: "var(--roke-bg)", paddingTop: 72, paddingBottom: 72 }}
       >
         <div className="roke-grid-bg opacity-40" />
+        {/* Figura diagonal (igual que el hero del Blog) */}
+        <div
+          className="roke-slash-band"
+          style={{
+            position: "absolute",
+            top: "110px",
+            right: "-200px",
+            width: "1800px",
+            height: "160px",
+            transform: "rotate(-30deg)",
+            transformOrigin: "50% 50%",
+            pointerEvents: "none",
+          }}
+        />
         <div className="max-w-[1296px] mx-auto px-6 md:px-14 relative z-10">
           <motion.div
             initial={{ opacity: 0, y: 24 }}
