@@ -4,6 +4,7 @@ import { ArrowRight, MessageCircle } from "lucide-react";
 import { Link } from "react-router-dom";
 import { ROUTES } from "../../utils/constants/config";
 import WhatsAppService from "../../services/whatsapp/whatsappService";
+import { ScrollScrub } from "../ui/scroll-motion";
 
 const FinalCTA: React.FC = () => {
   return (
@@ -22,12 +23,8 @@ const FinalCTA: React.FC = () => {
 
       <div className="relative z-10 grid min-h-[493px] items-center gap-10 px-[68px] lg:grid-cols-[59.4vw_1fr]">
         <div>
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.65 }}
-            viewport={{ once: true }}
-          >
+          {/* El titular se "ensambla" ligado al scroll (ScrollScrub). */}
+          <ScrollScrub fromY={64} fromScale={0.94}>
             <h2
               className="m-0 max-w-[720px] text-[56px] font-bold leading-[0.98] tracking-[-0.055em] text-[#141821] md:text-[70px] lg:text-[72px]"
               style={{ textWrap: "balance" } as React.CSSProperties}
@@ -38,7 +35,7 @@ const FinalCTA: React.FC = () => {
               <br />
               <span className="font-medium text-[#465363]">ser el problema?</span>
             </h2>
-          </motion.div>
+          </ScrollScrub>
         </div>
 
         <div className="max-w-[540px] border-[#d7dbe0] lg:border-l lg:pl-10">
@@ -56,7 +53,7 @@ const FinalCTA: React.FC = () => {
             <div className="mt-5 flex flex-col gap-2.5 sm:flex-row">
               <Link
                 to={ROUTES.CONTACT}
-                className="inline-flex items-center justify-center gap-3 rounded-[3px] bg-[#1b1e22] px-7 py-[15px] text-[14px] font-bold text-white transition-all hover:-translate-y-px hover:bg-[#101215] hover:shadow-lg"
+                className="mi-sheen mi-arrow inline-flex items-center justify-center gap-3 rounded-[3px] bg-[#1b1e22] px-7 py-[15px] text-[14px] font-bold text-white transition-all hover:-translate-y-px hover:bg-[#101215] hover:shadow-lg"
               >
                 Cotizar Ahora
                 <ArrowRight className="h-4 w-4" />
@@ -64,7 +61,7 @@ const FinalCTA: React.FC = () => {
               <button
                 type="button"
                 onClick={() => WhatsAppService.openWhatsApp("Hola ROKE Industries, quiero cotizar un proyecto.")}
-                className="inline-flex items-center justify-center gap-3 rounded-[3px] bg-[#22d365] px-7 py-[15px] text-[14px] font-bold text-[#082415] transition-all hover:-translate-y-px hover:bg-[#1fc35d]"
+                className="mi-sheen mi-icon-pop inline-flex items-center justify-center gap-3 rounded-[3px] bg-[#22d365] px-7 py-[15px] text-[14px] font-bold text-[#082415] transition-all hover:-translate-y-px hover:bg-[#1fc35d]"
               >
                 <MessageCircle className="h-4 w-4 fill-current" />
                 WhatsApp

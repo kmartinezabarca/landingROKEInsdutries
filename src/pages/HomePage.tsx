@@ -7,10 +7,12 @@ import SocialProof from '../components/sections/SocialProof';
 import Urgency from '../components/sections/Urgency';
 import FAQ from '../components/sections/FAQ';
 import FinalCTA from '../components/sections/FinalCTA';
+import { ScrollProgressBar } from '../components/ui/scroll-motion';
 
 const HomePage: React.FC = () => {
   return (
     <div className="home-modern">
+      <ScrollProgressBar />
       <Hero />
       <Services />
       <SocialProof />

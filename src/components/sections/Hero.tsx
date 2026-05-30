@@ -104,7 +104,7 @@ const Hero: React.FC = () => {
           <div className="mb-9 flex flex-col gap-2.5 sm:flex-row">
             <Link
               to={ROUTES.HOSTING}
-              className="inline-flex h-[50px] items-center justify-center gap-3 rounded-[4px] border border-[var(--roke-primary-bg)] bg-[var(--roke-primary-bg)] px-[27px] text-[14px] font-semibold text-[var(--roke-primary-fg)] transition-all hover:-translate-y-px hover:shadow-lg"
+              className="mi-sheen mi-arrow inline-flex h-[50px] items-center justify-center gap-3 rounded-[4px] border border-[var(--roke-primary-bg)] bg-[var(--roke-primary-bg)] px-[27px] text-[14px] font-semibold text-[var(--roke-primary-fg)] transition-all hover:-translate-y-px hover:shadow-lg"
             >
               Ver Planes y Precios
               <ArrowRight className="h-4 w-4" />
@@ -112,7 +112,7 @@ const Hero: React.FC = () => {
             <button
               type="button"
               onClick={() => WhatsAppService.openWhatsApp()}
-              className="inline-flex h-[50px] items-center justify-center gap-3 rounded-[4px] border border-[var(--roke-whatsapp)] bg-[var(--roke-whatsapp)] px-[27px] text-[14px] font-semibold text-[var(--roke-whatsapp-fg)] transition-all hover:-translate-y-px hover:brightness-95"
+              className="mi-sheen mi-icon-pop inline-flex h-[50px] items-center justify-center gap-3 rounded-[4px] border border-[var(--roke-whatsapp)] bg-[var(--roke-whatsapp)] px-[27px] text-[14px] font-semibold text-[var(--roke-whatsapp-fg)] transition-all hover:-translate-y-px hover:brightness-95"
             >
               <MessageCircle className="h-4 w-4 fill-current" />
               WhatsApp

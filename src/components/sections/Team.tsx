@@ -63,13 +63,14 @@ const Team: React.FC = () => {
           {teamMembers.map((member, index) => (
             <motion.div
               key={member.name}
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.1 * index }}
+              initial={{ opacity: 0, y: 36, scale: 0.97, filter: "blur(8px)" }}
+              whileInView={{ opacity: 1, y: 0, scale: 1, filter: "blur(0px)" }}
+              whileHover={{ y: -6 }}
+              transition={{ duration: 0.6, delay: 0.12 * index, ease: [0.22, 1, 0.36, 1] }}
               viewport={{ once: true }}
               className="h-full w-full max-w-sm" // Asegura que el contenedor ocupe toda la altura
             >
-              <Card className="h-full flex flex-col group transition-all duration-300">
+              <Card className="mi-glow h-full flex flex-col group transition-all duration-300">
                 <CardContent className="p-8 text-center flex flex-col flex-grow">
                   <div className="relative mb-10">
                     <img
@@ -152,7 +153,7 @@ const Team: React.FC = () => {
           </p>
           <motion.a
             href="mailto:careers@rokeindustries.com"
-            className="inline-flex items-center px-6 py-3 bg-primary text-primary-foreground rounded-lg font-medium hover:bg-primary/90 transition-colors duration-200"
+            className="mi-sheen mi-icon-pop inline-flex items-center px-6 py-3 bg-primary text-primary-foreground rounded-lg font-medium hover:bg-primary/90 transition-colors duration-200"
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
           >

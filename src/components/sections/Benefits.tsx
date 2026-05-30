@@ -1,5 +1,6 @@
 import React from "react";
 import { motion } from "framer-motion";
+import { CountUp } from "../ui/scroll-motion";
 
 const stats = [
   {
@@ -36,10 +37,10 @@ const Benefits: React.FC = () => {
           <motion.div
             key={stat.label}
             className="roke-stat-cell"
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: i * 0.08 }}
-            viewport={{ once: true }}
+            initial={{ opacity: 0, y: 36, scale: 0.95, filter: "blur(10px)" }}
+            whileInView={{ opacity: 1, y: 0, scale: 1, filter: "blur(0px)" }}
+            transition={{ duration: 0.6, delay: i * 0.1, ease: [0.22, 1, 0.36, 1] }}
+            viewport={{ once: true, amount: 0.3 }}
           >
             {/* Number */}
             <div
@@ -53,7 +54,7 @@ const Benefits: React.FC = () => {
                 fontVariantNumeric: "tabular-nums",
               }}
             >
-              {stat.num}
+              <CountUp to={parseFloat(stat.num)} decimals={stat.num.includes(".") ? 2 : 0} />
               <span
                 style={{
                   fontSize: 32,

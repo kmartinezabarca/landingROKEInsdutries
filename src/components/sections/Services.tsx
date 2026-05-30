@@ -215,10 +215,12 @@ const Services: React.FC = () => {
             return (
               <motion.article
                 key={service.id || service.title}
-                initial={{ opacity: 0, y: 24 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.45, delay: 0.08 * index }}
-                viewport={{ once: true }}
+                className="mi-sheen mi-glow"
+                initial={{ opacity: 0, y: 44, scale: 0.96, filter: "blur(10px)" }}
+                whileInView={{ opacity: 1, y: 0, scale: 1, filter: "blur(0px)" }}
+                whileHover={{ y: -6 }}
+                transition={{ duration: 0.6, delay: 0.1 * index, ease: [0.22, 1, 0.36, 1] }}
+                viewport={{ once: true, amount: 0.25 }}
                 style={{
                   padding: "36px 36px 32px",
                   border: "1px solid var(--roke-border-strong)",
@@ -342,6 +344,7 @@ const Services: React.FC = () => {
                 {/* Link */}
                 <Link
                   to={`${ROUTES.SERVICES}${service.slug ? `#${service.slug}` : ""}`}
+                  className="mi-arrow"
                   style={{
                     marginTop: "auto",
                     paddingTop: 16,

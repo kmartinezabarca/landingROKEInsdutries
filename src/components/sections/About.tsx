@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import { Calendar, Rocket, Eye, Gem, HardHat, Wrench, Server } from "lucide-react";
 import Container from "../common/Container";
 import { Card, CardContent, CardHeader, CardTitle } from "../common/Card";
+import { CountUp } from "../ui/scroll-motion";
 
 interface Milestone {
   year: string;
@@ -116,7 +117,17 @@ const About: React.FC = () => {
               className="text-center"
             >
               <div className="text-3xl md:text-4xl font-bold text-primary mb-2">
-                {stat.number}
+                {(() => {
+                  const m = stat.number.match(/^([\d.,]+)(.*)$/);
+                  if (!m) return stat.number;
+                  const numStr = m[1].replace(/,/g, "");
+                  return (
+                    <>
+                      <CountUp to={parseFloat(numStr)} decimals={numStr.includes(".") ? 1 : 0} />
+                      {m[2]}
+                    </>
+                  );
+                })()}
               </div>
               <div className="text-muted-foreground">{stat.label}</div>
             </motion.div>
@@ -142,11 +153,12 @@ const About: React.FC = () => {
                 key={milestone.year}
                 initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
+                whileHover={{ y: -5 }}
                 transition={{ duration: 0.6, delay: 0.1 * index }}
                 viewport={{ once: true }}
                 className="relative"
               >
-                <Card className="h-full">
+                <Card className="mi-glow h-full">
                   <CardHeader className="pb-3">
                     <div className="w-12 h-12 bg-primary rounded-full flex items-center justify-center mb-3">
                       <Icon className="w-6 h-6 text-primary-foreground" />
@@ -186,10 +198,11 @@ const About: React.FC = () => {
                   key={value.title}
                   initial={{ opacity: 0, y: 30 }}
                   whileInView={{ opacity: 1, y: 0 }}
+                  whileHover={{ y: -5 }}
                   transition={{ duration: 0.6, delay: 0.1 * index }}
                   viewport={{ once: true }}
                 >
-                  <Card className="h-full text-center">
+                  <Card className="mi-glow mi-sheen h-full text-center">
                     <CardHeader>
                       <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
                         <Icon className="w-8 h-8 text-primary" />

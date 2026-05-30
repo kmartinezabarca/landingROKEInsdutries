@@ -201,7 +201,7 @@ const Pricing: React.FC = () => {
                     ease: [0.22, 1, 0.36, 1],
                   }}
                   viewport={{ once: true, amount: 0.15 }}
-                  className={`relative p-9 border border-border -m-[1px] flex flex-col gap-[18px] cursor-pointer ${
+                  className={`mi-sheen relative p-9 border border-border -m-[1px] flex flex-col gap-[18px] cursor-pointer ${
                     isFeatured
                       ? "bg-foreground text-background z-10 md:shadow-[0_30px_60px_-20px_rgba(0,0,0,0.35)]"
                       : "bg-card hover:bg-muted/30"
@@ -251,7 +251,7 @@ const Pricing: React.FC = () => {
                     onClick={() => openCheckout(plan, currentBillingCycle as any)}
                     whileHover={{ scale: 1.02, transition: { duration: 0.15 } }}
                     whileTap={{ scale: 0.98 }}
-                    className={`mt-auto w-full py-3.5 font-semibold text-[13.5px] rounded-[4px] cursor-pointer border transition-opacity hover:opacity-90 ${
+                    className={`mi-sheen mt-auto w-full py-3.5 font-semibold text-[13.5px] rounded-[4px] cursor-pointer border transition-opacity hover:opacity-90 ${
                       isFeatured
                         ? "bg-background text-foreground border-background"
                         : "bg-foreground text-background border-foreground"
@@ -283,6 +283,7 @@ const Pricing: React.FC = () => {
             {enterprisePlans.map((plan, index) => (
               <motion.article
                 key={plan.name}
+                className="mi-sheen"
                 initial={{ opacity: 0, y: 24 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 whileHover={{
@@ -378,8 +379,8 @@ const Pricing: React.FC = () => {
             <p className="text-muted-foreground text-[15px] mb-6">
               ¿Necesitas una solución personalizada? Hablemos de tu proyecto.
             </p>
-            <Button size="lg" asChild className="rounded-[4px] font-semibold">
-              <Link to={ROUTES.CONTACT} className="flex items-center gap-2">
+            <Button size="lg" asChild className="mi-sheen rounded-[4px] font-semibold">
+              <Link to={ROUTES.CONTACT} className="mi-arrow flex items-center gap-2">
                 Solicitar Cotización
                 <ArrowRight className="w-4 h-4" />
               </Link>

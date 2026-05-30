@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect } from 'react';
 import { CardElement, useStripe, useElements } from '@stripe/react-stripe-js';
 import { useQuery } from '@tanstack/react-query';
 import { Loader2, ShieldCheck, CreditCard, Plus, ChevronDown, Receipt } from 'lucide-react';
@@ -88,13 +88,23 @@ export const PaymentStep: React.FC<Props> = ({ plan, billingCycle, serviceName, 
     }
   }, [savedMethods]);
 
-  // Price
-  const { subtotal, iva, total } = useMemo(() => {
-    const disc = parseFloat(String(billingCycle.discount_percentage)) / 100;
-    const sub  = parseFloat(String(plan.basePrice)) * (1 - disc);
-    const tax  = sub * 0.16;
-    return { subtotal: sub, iva: tax, total: sub + tax };
-  }, [plan.basePrice, billingCycle.discount_percentage]);
+  // Precio AUTORITATIVO desde el backend (cotización). El cliente ya no calcula
+  // el monto: se muestra y se cobra exactamente lo que el backend determina.
+  const { data: quote, isLoading: loadingQuote, isError: quoteError } = useQuery({
+    queryKey: ['checkout-quote', plan.slug, billingCycle.slug],
+    queryFn: () => ApiService.post('/checkout/quote', {
+      plan_id: plan.slug,
+      billing_cycle: billingCycle.slug,
+      add_ons: [],
+    }).then((r: any) => r.data?.data),
+    retry: false,
+    staleTime: 0,
+  });
+
+  const subtotal = Number(quote?.subtotal ?? 0);
+  const iva      = Number(quote?.tax ?? 0);
+  const total    = Number(quote?.total ?? 0);
+  const quoteId  = quote?.quote_id as string | undefined;
 
   const invoiceValid = !wantsInvoice || (
     invoice.rfc.length >= 12 && invoice.name && invoice.zip.length === 5 && invoice.regimen && invoice.uso_cfdi
@@ -103,6 +113,7 @@ export const PaymentStep: React.FC<Props> = ({ plan, billingCycle, serviceName, 
 
   const handlePay = async () => {
     if (!invoiceValid) { toast.error('Completa todos los datos fiscales'); return; }
+    if (!quoteId) { toast.error('No se pudo obtener la cotización. Intenta de nuevo.'); return; }
     setLoading(true);
     setCardError(null);
 
@@ -112,6 +123,7 @@ export const PaymentStep: React.FC<Props> = ({ plan, billingCycle, serviceName, 
       if (!useNewCard && selectedPmId) {
         // ── Saved card ─────────────────────────────────────────────
         const res  = await contractService.contract({
+          quote_id: quoteId,
           plan_id: plan.slug, billing_cycle: billingCycle.slug,
           service_name: serviceName, payment_method_id: selectedPmId,
           create_subscription: true, invoice: invoicePayload, egg_id: eggId,
@@ -151,6 +163,7 @@ export const PaymentStep: React.FC<Props> = ({ plan, billingCycle, serviceName, 
         if (pmErr || !paymentMethod) { setCardError(pmErr?.message ?? 'Error con la tarjeta'); setLoading(false); return; }
 
         const res  = await contractService.contract({
+          quote_id: quoteId,
           plan_id: plan.slug, billing_cycle: billingCycle.slug,
           service_name: serviceName, payment_method_id: paymentMethod.id,
           create_subscription: true, invoice: invoicePayload, egg_id: eggId,
@@ -197,8 +210,13 @@ export const PaymentStep: React.FC<Props> = ({ plan, billingCycle, serviceName, 
         </div>
         <div className="border-t border-border mt-2 pt-2 flex justify-between items-center">
           <span className="text-sm font-semibold text-foreground">Total hoy</span>
-          <span className="text-lg font-bold text-primary">${total.toFixed(2)} MXN</span>
+          <span className="text-lg font-bold text-primary">
+            {loadingQuote ? 'Calculando…' : `$${total.toFixed(2)} MXN`}
+          </span>
         </div>
+        {quoteError && (
+          <p className="text-xs text-red-500 mt-2">No se pudo calcular el precio. Recarga e intenta de nuevo.</p>
+        )}
       </div>
 
       {/* Payment method */}
@@ -389,11 +407,11 @@ export const PaymentStep: React.FC<Props> = ({ plan, billingCycle, serviceName, 
         </button>
         <button
           onClick={handlePay}
-          disabled={loading || (useNewCard && !isStripeConfigured) || (!useNewCard && !selectedPmId) || !invoiceValid}
+          disabled={loading || loadingQuote || !quoteId || quoteError || (useNewCard && !isStripeConfigured) || (!useNewCard && !selectedPmId) || !invoiceValid}
           className="flex-1 py-2.5 rounded-xl bg-primary text-primary-foreground font-medium text-sm hover:bg-primary/90 transition disabled:opacity-60 flex items-center justify-center gap-2"
         >
-          {loading && <Loader2 className="w-4 h-4 animate-spin" />}
-          {loading ? 'Procesando…' : `Pagar $${total.toFixed(2)} MXN`}
+          {(loading || loadingQuote) && <Loader2 className="w-4 h-4 animate-spin" />}
+          {loading ? 'Procesando…' : loadingQuote ? 'Calculando…' : `Pagar $${total.toFixed(2)} MXN`}
         </button>
       </div>
     </div>

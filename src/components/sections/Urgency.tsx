@@ -1,6 +1,7 @@
 import React from "react";
 import { motion } from "framer-motion";
 import { ArrowRight } from "lucide-react";
+import { Reveal } from "../ui/scroll-motion";
 
 const steps = [
   {
@@ -31,7 +32,7 @@ const Urgency: React.FC = () => {
     <section className="bg-[#f6f7f6] px-6 py-16 text-[#141821] md:px-14 md:py-20">
       <div className="mx-auto max-w-[1296px]">
         <div className="mb-16 grid gap-10 md:grid-cols-[1fr_1.05fr] md:items-start lg:mb-20">
-          <div>
+          <Reveal>
             <div className="roke-eyebrow mb-7">
               <span className="roke-eyebrow-line" />
               <span>04 / CÓMO TRABAJAMOS</span>
@@ -42,24 +43,26 @@ const Urgency: React.FC = () => {
               <br />
               <span className="font-medium text-[#465363]">Sin sorpresas.</span>
             </h2>
-          </div>
+          </Reveal>
 
-          <p className="max-w-[560px] pt-10 text-[18px] leading-[1.45] tracking-[-0.01em] text-[#24324b] md:justify-self-center">
-            Nuestro proceso es honesto y rastreable. Cada fase tiene
-            entregables, plazos y un canal de WhatsApp directo con tu
-            líder técnico.
-          </p>
+          <Reveal delay={0.12}>
+            <p className="max-w-[560px] pt-10 text-[18px] leading-[1.45] tracking-[-0.01em] text-[#24324b] md:justify-self-center">
+              Nuestro proceso es honesto y rastreable. Cada fase tiene
+              entregables, plazos y un canal de WhatsApp directo con tu
+              líder técnico.
+            </p>
+          </Reveal>
         </div>
 
         <div className="grid gap-0 md:grid-cols-3">
           {steps.map((step, index) => (
             <motion.article
               key={step.num}
-              initial={{ opacity: 0, y: 18 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, amount: 0.35 }}
-              transition={{ duration: 0.45, delay: index * 0.08 }}
-              className="border-[#d4d9dd] py-10 md:min-h-[328px] md:px-10 md:py-9 md:[&:not(:last-child)]:border-r lg:px-10"
+              initial={{ opacity: 0, y: 36, filter: "blur(8px)" }}
+              whileInView={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+              viewport={{ once: true, amount: 0.3 }}
+              transition={{ duration: 0.6, delay: index * 0.12, ease: [0.22, 1, 0.36, 1] }}
+              className="mi-icon-pop border-[#d4d9dd] py-10 md:min-h-[328px] md:px-10 md:py-9 md:[&:not(:last-child)]:border-r lg:px-10"
             >
               <div className="mb-7 flex items-center gap-5">
                 <span className="text-[54px] font-bold leading-none tracking-[-0.045em] text-[#141821]">

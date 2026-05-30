@@ -30,6 +30,7 @@ import DocumentationDetailPage from './pages/DocumentationDetailPage'
 import TermsPage from './pages/TermsPage';
 import { ROUTES } from './utils/constants/config';
 import './App.css';
+import './styles/micro-animations.css';
 
 const App: React.FC = () => {
   const handleContactClick = () => {
