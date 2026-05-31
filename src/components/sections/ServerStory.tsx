@@ -243,6 +243,21 @@ const StepTracker: React.FC<{ progress: number }> = ({ progress }) => (
 const ServerStory: React.FC = () => {
   const stickyRef = useRef<HTMLDivElement>(null);
 
+  /**
+   * canvasReady — only mount the WebGL canvas once the section is within
+   * 300px of the viewport. This prevents the GPU shader-compilation spike
+   * from happening while the user is still looking at the hero.
+   */
+  const [canvasReady, setCanvasReady] = useState(false);
+  useEffect(() => {
+    const obs = new IntersectionObserver(
+      ([entry]) => { if (entry.isIntersecting) setCanvasReady(true); },
+      { rootMargin: "300px" }
+    );
+    if (stickyRef.current) obs.observe(stickyRef.current);
+    return () => obs.disconnect();
+  }, []);
+
   const { scrollYProgress } = useScroll({
     target: stickyRef,
     offset: ["start start", "end end"],
@@ -335,9 +350,11 @@ const ServerStory: React.FC = () => {
 
         {/* 3D canvas — receives progressRef, never re-renders for animation */}
         <motion.div style={{ position: "absolute", inset: 0, y: canvasY }}>
-          <Suspense fallback={null}>
-            <ServerScene progressRef={progressRef} />
-          </Suspense>
+          {canvasReady && (
+            <Suspense fallback={null}>
+              <ServerScene progressRef={progressRef} />
+            </Suspense>
+          )}
         </motion.div>
 
         {/* annotation callouts — DOM overlay, throttled re-renders */}

@@ -1,26 +1,29 @@
 /**
- * ServerScene — scroll-driven 3D server assembly, render-quality pass.
+ * ServerScene — performance-optimised version.
  *
- * Realism techniques:
- *  · RoundedBox (beveled edges) instead of hard boxes — real hardware has chamfers
- *  · ACES Filmic tone mapping + correct color space
- *  · EffectComposer post-fx: selective Bloom on LEDs, ambient vignette, SMAA
- *  · 3-point lighting (key / fill / rim) + studio HDRI for reflections
- *  · Per-component velocity spring (slight overshoot), driven entirely in
- *    useFrame via a mutable progressRef — zero React re-renders.
+ * Key decisions vs. the previous pass:
+ *  · MeshStandardMaterial everywhere except CPU IHS (one clearcoat material)
+ *    → far fewer shader variants to compile on first mount
+ *  · No EffectComposer (Bloom/SMAA were the main frame-budget killers)
+ *    → LED glow is faked with small PointLights updated in useFrame
+ *  · No ContactShadows (re-renders the scene every frame)
+ *    → replaced with a canvas-gradient soft-shadow decal (zero runtime cost)
+ *  · RoundedBox smoothness=2 instead of 3
+ *  · dpr capped at 1.4
+ *  · hardware antialias: true (no SMAA overhead)
+ *  · All animation still runs entirely in useFrame via progressRef
  */
 
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
-import { Environment, ContactShadows, RoundedBox } from "@react-three/drei";
-import { EffectComposer, Bloom, Vignette, SMAA } from "@react-three/postprocessing";
+import { Environment, RoundedBox } from "@react-three/drei";
 import * as THREE from "three";
 
 export interface ServerSceneProps {
   progressRef: React.MutableRefObject<number>;
 }
 
-// ─── math ───────────────────────────────────────────────────────────────────
+// ─── math ─────────────────────────────────────────────────────────────────────
 const clamp01 = (v: number) => Math.max(0, Math.min(1, v));
 const lerp = (a: number, b: number, t: number) => a + (b - a) * t;
 const seg = (p: number, a: number, b: number) => clamp01((p - a) / (b - a));
@@ -37,42 +40,106 @@ function applyT(group: THREE.Group, t: number) {
   const opacity = clamp01(t * 7);
   group.traverse((obj) => {
     if (!(obj instanceof THREE.Mesh)) return;
-    const m = obj.material as THREE.MeshPhysicalMaterial;
+    const m = obj.material as THREE.MeshStandardMaterial;
     if (m.transparent) m.opacity = opacity;
-    if (m.emissive && m.emissive.getHex() !== 0) m.emissiveIntensity = t * 4.0;
+    if (m.emissive && m.emissive.getHex() !== 0) m.emissiveIntensity = t * 3.5;
   });
 }
 
-// ─── beveled box helper ───────────────────────────────────────────────────────
-const RBox: React.FC<{
-  size: [number, number, number];
-  position?: [number, number, number];
-  radius?: number;
-  mat: Record<string, unknown>;
-}> = ({ size, position, radius = 0.012, mat }) => (
-  <RoundedBox args={size} radius={Math.min(radius, Math.min(...size) / 2.2)} smoothness={3} position={position}>
-    <meshPhysicalMaterial transparent opacity={0} {...mat} />
-  </RoundedBox>
-);
-
-// ─── material presets ─────────────────────────────────────────────────────────
-const MAT = {
-  chassis:   { color: "#23262f", metalness: 0.9,  roughness: 0.28, clearcoat: 0.3, clearcoatRoughness: 0.4 },
-  chassisDk: { color: "#15171e", metalness: 0.8,  roughness: 0.4 },
-  lid:       { color: "#272b38", metalness: 0.92, roughness: 0.22, clearcoat: 0.4, clearcoatRoughness: 0.3 },
-  pcb:       { color: "#0e3a22", metalness: 0.05, roughness: 0.7,  clearcoat: 0.6, clearcoatRoughness: 0.35 },
-  pcbBlue:   { color: "#10293e", metalness: 0.05, roughness: 0.65, clearcoat: 0.6, clearcoatRoughness: 0.35 },
-  ihs:       { color: "#cdd2dc", metalness: 0.98, roughness: 0.05, clearcoat: 0.7, clearcoatRoughness: 0.05 },
-  aluminium: { color: "#aab4c2", metalness: 0.95, roughness: 0.14 },
-  aluDark:   { color: "#8893a3", metalness: 0.92, roughness: 0.2 },
-  chip:      { color: "#15181f", metalness: 0.4,  roughness: 0.5 },
-  chipMatte: { color: "#0c0e13", metalness: 0.25, roughness: 0.7 },
-  gold:      { color: "#d4a92a", metalness: 0.98, roughness: 0.18 },
-  ramSpread: { color: "#414857", metalness: 0.85, roughness: 0.25 },
-  steel:     { color: "#1a1d25", metalness: 0.85, roughness: 0.25 },
-  copper:    { color: "#c8821e", metalness: 0.7,  roughness: 0.4, emissive: new THREE.Color("#7a4d10"), emissiveIntensity: 0 },
+// ─── Shared material configs (MeshStandardMaterial — fast compile) ─────────────
+const S = {
+  chassis:   { color: "#23262f", metalness: 0.88, roughness: 0.28 },
+  chassisDk: { color: "#15171e", metalness: 0.78, roughness: 0.40 },
+  lid:       { color: "#272b38", metalness: 0.90, roughness: 0.24 },
+  pcb:       { color: "#0e3a22", metalness: 0.04, roughness: 0.72 },
+  pcbBlue:   { color: "#10293e", metalness: 0.04, roughness: 0.68 },
+  aluminium: { color: "#aab4c2", metalness: 0.92, roughness: 0.16 },
+  aluDark:   { color: "#8893a3", metalness: 0.88, roughness: 0.22 },
+  chip:      { color: "#15181f", metalness: 0.38, roughness: 0.52 },
+  chipMatte: { color: "#0c0e13", metalness: 0.22, roughness: 0.72 },
+  gold:      { color: "#d4a92a", metalness: 0.96, roughness: 0.20 },
+  ramSpread: { color: "#414857", metalness: 0.84, roughness: 0.26 },
+  steel:     { color: "#1a1d25", metalness: 0.84, roughness: 0.26 },
+  copper:    { color: "#c8821e", metalness: 0.68, roughness: 0.42,
+               emissive: new THREE.Color("#7a4d10"), emissiveIntensity: 0 },
 };
-const led = (hex: string) => ({ color: hex, emissive: new THREE.Color(hex), emissiveIntensity: 0, metalness: 0, roughness: 0.4 });
+const led = (hex: string) => ({
+  color: hex,
+  emissive: new THREE.Color(hex),
+  emissiveIntensity: 0,
+  metalness: 0,
+  roughness: 0.4,
+});
+
+// ─── Rounded box helper (smoothness=2 for perf) ───────────────────────────────
+const RB: React.FC<{
+  size: [number, number, number];
+  pos?: [number, number, number];
+  rot?: [number, number, number];
+  r?: number;
+  mat: Record<string, unknown>;
+}> = ({ size, pos, rot, r = 0.013, mat }) => {
+  const radius = Math.min(r, Math.min(...size) / 2.2);
+  return (
+    <RoundedBox
+      args={size}
+      radius={radius}
+      smoothness={2}
+      position={pos}
+      rotation={rot}
+    >
+      <meshStandardMaterial transparent opacity={0} {...mat} />
+    </RoundedBox>
+  );
+};
+
+// ─── Soft shadow (canvas texture — zero runtime cost) ─────────────────────────
+const SoftShadow: React.FC<{ pr: React.MutableRefObject<number> }> = ({ pr }) => {
+  const texture = useMemo(() => {
+    const c = document.createElement("canvas");
+    c.width = 256; c.height = 128;
+    const ctx = c.getContext("2d")!;
+    const g = ctx.createRadialGradient(128, 64, 4, 128, 64, 115);
+    g.addColorStop(0,   "rgba(0,0,0,0.75)");
+    g.addColorStop(0.5, "rgba(0,0,0,0.25)");
+    g.addColorStop(1,   "rgba(0,0,0,0)");
+    ctx.fillStyle = g;
+    ctx.fillRect(0, 0, 256, 128);
+    return new THREE.CanvasTexture(c);
+  }, []);
+  const ref = useRef<THREE.Mesh>(null);
+  useFrame(() => {
+    if (!ref.current) return;
+    (ref.current.material as THREE.MeshBasicMaterial).opacity = clamp01(pr.current * 3) * 0.55;
+  });
+  return (
+    <mesh ref={ref} rotation={[-Math.PI / 2, 0, 0]} position={[0, -0.23, 0]}>
+      <planeGeometry args={[6.5, 3.2]} />
+      <meshBasicMaterial map={texture} transparent opacity={0} depthWrite={false} />
+    </mesh>
+  );
+};
+
+// ─── LED glow PointLight (simulates bloom without post-processing) ─────────────
+const LEDLight: React.FC<{
+  pr: React.MutableRefObject<number>;
+  segStart: number;
+  pos: [number, number, number];
+  color: string;
+}> = ({ pr, segStart, pos, color }) => {
+  const ref = useRef<THREE.PointLight>(null);
+  const glow = useRef(0);
+  const prev = useRef(0);
+  useFrame((_, delta) => {
+    if (!ref.current) return;
+    const curr = seg(pr.current, segStart, segStart + 0.02);
+    if (curr > 0.1 && prev.current < 0.1) glow.current = 1.0;
+    prev.current = curr;
+    glow.current = Math.max(0, glow.current - delta * 1.8);
+    ref.current.intensity = glow.current * 4.5 + (curr > 0.5 ? 0.4 : 0);
+  });
+  return <pointLight ref={ref} position={pos} color={color} intensity={0} distance={2.5} />;
+};
 
 // ─── CHASSIS ──────────────────────────────────────────────────────────────────
 const Chassis: React.FC<{ pr: React.MutableRefObject<number> }> = ({ pr }) => {
@@ -86,23 +153,17 @@ const Chassis: React.FC<{ pr: React.MutableRefObject<number> }> = ({ pr }) => {
   });
   return (
     <group ref={g} position={[0, -3, 0]}>
-      <RBox size={[4.2, 0.44, 1.8]} radius={0.04} mat={MAT.chassis} />
-      {/* inner tray (darker, recessed) */}
-      <RBox size={[3.95, 0.2, 1.6]} position={[0, 0.13, 0]} radius={0.02} mat={MAT.chassisDk} />
-      {/* front bezel */}
-      <RBox size={[4.2, 0.44, 0.04]} position={[0, 0, -0.9]} radius={0.03} mat={MAT.chassisDk} />
-      {/* vent slots */}
-      {[0.5, 0.7, 0.9, 1.1, 1.3, 1.5, 1.7].map((x) => (
-        <RBox key={x} size={[0.05, 0.28, 0.01]} position={[x, 0, -0.922]} radius={0.004} mat={{ color: "#070910", metalness: 0.3, roughness: 0.8 }} />
+      <RB size={[4.2, 0.44, 1.8]}    r={0.04}  mat={S.chassis} />
+      <RB size={[3.95, 0.22, 1.6]}   r={0.02}  mat={S.chassisDk} pos={[0, 0.13, 0]} />
+      <RB size={[4.2, 0.44, 0.04]}   r={0.03}  mat={S.chassisDk} pos={[0, 0, -0.9]} />
+      {[0.5,0.7,0.9,1.1,1.3,1.5,1.7].map((x) => (
+        <RB key={x} size={[0.05,0.28,0.01]} r={0.004} mat={{ color:"#070910", metalness:0.3, roughness:0.8 }} pos={[x,0,-0.922]} />
       ))}
-      {/* HDD cage drive bays */}
-      {[-0.13, 0, 0.13].map((y) => (
-        <RBox key={y} size={[1.4, 0.1, 0.02]} position={[-0.78, y, -0.922]} radius={0.01} mat={{ color: "#0c0e15", metalness: 0.6, roughness: 0.4 }} />
+      {[-0.13,0,0.13].map((y) => (
+        <RB key={y} size={[1.4,0.1,0.02]} r={0.01} mat={{ color:"#0c0e15", metalness:0.5, roughness:0.5 }} pos={[-0.78,y,-0.922]} />
       ))}
-      {/* power LED — green */}
-      <RBox size={[0.1, 0.045, 0.012]} position={[-1.9, 0.05, -0.922]} radius={0.006} mat={led("#33ff66")} />
-      {/* activity LED — blue */}
-      <RBox size={[0.07, 0.035, 0.012]} position={[-1.74, 0.05, -0.922]} radius={0.005} mat={led("#4ab8ff")} />
+      <RB size={[0.1,0.045,0.012]}   r={0.006} mat={led("#33ff66")} pos={[-1.9, 0.05,-0.922]} />
+      <RB size={[0.07,0.035,0.012]}  r={0.005} mat={led("#4ab8ff")} pos={[-1.74,0.05,-0.922]} />
     </group>
   );
 };
@@ -119,25 +180,18 @@ const Motherboard: React.FC<{ pr: React.MutableRefObject<number> }> = ({ pr }) =
   });
   return (
     <group ref={g} position={[0, 2.0, 0]}>
-      <RBox size={[3.8, 0.05, 1.55]} radius={0.02} mat={MAT.pcb} />
-      {/* CPU socket frame */}
-      <RBox size={[0.78, 0.02, 0.78]} position={[-0.45, 0.035, 0.05]} radius={0.01} mat={{ color: "#0a0c10", metalness: 0.6, roughness: 0.4 }} />
-      <RBox size={[0.68, 0.012, 0.68]} position={[-0.45, 0.04, 0.05]} radius={0.008} mat={{ color: "#1a1e26", metalness: 0.7, roughness: 0.35 }} />
-      {/* copper traces (emissive glow) */}
-      {[[-1.2, 0.0, 0.6], [0.25, 0.3, 0.5], [0.9, -0.3, 0.7], [1.4, 0.2, 0.4], [-0.5, -0.5, 0.55]].map(([x, z, w], i) => (
-        <RBox key={i} size={[w as number, 0.004, 0.006]} position={[x, 0.03, z]} radius={0.002} mat={MAT.copper} />
+      <RB size={[3.8,0.05,1.55]}   r={0.02} mat={S.pcb} />
+      <RB size={[0.78,0.02,0.78]}  r={0.01} mat={{ color:"#0a0c10", metalness:0.6, roughness:0.4 }} pos={[-0.45,0.035,0.05]} />
+      <RB size={[0.68,0.012,0.68]} r={0.008} mat={{ color:"#1a1e26", metalness:0.7, roughness:0.35 }} pos={[-0.45,0.04,0.05]} />
+      {[[-1.2,0.0,0.6],[0.25,0.3,0.5],[0.9,-0.3,0.7],[1.4,0.2,0.4],[-0.5,-0.5,0.55]].map(([x,z,w],i) => (
+        <RB key={i} size={[w as number,0.004,0.006]} r={0.002} mat={S.copper} pos={[x,0.03,z]} />
       ))}
-      {/* VRM heatsink */}
-      <RBox size={[0.5, 0.12, 0.18]} position={[-0.9, 0.07, 0]} radius={0.01} mat={MAT.aluDark} />
-      {/* chipset heatsink */}
-      <RBox size={[0.26, 0.06, 0.26]} position={[0.52, 0.05, 0.28]} radius={0.01} mat={MAT.aluminium} />
-      {/* PCIe slot */}
-      <RBox size={[0.88, 0.04, 0.12]} position={[-1.04, 0.04, -0.16]} radius={0.008} mat={{ color: "#181b22", metalness: 0.5, roughness: 0.4 }} />
-      {/* ATX 24-pin */}
-      <RBox size={[0.26, 0.1, 0.15]} position={[1.62, 0.075, 0.33]} radius={0.01} mat={MAT.chip} />
-      {/* SATA ports */}
-      {[-0.06, 0.06].map((z) => (
-        <RBox key={z} size={[0.16, 0.05, 0.07]} position={[1.6, 0.05, -0.4 + z]} radius={0.006} mat={{ color: "#1c2a4a", metalness: 0.4, roughness: 0.5 }} />
+      <RB size={[0.5,0.12,0.18]}  r={0.01} mat={S.aluDark} pos={[-0.9,0.07,0]} />
+      <RB size={[0.26,0.06,0.26]} r={0.01} mat={S.aluminium} pos={[0.52,0.05,0.28]} />
+      <RB size={[0.88,0.04,0.12]} r={0.008} mat={{ color:"#181b22", metalness:0.5, roughness:0.4 }} pos={[-1.04,0.04,-0.16]} />
+      <RB size={[0.26,0.1,0.15]}  r={0.01} mat={S.chip} pos={[1.62,0.075,0.33]} />
+      {[-0.06,0.06].map((z) => (
+        <RB key={z} size={[0.16,0.05,0.07]} r={0.006} mat={{ color:"#1c2a4a", metalness:0.4, roughness:0.5 }} pos={[1.6,0.05,-0.4+z]} />
       ))}
     </group>
   );
@@ -151,17 +205,17 @@ const CPU: React.FC<{ pr: React.MutableRefObject<number> }> = ({ pr }) => {
     if (!g.current) return;
     const t = tick(sp.current, seg(pr.current, 0.18, 0.30));
     g.current.position.y = lerp(2.4, 0.355, t);
-    g.current.rotation.y = lerp(0.6, 0, t);
+    g.current.rotation.y = lerp(0.5, 0, t);
     applyT(g.current, t);
   });
   return (
     <group ref={g} position={[-0.45, 2.4, 0.05]}>
-      {/* green substrate */}
-      <RBox size={[0.68, 0.018, 0.68]} position={[0, -0.026, 0]} radius={0.006} mat={MAT.pcb} />
-      {/* polished IHS */}
-      <RBox size={[0.6, 0.07, 0.6]} radius={0.025} mat={MAT.ihs} />
-      {/* notch detail */}
-      <RBox size={[0.36, 0.002, 0.1]} position={[0, 0.038, 0.06]} radius={0.001} mat={{ color: "#9aa0ac", metalness: 0.6, roughness: 0.5 }} />
+      <RB size={[0.68,0.018,0.68]} r={0.006} mat={S.pcb} pos={[0,-0.026,0]} />
+      {/* IHS — only MeshPhysicalMaterial in the scene, clearcoat worth it here */}
+      <RoundedBox args={[0.6,0.07,0.6]} radius={0.025} smoothness={2}>
+        <meshPhysicalMaterial color="#cdd2dc" metalness={0.97} roughness={0.05} clearcoat={0.65} clearcoatRoughness={0.06} transparent opacity={0} />
+      </RoundedBox>
+      <RB size={[0.36,0.002,0.1]} r={0.001} mat={{ color:"#9aa0ac", metalness:0.6, roughness:0.5 }} pos={[0,0.038,0.06]} />
     </group>
   );
 };
@@ -180,28 +234,25 @@ const CPUCooler: React.FC<{ pr: React.MutableRefObject<number>; reduced: boolean
   });
   return (
     <group ref={g} position={[-0.45, 2.7, 0.05]}>
-      <RBox size={[0.62, 0.04, 0.62]} position={[0, -0.02, 0]} radius={0.01} mat={MAT.aluminium} />
-      {/* heat-pipe fins */}
-      {Array.from({ length: 11 }).map((_, i) => (
-        <RBox key={i} size={[0.6 - i * 0.006, 0.018, 0.6 - i * 0.006]} position={[0, 0.02 + i * 0.036, 0]} radius={0.004} mat={i % 2 === 0 ? MAT.aluminium : MAT.aluDark} />
+      <RB size={[0.62,0.04,0.62]} r={0.01} mat={S.aluminium} pos={[0,-0.02,0]} />
+      {Array.from({ length: 10 }).map((_, i) => (
+        <RB key={i} size={[0.6-i*0.006,0.018,0.6-i*0.006]} r={0.004}
+          mat={i%2===0 ? S.aluminium : S.aluDark} pos={[0,0.02+i*0.036,0]} />
       ))}
-      {/* fan shroud */}
       <mesh position={[0, 0.43, 0]}>
-        <cylinderGeometry args={[0.3, 0.3, 0.07, 32]} />
-        <meshPhysicalMaterial color="#1a1d28" metalness={0.6} roughness={0.4} transparent opacity={0} />
+        <cylinderGeometry args={[0.3, 0.3, 0.07, 24]} />
+        <meshStandardMaterial color="#1a1d28" metalness={0.6} roughness={0.4} transparent opacity={0} />
       </mesh>
-      {/* spinning blades */}
       <group ref={fan} position={[0, 0.43, 0]}>
-        {[0, 60, 120, 180, 240, 300].map((deg) => (
-          <mesh key={deg} rotation={[0, (deg * Math.PI) / 180, 0.3]} position={[0.12, 0, 0]}>
-            <boxGeometry args={[0.13, 0.02, 0.08]} />
-            <meshPhysicalMaterial color="#2c3240" metalness={0.5} roughness={0.45} transparent opacity={0} />
+        {[0,60,120,180,240,300].map((deg) => (
+          <mesh key={deg} rotation={[0,(deg*Math.PI)/180,0.3]} position={[0.12,0,0]}>
+            <boxGeometry args={[0.13,0.02,0.08]} />
+            <meshStandardMaterial color="#2c3240" metalness={0.5} roughness={0.45} transparent opacity={0} />
           </mesh>
         ))}
-        {/* hub */}
         <mesh>
-          <cylinderGeometry args={[0.06, 0.06, 0.05, 16]} />
-          <meshPhysicalMaterial color="#16181f" metalness={0.6} roughness={0.4} transparent opacity={0} />
+          <cylinderGeometry args={[0.055,0.055,0.05,14]} />
+          <meshStandardMaterial color="#16181f" metalness={0.6} roughness={0.4} transparent opacity={0} />
         </mesh>
       </group>
     </group>
@@ -220,22 +271,19 @@ const RAMStick: React.FC<{ pr: React.MutableRefObject<number>; x: number; s: num
   });
   return (
     <group ref={g} position={[x, 0.35, -3.0]}>
-      <RBox size={[0.1, 0.3, 1.0]} radius={0.01} mat={MAT.pcbBlue} />
-      {/* heat spreaders */}
-      {[-1, 1].map((d) => (
-        <RBox key={d} size={[0.018, 0.3, 0.96]} position={[d * 0.06, 0.02, 0]} radius={0.006} mat={MAT.ramSpread} />
+      <RB size={[0.1,0.3,1.0]}    r={0.01}  mat={S.pcbBlue} />
+      {[-1,1].map((d) => (
+        <RB key={d} size={[0.018,0.3,0.96]} r={0.006} mat={S.ramSpread} pos={[d*0.06,0.02,0]} />
       ))}
-      {/* spreader fin comb on top */}
-      {[-0.4, -0.2, 0, 0.2, 0.4].map((z) => (
-        <RBox key={z} size={[0.14, 0.04, 0.04]} position={[0, 0.18, z]} radius={0.004} mat={MAT.aluDark} />
+      {[-0.4,-0.2,0,0.2,0.4].map((z) => (
+        <RB key={z} size={[0.14,0.04,0.04]} r={0.004} mat={S.aluDark} pos={[0,0.18,z]} />
       ))}
-      {/* gold contacts */}
-      <RBox size={[0.1, 0.026, 0.9]} position={[0, -0.173, 0]} radius={0.004} mat={MAT.gold} />
+      <RB size={[0.1,0.026,0.9]} r={0.004} mat={S.gold} pos={[0,-0.173,0]} />
     </group>
   );
 };
 
-// ─── NVMe ─────────────────────────────────────────────────────────────────────
+// ─── NVME ─────────────────────────────────────────────────────────────────────
 const NVMe: React.FC<{ pr: React.MutableRefObject<number>; z: number; s: number; e: number }> = ({ pr, z, s, e }) => {
   const g = useRef<THREE.Group>(null);
   const sp = useRef<Sp>({ v: 0, vel: 0 });
@@ -247,15 +295,12 @@ const NVMe: React.FC<{ pr: React.MutableRefObject<number>; z: number; s: number;
   });
   return (
     <group ref={g} position={[3.8, 0.27, z]}>
-      <RBox size={[0.88, 0.035, 0.22]} radius={0.008} mat={MAT.pcb} />
-      {/* controller */}
-      <RBox size={[0.2, 0.03, 0.16]} position={[-0.12, 0.03, 0]} radius={0.005} mat={MAT.chip} />
-      {/* NAND chips */}
-      {[0.17, 0.36].map((xo) => (
-        <RBox key={xo} size={[0.14, 0.026, 0.18]} position={[xo, 0.03, 0]} radius={0.004} mat={MAT.chipMatte} />
+      <RB size={[0.88,0.035,0.22]}  r={0.008} mat={S.pcb} />
+      <RB size={[0.2,0.03,0.16]}    r={0.005} mat={S.chip}     pos={[-0.12,0.03,0]} />
+      {[0.17,0.36].map((xo) => (
+        <RB key={xo} size={[0.14,0.026,0.18]} r={0.004} mat={S.chipMatte} pos={[xo,0.03,0]} />
       ))}
-      {/* M.2 gold edge */}
-      <RBox size={[0.08, 0.026, 0.18]} position={[-0.385, -0.002, 0]} radius={0.003} mat={MAT.gold} />
+      <RB size={[0.08,0.026,0.18]}  r={0.003} mat={S.gold} pos={[-0.385,-0.002,0]} />
     </group>
   );
 };
@@ -272,20 +317,17 @@ const NIC: React.FC<{ pr: React.MutableRefObject<number> }> = ({ pr }) => {
   });
   return (
     <group ref={g} position={[-1.02, 2.2, -0.1]}>
-      <RBox size={[0.76, 0.05, 0.46]} radius={0.01} mat={MAT.pcb} />
-      {/* I/O bracket */}
-      <RBox size={[0.04, 0.2, 0.46]} position={[-0.39, -0.04, 0]} radius={0.006} mat={MAT.aluminium} />
-      {/* RJ45 ports */}
-      {[-0.1, 0.1].map((z) => (
-        <RBox key={z} size={[0.03, 0.11, 0.14]} position={[-0.4, 0.05, z]} radius={0.005} mat={{ color: "#1a1d24", metalness: 0.5, roughness: 0.5 }} />
+      <RB size={[0.76,0.05,0.46]}    r={0.01}  mat={S.pcb} />
+      <RB size={[0.04,0.2,0.46]}     r={0.006} mat={S.aluminium} pos={[-0.39,-0.04,0]} />
+      {[-0.1,0.1].map((z) => (
+        <RB key={z} size={[0.03,0.11,0.14]} r={0.005}
+          mat={{ color:"#1a1d24", metalness:0.5, roughness:0.5 }} pos={[-0.4,0.05,z]} />
       ))}
-      {/* link LEDs */}
-      {[-0.1, 0.1].map((z) => (
-        <RBox key={z} size={[0.012, 0.024, 0.045]} position={[-0.41, 0.13, z]} radius={0.003} mat={led("#33ff66")} />
+      {[-0.1,0.1].map((z) => (
+        <RB key={z} size={[0.012,0.024,0.045]} r={0.003} mat={led("#33ff66")} pos={[-0.41,0.13,z]} />
       ))}
-      {/* controller + heatsink */}
-      <RBox size={[0.16, 0.06, 0.14]} position={[0.08, 0.055, 0]} radius={0.006} mat={MAT.aluDark} />
-      <RBox size={[0.14, 0.03, 0.12]} position={[0.3, 0.045, 0]} radius={0.005} mat={MAT.chip} />
+      <RB size={[0.16,0.06,0.14]} r={0.006} mat={S.aluDark} pos={[0.08,0.055,0]} />
+      <RB size={[0.14,0.03,0.12]} r={0.005} mat={S.chip}    pos={[0.3,0.045,0]} />
     </group>
   );
 };
@@ -304,23 +346,20 @@ const PSU: React.FC<{ pr: React.MutableRefObject<number> }> = ({ pr }) => {
   });
   return (
     <group ref={g} position={[-4.2, 0.26, 0.52]}>
-      <RBox size={[0.88, 0.32, 0.52]} radius={0.02} mat={MAT.steel} />
-      {/* fan grill ring */}
-      <mesh position={[0, 0, -0.27]} rotation={[Math.PI / 2, 0, 0]}>
-        <torusGeometry args={[0.13, 0.012, 8, 24]} />
-        <meshPhysicalMaterial color="#0a0c10" metalness={0.6} roughness={0.4} transparent opacity={0} />
+      <RB size={[0.88,0.32,0.52]} r={0.02} mat={S.steel} />
+      <mesh position={[0,0,-0.27]} rotation={[Math.PI/2,0,0]}>
+        <torusGeometry args={[0.13,0.012,6,24]} />
+        <meshStandardMaterial color="#0a0c10" metalness={0.6} roughness={0.4} transparent opacity={0} />
       </mesh>
-      {/* fan blades */}
-      <group ref={fan} position={[0, 0, -0.255]}>
-        {[0, 51, 102, 153, 204, 255, 306].map((deg) => (
-          <mesh key={deg} rotation={[Math.PI / 2, 0, (deg * Math.PI) / 180]} position={[0, 0.06, 0]}>
-            <boxGeometry args={[0.05, 0.005, 0.09]} />
-            <meshPhysicalMaterial color="#181b22" metalness={0.4} roughness={0.5} transparent opacity={0} />
+      <group ref={fan} position={[0,0,-0.255]}>
+        {[0,51,102,153,204,255,306].map((deg) => (
+          <mesh key={deg} rotation={[Math.PI/2,0,(deg*Math.PI)/180]} position={[0,0.06,0]}>
+            <boxGeometry args={[0.05,0.005,0.09]} />
+            <meshStandardMaterial color="#181b22" metalness={0.4} roughness={0.5} transparent opacity={0} />
           </mesh>
         ))}
       </group>
-      {/* output cable bundle stub */}
-      <RBox size={[0.05, 0.28, 0.44]} position={[0.45, 0, 0]} radius={0.01} mat={{ color: "#202430", metalness: 0.5, roughness: 0.5 }} />
+      <RB size={[0.05,0.28,0.44]} r={0.01} mat={{ color:"#202430", metalness:0.5, roughness:0.5 }} pos={[0.45,0,0]} />
     </group>
   );
 };
@@ -337,34 +376,17 @@ const Lid: React.FC<{ pr: React.MutableRefObject<number> }> = ({ pr }) => {
   });
   return (
     <group ref={g} position={[0, 3.2, 0]}>
-      <RBox size={[4.2, 0.06, 1.8]} radius={0.03} mat={MAT.lid} />
-      {/* perforated vent panels */}
-      {[-1.2, -0.8, -0.4, 0, 0.4, 0.8].map((x) => (
-        <RBox key={x} size={[0.1, 0.062, 1.5]} position={[x, -0.001, 0]} radius={0.008} mat={MAT.chassisDk} />
+      <RB size={[4.2,0.06,1.8]}  r={0.03} mat={S.lid} />
+      {[-1.2,-0.8,-0.4,0,0.4,0.8].map((x) => (
+        <RB key={x} size={[0.1,0.062,1.5]} r={0.008} mat={S.chassisDk} pos={[x,-0.001,0]} />
       ))}
-      {/* brand strip */}
-      <RBox size={[0.9, 0.064, 0.18]} position={[1.5, 0.001, 0.6]} radius={0.006} mat={{ color: "#33373f", metalness: 0.9, roughness: 0.2 }} />
+      <RB size={[0.9,0.064,0.18]} r={0.006}
+        mat={{ color:"#33373f", metalness:0.9, roughness:0.2 }} pos={[1.5,0.001,0.6]} />
     </group>
   );
 };
 
-// ─── arrival flash light ──────────────────────────────────────────────────────
-const ArrivalLight: React.FC<{ pr: React.MutableRefObject<number>; at: number; pos: [number, number, number]; color: string }> = ({ pr, at, pos, color }) => {
-  const ref = useRef<THREE.PointLight>(null);
-  const prev = useRef(0);
-  const glow = useRef(0);
-  useFrame((_, delta) => {
-    if (!ref.current) return;
-    const curr = seg(pr.current, at, at + 0.02);
-    if (curr > 0.1 && prev.current < 0.1) glow.current = 1.0;
-    prev.current = curr;
-    glow.current = Math.max(0, glow.current - delta * 1.6);
-    ref.current.intensity = glow.current * 5;
-  });
-  return <pointLight ref={ref} position={pos} color={color} intensity={0} distance={3.5} />;
-};
-
-// ─── camera ───────────────────────────────────────────────────────────────────
+// ─── CAMERA ───────────────────────────────────────────────────────────────────
 const CameraRig: React.FC<{ pr: React.MutableRefObject<number>; reduced: boolean }> = ({ pr, reduced }) => {
   const { camera } = useThree();
   const angle = useRef(0.4);
@@ -375,7 +397,7 @@ const CameraRig: React.FC<{ pr: React.MutableRefObject<number>; reduced: boolean
     angle.current += delta * 0.035;
     const p = pr.current;
     radius.current += ((6.0 - p * 1.0) - radius.current) * 0.04;
-    camY.current += ((lerp(2.4, 1.05, p)) - camY.current) * 0.04;
+    camY.current   += (lerp(2.4, 1.05, p) - camY.current) * 0.04;
     camera.position.x = Math.sin(angle.current) * radius.current;
     camera.position.z = Math.cos(angle.current) * radius.current;
     camera.position.y = camY.current;
@@ -384,22 +406,22 @@ const CameraRig: React.FC<{ pr: React.MutableRefObject<number>; reduced: boolean
   return null;
 };
 
-// ─── ground grid ──────────────────────────────────────────────────────────────
+// ─── GROUND GRID ──────────────────────────────────────────────────────────────
 const GroundGrid: React.FC<{ pr: React.MutableRefObject<number> }> = ({ pr }) => {
   const ref = useRef<THREE.Mesh>(null);
   useFrame(() => {
     if (!ref.current) return;
-    (ref.current.material as THREE.MeshBasicMaterial).opacity = pr.current * 0.14;
+    (ref.current.material as THREE.MeshBasicMaterial).opacity = pr.current * 0.12;
   });
   return (
     <mesh ref={ref} rotation={[-Math.PI / 2, 0, 0]} position={[0, -0.24, 0]}>
-      <planeGeometry args={[16, 9, 28, 16]} />
+      <planeGeometry args={[16, 9, 26, 14]} />
       <meshBasicMaterial color="#3a5ba8" wireframe transparent opacity={0} depthWrite={false} />
     </mesh>
   );
 };
 
-// ─── canvas ───────────────────────────────────────────────────────────────────
+// ─── CANVAS ───────────────────────────────────────────────────────────────────
 const ServerScene: React.FC<ServerSceneProps> = ({ progressRef }) => {
   const [reduced, setReduced] = useState(false);
   useEffect(() => {
@@ -414,33 +436,32 @@ const ServerScene: React.FC<ServerSceneProps> = ({ progressRef }) => {
     <Canvas
       style={{ width: "100%", height: "100%" }}
       camera={{ position: [1.6, 2.4, 6.0], fov: 44 }}
-      dpr={[1, 1.7]}
+      dpr={[0.9, 1.4]}
       gl={{
-        antialias: false, // SMAA handles AA in post
+        antialias: true,
         alpha: true,
         powerPreference: "high-performance",
         toneMapping: THREE.ACESFilmicToneMapping,
-        toneMappingExposure: 1.05,
+        toneMappingExposure: 1.08,
       }}
       frameloop="always"
     >
-      {/* HDRI reflections */}
-      <Environment preset="studio" environmentIntensity={0.7} />
+      <Environment preset="studio" environmentIntensity={0.72} />
 
-      {/* 3-point lighting */}
-      <ambientLight intensity={0.18} />
-      <directionalLight position={[6, 10, 5]} intensity={2.0} color="#fff6ec" />
-      <directionalLight position={[-5, 4, -4]} intensity={0.7} color="#5e8cff" />
-      <spotLight position={[0, 7, -3]} angle={0.5} penumbra={0.8} intensity={1.2} color="#aaccff" />
+      <ambientLight intensity={0.2} />
+      <directionalLight position={[6, 10, 5]}  intensity={1.9} color="#fff6ec" />
+      <directionalLight position={[-5, 4, -4]} intensity={0.65} color="#5e8cff" />
+      <spotLight position={[0, 7, -3]} angle={0.5} penumbra={0.9} intensity={1.1} color="#aaccff" />
 
-      <ArrivalLight pr={progressRef} at={0.00} pos={[0, 0.5, 0]}     color="#bfe4ff" />
-      <ArrivalLight pr={progressRef} at={0.18} pos={[-0.45, 1, 0.05]} color="#ffe2b0" />
-      <ArrivalLight pr={progressRef} at={0.33} pos={[0.55, 1, -0.42]} color="#4ab8ff" />
-      <ArrivalLight pr={progressRef} at={0.51} pos={[1.05, 0.8, 0.4]} color="#b0ffe0" />
-      <ArrivalLight pr={progressRef} at={0.63} pos={[-1, 1, -0.1]}    color="#7affc0" />
-      <ArrivalLight pr={progressRef} at={0.73} pos={[-1.5, 0.8, 0.5]} color="#ffbb55" />
+      {/* LED glow lights — simulate bloom without post-processing */}
+      <LEDLight pr={progressRef} segStart={0.00} pos={[ 0,    0.6,  0]}    color="#bfe4ff" />
+      <LEDLight pr={progressRef} segStart={0.18} pos={[-0.45, 1.0,  0.05]} color="#ffe2b0" />
+      <LEDLight pr={progressRef} segStart={0.33} pos={[ 0.55, 1.0, -0.42]} color="#4ab8ff" />
+      <LEDLight pr={progressRef} segStart={0.51} pos={[ 1.05, 0.8,  0.4]}  color="#b0ffe0" />
+      <LEDLight pr={progressRef} segStart={0.63} pos={[-1.0,  1.0, -0.1]}  color="#7affc0" />
+      <LEDLight pr={progressRef} segStart={0.73} pos={[-1.5,  0.8,  0.5]}  color="#ffbb55" />
 
-      <ContactShadows position={[0, -0.23, 0]} opacity={0.65} scale={11} blur={3} far={1.6} color="#000000" resolution={1024} />
+      <SoftShadow pr={progressRef} />
       <GroundGrid pr={progressRef} />
 
       <fog attach="fog" args={["#0a0c16", 11, 28]} />
@@ -460,19 +481,6 @@ const ServerScene: React.FC<ServerSceneProps> = ({ progressRef }) => {
       <NIC         pr={progressRef} />
       <PSU         pr={progressRef} />
       <Lid         pr={progressRef} />
-
-      {/* post-processing — the realism multiplier */}
-      <EffectComposer enableNormalPass={false} multisampling={0}>
-        <Bloom
-          intensity={0.85}
-          luminanceThreshold={0.9}
-          luminanceSmoothing={0.3}
-          mipmapBlur
-          radius={0.7}
-        />
-        <Vignette offset={0.32} darkness={0.62} eskil={false} />
-        <SMAA />
-      </EffectComposer>
     </Canvas>
   );
 };
