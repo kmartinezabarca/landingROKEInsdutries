@@ -27,6 +27,16 @@ const steps = [
   },
 ];
 
+const tagVariants = {
+  hidden: { opacity: 0, scale: 0.8, y: 6 },
+  visible: (i: number) => ({
+    opacity: 1,
+    scale: 1,
+    y: 0,
+    transition: { duration: 0.35, delay: i * 0.07, ease: [0.34, 1.56, 0.64, 1] },
+  }),
+};
+
 const Urgency: React.FC = () => {
   return (
     <section className="bg-[#f6f7f6] px-6 py-16 text-[#141821] md:px-14 md:py-20">
@@ -65,11 +75,29 @@ const Urgency: React.FC = () => {
               className="mi-icon-pop border-[#d4d9dd] py-10 md:min-h-[328px] md:px-10 md:py-9 md:[&:not(:last-child)]:border-r lg:px-10"
             >
               <div className="mb-7 flex items-center gap-5">
-                <span className="text-[54px] font-bold leading-none tracking-[-0.045em] text-[#141821]">
+                {/* Step number — springs in with overshoot */}
+                <motion.span
+                  className="text-[54px] font-bold leading-none tracking-[-0.045em] text-[#141821]"
+                  initial={{ opacity: 0, scale: 0.6 }}
+                  whileInView={{ opacity: 1, scale: 1 }}
+                  viewport={{ once: true }}
+                  transition={{
+                    duration: 0.5,
+                    delay: index * 0.12 + 0.18,
+                    ease: [0.34, 1.56, 0.64, 1],
+                  }}
+                >
                   {step.num}
-                </span>
+                </motion.span>
                 {step.arrow && (
-                  <ArrowRight className="mt-1 h-5 w-5 text-[#7a8594]" strokeWidth={1.8} />
+                  <motion.span
+                    initial={{ opacity: 0, x: -8 }}
+                    whileInView={{ opacity: 1, x: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.4, delay: index * 0.12 + 0.28, ease: [0.22, 1, 0.36, 1] }}
+                  >
+                    <ArrowRight className="mt-1 h-5 w-5 text-[#7a8594]" strokeWidth={1.8} />
+                  </motion.span>
                 )}
               </div>
 
@@ -81,14 +109,20 @@ const Urgency: React.FC = () => {
                 {step.desc}
               </p>
 
+              {/* Tag pills — stagger bounce in */}
               <div className="flex flex-wrap gap-1.5">
-                {step.tags.map((tag) => (
-                  <span
+                {step.tags.map((tag, ti) => (
+                  <motion.span
                     key={tag}
+                    custom={ti}
+                    variants={tagVariants}
+                    initial="hidden"
+                    whileInView="visible"
+                    viewport={{ once: true }}
                     className="border border-[#d4d9dd] bg-[#f6f7f6] px-2.5 py-1 font-mono text-[10px] leading-none tracking-[0.18em] text-[#6f7b8b]"
                   >
                     {tag}
-                  </span>
+                  </motion.span>
                 ))}
               </div>
             </motion.article>

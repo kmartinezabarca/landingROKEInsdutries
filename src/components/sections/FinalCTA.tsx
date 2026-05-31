@@ -51,9 +51,10 @@ const FinalCTA: React.FC = () => {
             </p>
 
             <div className="mt-5 flex flex-col gap-2.5 sm:flex-row">
+              {/* Primary CTA — pulsing ring via mi-cta-pulse */}
               <Link
                 to={ROUTES.CONTACT}
-                className="mi-sheen mi-arrow inline-flex items-center justify-center gap-3 rounded-[3px] bg-[#1b1e22] px-7 py-[15px] text-[14px] font-bold text-white transition-all hover:-translate-y-px hover:bg-[#101215] hover:shadow-lg"
+                className="mi-sheen mi-arrow mi-cta-pulse inline-flex items-center justify-center gap-3 rounded-[3px] bg-[#1b1e22] px-7 py-[15px] text-[14px] font-bold text-white transition-all hover:-translate-y-px hover:bg-[#101215] hover:shadow-lg"
               >
                 Cotizar Ahora
                 <ArrowRight className="h-4 w-4" />

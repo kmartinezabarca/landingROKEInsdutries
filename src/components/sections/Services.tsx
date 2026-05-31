@@ -313,8 +313,16 @@ const Services: React.FC = () => {
                     }}
                   >
                     {service.features.slice(0, 5).map((feature, idx) => (
-                      <li
+                      <motion.li
                         key={idx}
+                        initial={{ opacity: 0, scale: 0.82, y: 5 }}
+                        whileInView={{ opacity: 1, scale: 1, y: 0 }}
+                        viewport={{ once: true }}
+                        transition={{
+                          duration: 0.3,
+                          delay: index * 0.1 + idx * 0.06 + 0.2,
+                          ease: [0.34, 1.56, 0.64, 1],
+                        }}
                         style={{
                           fontFamily: '"JetBrains Mono", monospace',
                           fontSize: 11,
@@ -325,7 +333,7 @@ const Services: React.FC = () => {
                         }}
                       >
                         {feature}
-                      </li>
+                      </motion.li>
                     ))}
                   </ul>
                 )}
