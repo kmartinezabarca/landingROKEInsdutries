@@ -33,6 +33,16 @@ const StarIcon = () => (
   </svg>
 );
 
+const starVariants = {
+  hidden: { opacity: 0, scale: 0.4, rotate: -20 },
+  visible: (i: number) => ({
+    opacity: 1,
+    scale: 1,
+    rotate: 0,
+    transition: { duration: 0.3, delay: i * 0.07, ease: [0.34, 1.56, 0.64, 1] },
+  }),
+};
+
 const SocialProof: React.FC = () => {
   return (
     <section className="roke-section-services">
@@ -106,10 +116,20 @@ const SocialProof: React.FC = () => {
                 transition: "background 0.18s ease",
               }}
             >
-              {/* Stars */}
+              {/* Stars — stagger bounce in */}
               <div style={{ display: "flex", gap: 4 }}>
                 {[...Array(t.rating)].map((_, si) => (
-                  <StarIcon key={si} />
+                  <motion.span
+                    key={si}
+                    custom={si}
+                    variants={starVariants}
+                    initial="hidden"
+                    whileInView="visible"
+                    viewport={{ once: true }}
+                    style={{ display: "inline-flex" }}
+                  >
+                    <StarIcon />
+                  </motion.span>
                 ))}
               </div>
 
