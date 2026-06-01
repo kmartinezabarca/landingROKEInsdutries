@@ -1,7 +1,8 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { GoogleOAuthProvider } from '@react-oauth/google';
-import { MessageCircle, Phone } from 'lucide-react';
+import { Phone } from 'lucide-react';
+import { FaWhatsapp } from 'react-icons/fa';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Toaster } from './components/ui/sileo-toaster';
 import { ThemeProvider } from './contexts/ThemeContext';
@@ -75,16 +76,16 @@ const App: React.FC = () => {
             position="bottom-right"
             onClick={handleWhatsAppClick}
             ariaLabel="Contactar por WhatsApp"
-            className="bg-green-500 hover:bg-green-600 text-white"
+            className="bg-[#25d366] hover:bg-[#1fb855] text-white"
           >
-            <MessageCircle className="w-6 h-6" />
+            <FaWhatsapp className="w-7 h-7" />
           </FloatingButton>
 
           <FloatingButton
             position="bottom-right"
             onClick={handleContactClick}
             ariaLabel="Contactar"
-            className="mr-20 bg-primary hover:bg-primary/90"
+            className="mb-20 bg-primary hover:bg-primary/90"
           >
             <Phone className="w-6 h-6" />
           </FloatingButton>
