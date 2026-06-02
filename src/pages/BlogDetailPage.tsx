@@ -618,7 +618,7 @@ const BlogDetailPage: React.FC = () => {
 };
 
 /* ── Related card sub-component ── */
-const RelatedCard: React.FC<{ rel: RelatedArticle; relAuthor: string; idx: number; total: number }> = ({ rel, relAuthor, idx, total }) => {
+const RelatedCard: React.FC<{ rel: RelatedArticle; relAuthor: string; idx: number; total: number }> = ({ rel, relAuthor, idx }) => {
   const [hovered, setHovered] = useState(false);
   return (
     <Link key={rel.uuid} to={`/blog/${rel.slug}`}

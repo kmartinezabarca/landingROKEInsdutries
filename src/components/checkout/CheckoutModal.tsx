@@ -48,7 +48,6 @@ export const CheckoutModal: React.FC = () => {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isOpen]);
 
-  const currentIndex = STEP_ORDER.indexOf(step);
   const visibleSteps = isAuthenticated
     ? STEP_ORDER.filter(s => s !== 'auth')
     : STEP_ORDER;

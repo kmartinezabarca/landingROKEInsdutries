@@ -204,7 +204,7 @@ pipeline {
             parallel {
                 stage('Lint') {
                     when { expression { params.RUN_LINT } }
-                    steps { sh 'pnpm lint || true' }
+                    steps { sh 'pnpm lint' }
                 }
                 stage('Format Check') {
                     when { expression { params.RUN_FORMAT_CHECK } }

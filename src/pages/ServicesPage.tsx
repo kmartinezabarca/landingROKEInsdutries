@@ -357,7 +357,7 @@ const ServicesPage: React.FC = () => {
       {/* ════ LÍNEAS DE SERVICIO ════ */}
       <section className="border-b border-border" style={{ background: "var(--roke-surface)" }}>
         <div className="max-w-[1296px] mx-auto px-6 md:px-14">
-          {serviceLines.map((s, i) => (
+          {serviceLines.map((s) => (
             <motion.div
               key={s.num}
               id={`linea-${s.num}`}
