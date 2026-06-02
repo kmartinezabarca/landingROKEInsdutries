@@ -1,19 +1,19 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Check, ArrowRight, MessageCircle, Mail, ChevronDown, AlertCircle } from "lucide-react";
-import { useServicePlans } from "../hooks/useServicePlans";
-import { useBillingCycles } from "../hooks/useBillingCycles";
-import { useCheckout } from "../contexts/CheckoutContext";
-import { useCategories } from "../hooks/useCategories";
+import { useServicePlans } from "@/hooks/useServicePlans";
+import { useBillingCycles } from "@/hooks/useBillingCycles";
+import { useCheckout } from "@/contexts/CheckoutContext";
+import { useCategories } from "@/hooks/useCategories";
 import {
   getAvailableCategories,
   getPlanPrice,
   getPlansForCategory,
   sortPlanFeatures,
-} from "../utils/serviceCatalog";
-import { CONFIG } from "../utils/constants/config";
-import WhatsAppService from "../services/whatsapp/whatsappService";
-import { PlanGridSkeleton } from "../components/common/Skeletons";
+} from "@/utils/serviceCatalog";
+import { CONFIG } from "@/utils/constants/config";
+import WhatsAppService from "@/services/whatsapp/whatsappService";
+import { PlanGridSkeleton } from "@/components/common/Skeletons";
 
 /* ── FAQ data ────────────────────────────────────────── */
 const faqs = [

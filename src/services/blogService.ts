@@ -1,4 +1,4 @@
-import ApiService from '../lib/apiClient';
+import ApiService from '@/lib/apiClient';
 
 interface BlogParams {
   search?: string;

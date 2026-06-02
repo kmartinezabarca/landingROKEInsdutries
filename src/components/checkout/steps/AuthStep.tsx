@@ -5,9 +5,9 @@ import { z } from 'zod';
 import { Eye, EyeOff, Loader2 } from 'lucide-react';
 import { sileo as toast } from 'sileo';
 import { useGoogleLogin } from '@react-oauth/google';
-import authService from '../../../services/authService';
-import { useAuthContext } from '../../../contexts/AuthContext';
-import { isGoogleAuthConfigured } from '../../../lib/oauth';
+import authService from '@/services/authService';
+import { useAuthContext } from '@/contexts/AuthContext';
+import { isGoogleAuthConfigured } from '@/lib/oauth';
 
 const loginSchema = z.object({
   email:    z.string().email('Email inválido'),

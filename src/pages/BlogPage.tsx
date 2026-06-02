@@ -2,8 +2,8 @@ import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Clock, ArrowRight, AlertCircle, Search, Mail } from "lucide-react";
 import { Link } from "react-router-dom";
-import { getBlogPosts, getBlogCategories } from "../services/blogService";
-import { PostGridSkeleton } from "../components/common/Skeletons";
+import { getBlogPosts, getBlogCategories } from "@/services/blogService";
+import { PostGridSkeleton } from "@/components/common/Skeletons";
 
 interface BlogPost {
   uuid: string; slug: string; title: string; excerpt: string;

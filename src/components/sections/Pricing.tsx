@@ -2,21 +2,21 @@ import React, { useEffect, useMemo, useState } from "react";
 import { motion } from "framer-motion";
 import { Check, ArrowRight } from "lucide-react";
 import { Link } from "react-router-dom";
-import Button from "../common/Button";
+import Button from "@/components/common/Button";
 import { AlertCircle } from "lucide-react";
-import TiltArticle from "../common/TiltArticle";
-import { PlanGridSkeleton } from "../common/Skeletons";
-import { ROUTES } from "../../utils/constants/config";
-import { useServicePlans } from "../../hooks/useServicePlans";
-import { useBillingCycles } from "../../hooks/useBillingCycles";
-import { useCheckout } from "../../contexts/CheckoutContext";
-import { useCategories } from "../../hooks/useCategories";
+import TiltArticle from "@/components/common/TiltArticle";
+import { PlanGridSkeleton } from "@/components/common/Skeletons";
+import { ROUTES } from "@/utils/constants/config";
+import { useServicePlans } from "@/hooks/useServicePlans";
+import { useBillingCycles } from "@/hooks/useBillingCycles";
+import { useCheckout } from "@/contexts/CheckoutContext";
+import { useCategories } from "@/hooks/useCategories";
 import {
   getAvailableCategories,
   getPlanPrice,
   getPlansForCategory,
   sortPlanFeatures,
-} from "../../utils/serviceCatalog";
+} from "@/utils/serviceCatalog";
 
 interface EnterprisePlan {
   name: string;

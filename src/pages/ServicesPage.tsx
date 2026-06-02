@@ -1,17 +1,17 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { motion } from "framer-motion";
 import { Check, ArrowRight, MessageCircle, Mail, AlertCircle } from "lucide-react";
-import { useServicePlans } from "../hooks/useServicePlans";
-import { useCategories } from "../hooks/useCategories";
-import { useBillingCycles } from "../hooks/useBillingCycles";
-import { useCheckout } from "../contexts/CheckoutContext";
+import { useServicePlans } from "@/hooks/useServicePlans";
+import { useCategories } from "@/hooks/useCategories";
+import { useBillingCycles } from "@/hooks/useBillingCycles";
+import { useCheckout } from "@/contexts/CheckoutContext";
 import {
   getAvailableCategories, getPlanPrice,
   getPlansForCategory, sortPlanFeatures,
-} from "../utils/serviceCatalog";
-import { CONFIG, ROUTES } from "../utils/constants/config";
-import WhatsAppService from "../services/whatsapp/whatsappService";
-import { PlanGridSkeleton } from "../components/common/Skeletons";
+} from "@/utils/serviceCatalog";
+import { CONFIG, ROUTES } from "@/utils/constants/config";
+import WhatsAppService from "@/services/whatsapp/whatsappService";
+import { PlanGridSkeleton } from "@/components/common/Skeletons";
 
 /* ── SVG icons ───────────────────────────────────────── */
 const SvgServer = () => (

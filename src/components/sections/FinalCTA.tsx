@@ -2,9 +2,9 @@ import React from "react";
 import { motion } from "framer-motion";
 import { ArrowRight, MessageCircle } from "lucide-react";
 import { Link } from "react-router-dom";
-import { ROUTES } from "../../utils/constants/config";
-import WhatsAppService from "../../services/whatsapp/whatsappService";
-import { ScrollScrub } from "../ui/scroll-motion";
+import { ROUTES } from "@/utils/constants/config";
+import WhatsAppService from "@/services/whatsapp/whatsappService";
+import { ScrollScrub } from "@/components/ui/scroll-motion";
 
 const FinalCTA: React.FC = () => {
   return (

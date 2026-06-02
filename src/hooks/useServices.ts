@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
-import { getServices } from '../services/servicesService';
-import { keysToCamel } from '../utils/formatters';
+import { getServices } from '@/services/servicesService';
+import { keysToCamel } from '@/utils/formatters';
 
 export const useServices = () => {
   return useQuery({

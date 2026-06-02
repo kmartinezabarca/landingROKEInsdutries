@@ -2,13 +2,13 @@ import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Menu, X, MessageCircle } from 'lucide-react';
-import { CONFIG, ROUTES } from '../../utils/constants/config';
+import { CONFIG, ROUTES } from '@/utils/constants/config';
 import ThemeToggle from './ThemeToggle';
-import { cn } from '../../lib/utils';
-import { useCategories } from '../../hooks/useCategories';
-import { useServicePlans } from '../../hooks/useServicePlans';
-import { getAvailableCategories } from '../../utils/serviceCatalog';
-import WhatsAppService from '../../services/whatsapp/whatsappService';
+import { cn } from '@/lib/utils';
+import { useCategories } from '@/hooks/useCategories';
+import { useServicePlans } from '@/hooks/useServicePlans';
+import { getAvailableCategories } from '@/utils/serviceCatalog';
+import WhatsAppService from '@/services/whatsapp/whatsappService';
 
 interface NavigationItem {
   name: string;

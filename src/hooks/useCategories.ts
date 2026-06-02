@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
-import { getCategories } from '../services/categoryService';
-import { keysToCamel } from '../utils/formatters';
+import { getCategories } from '@/services/categoryService';
+import { keysToCamel } from '@/utils/formatters';
 
 export const useCategories = () => {
   return useQuery({

@@ -2,12 +2,12 @@ import React, { Suspense, lazy } from "react";
 import { motion } from "framer-motion";
 import { ArrowRight, MessageCircle } from "lucide-react";
 import { Link } from "react-router-dom";
-import { ROUTES } from "../../utils/constants/config";
-import WhatsAppService from "../../services/whatsapp/whatsappService";
-import TiltCard from "../common/TiltCard";
-import { CountUp } from "../ui/scroll-motion";
+import { ROUTES } from "@/utils/constants/config";
+import WhatsAppService from "@/services/whatsapp/whatsappService";
+import TiltCard from "@/components/common/TiltCard";
+import { CountUp } from "@/components/ui/scroll-motion";
 
-const HeroScene = lazy(() => import("../three/HeroScene"));
+const HeroScene = lazy(() => import("@/components/three/HeroScene"));
 
 const statItems = [
   { label: "UPTIME · 30D", to: 99.97, decimals: 2, unit: "%", trend: "↑ +0.04 vs prev." },

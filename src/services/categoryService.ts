@@ -1,4 +1,4 @@
-import ApiService from '../lib/apiClient';
+import ApiService from '@/lib/apiClient';
 
 export const getCategories = async (): Promise<unknown> => {
   const response = await ApiService.get('/categories');

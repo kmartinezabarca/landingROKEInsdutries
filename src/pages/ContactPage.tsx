@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Mail, Phone, MapPin, Clock, Send, MessageCircle, CheckCircle, AlertCircle } from 'lucide-react';
-import WhatsAppService from '../services/whatsapp/whatsappService';
-import { CONFIG } from '../utils/constants/config';
+import WhatsAppService from '@/services/whatsapp/whatsappService';
+import { CONFIG } from '@/utils/constants/config';
 
 interface FormData { name: string; email: string; phone: string; company: string; service: string; message: string }
 interface FormErrors { name?: string; email?: string; phone?: string; service?: string; message?: string }

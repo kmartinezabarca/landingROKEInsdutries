@@ -2,9 +2,9 @@ import React from "react";
 import { motion } from "framer-motion";
 import { ArrowRight } from "lucide-react";
 import { Link } from "react-router-dom";
-import { ROUTES } from "../../utils/constants/config";
-import { useServices } from "../../hooks/useServices";
-import TiltArticle from "../common/TiltArticle";
+import { ROUTES } from "@/utils/constants/config";
+import { useServices } from "@/hooks/useServices";
+import TiltArticle from "@/components/common/TiltArticle";
 
 interface ServiceItem {
   id?: number;

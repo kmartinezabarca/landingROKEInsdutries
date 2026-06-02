@@ -1,6 +1,6 @@
 import React from "react";
 import { motion } from "framer-motion";
-import TiltArticle from "../common/TiltArticle";
+import TiltArticle from "@/components/common/TiltArticle";
 
 const testimonials = [
   {

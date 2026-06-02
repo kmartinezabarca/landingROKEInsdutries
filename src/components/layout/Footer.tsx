@@ -2,8 +2,8 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { Mail, Phone, MapPin, MessageCircle } from 'lucide-react';
 import { FaXTwitter, FaLinkedin, FaGithub, FaDiscord } from 'react-icons/fa6';
-import { CONFIG, ROUTES } from '../../utils/constants/config';
-import WhatsAppService from '../../services/whatsapp/whatsappService';
+import { CONFIG, ROUTES } from '@/utils/constants/config';
+import WhatsAppService from '@/services/whatsapp/whatsappService';
 
 /* ── inline style helpers — use CSS vars so dark mode works ── */
 const fg       = 'var(--foreground)';

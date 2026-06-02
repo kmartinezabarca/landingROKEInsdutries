@@ -5,7 +5,7 @@ import {
   Users, Target, Eye, Heart, Award, Shield, Zap,
   MapPin, Mail, Phone, HardHat, Server, Wrench, Rocket,
 } from "lucide-react";
-import { CONFIG } from "../utils/constants/config";
+import { CONFIG } from "@/utils/constants/config";
 
 interface Stat { number: string; label: string; icon: React.ElementType }
 interface TimelineItem { year: string; title: string; description: string; icon: React.ElementType }

@@ -1,6 +1,6 @@
 import React from "react";
 import { motion } from "framer-motion";
-import { CountUp } from "../ui/scroll-motion";
+import { CountUp } from "@/components/ui/scroll-motion";
 
 const stats = [
   {

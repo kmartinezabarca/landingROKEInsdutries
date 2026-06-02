@@ -1,9 +1,9 @@
 import React from "react";
 import { motion } from "framer-motion";
 import { Calendar, Rocket, Eye, Gem, HardHat, Wrench, Server } from "lucide-react";
-import Container from "../common/Container";
-import { Card, CardContent, CardHeader, CardTitle } from "../common/Card";
-import { CountUp } from "../ui/scroll-motion";
+import Container from "@/components/common/Container";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/common/Card";
+import { CountUp } from "@/components/ui/scroll-motion";
 
 interface Milestone {
   year: string;

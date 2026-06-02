@@ -1,4 +1,4 @@
-import { CONFIG } from '../../utils/constants/config';
+import { CONFIG } from '@/utils/constants/config';
 
 /**
  * Servicio para manejar la integración con WhatsApp

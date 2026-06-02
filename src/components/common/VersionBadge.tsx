@@ -1,5 +1,5 @@
 import React from 'react';
-import { APP_VERSION_LABEL, BUILD_DATE_LABEL, BUILD_DATE_ISO } from '../../utils/constants/version';
+import { APP_VERSION_LABEL, BUILD_DATE_LABEL, BUILD_DATE_ISO } from '@/utils/constants/version';
 
 /**
  * Always-visible app version badge.

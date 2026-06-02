@@ -1,8 +1,8 @@
 import React from "react";
 import { motion } from "framer-motion";
 import { Linkedin, Twitter, Github, Mail } from "lucide-react";
-import Container from "../common/Container";
-import { Card, CardContent } from "../common/Card";
+import Container from "@/components/common/Container";
+import { Card, CardContent } from "@/components/common/Card";
 import { FaLinkedin, FaXTwitter } from "react-icons/fa6";
 
 interface TeamMember {

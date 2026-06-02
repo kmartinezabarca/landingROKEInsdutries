@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
-import type { AuthUser } from '../services/authService';
-import ApiService from '../lib/apiClient';
+import type { AuthUser } from '@/services/authService';
+import ApiService from '@/lib/apiClient';
 
 const TOKEN_KEY = 'roke_token';
 const USER_KEY  = 'roke_user';

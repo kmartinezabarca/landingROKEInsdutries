@@ -1,7 +1,7 @@
 import React, { lazy, Suspense, useRef, useState, useEffect } from "react";
 import { motion, useScroll, useTransform, useSpring } from "framer-motion";
 
-const ServerScene = lazy(() => import("../three/ServerScene"));
+const ServerScene = lazy(() => import("@/components/three/ServerScene"));
 
 /* ─── callout definitions ────────────────────────────────────────────────────── */
 interface CalloutItem {

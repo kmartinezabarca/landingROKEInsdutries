@@ -1,22 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { CardElement, useStripe, useElements } from '@stripe/react-stripe-js';
-import { useQuery } from '@tanstack/react-query';
 import { Loader2, ShieldCheck, CreditCard, Plus, ChevronDown, Receipt } from 'lucide-react';
 import { sileo as toast } from 'sileo';
-import ApiService from '../../../lib/apiClient';
-import { isStripeConfigured } from '../../../lib/stripe';
-import contractService from '../../../services/contractService';
-import type { InvoiceData } from '../../../services/contractService';
-import type { CheckoutPlan, CheckoutBillingCycle } from '../../../contexts/CheckoutContext';
-
-interface SavedMethod {
-  stripe_payment_method_id: string;
-  brand: string;
-  last4: string;
-  exp_month: number;
-  exp_year: number;
-  is_default: boolean;
-}
+import { isStripeConfigured } from '@/lib/stripe';
+import contractService from '@/services/contractService';
+import type { InvoiceData } from '@/services/contractService';
+import { usePaymentMethods } from '@/hooks/usePaymentMethods';
+import { useCheckoutQuote } from '@/hooks/useCheckoutQuote';
+import type { CheckoutPlan, CheckoutBillingCycle } from '@/contexts/CheckoutContext';
 
 interface Props {
   plan: CheckoutPlan;
@@ -72,11 +63,7 @@ export const PaymentStep: React.FC<Props> = ({ plan, billingCycle, serviceName, 
   });
 
   // Saved payment methods
-  const { data: savedMethods = [], isLoading: loadingMethods } = useQuery<SavedMethod[]>({
-    queryKey: ['paymentMethods'],
-    queryFn: () => ApiService.get('/payments/methods').then((r: any) => r.data?.data || []),
-    retry: false,
-  });
+  const { data: savedMethods = [], isLoading: loadingMethods } = usePaymentMethods();
 
   useEffect(() => {
     if (savedMethods.length > 0) {
@@ -90,15 +77,9 @@ export const PaymentStep: React.FC<Props> = ({ plan, billingCycle, serviceName, 
 
   // Precio AUTORITATIVO desde el backend (cotización). El cliente ya no calcula
   // el monto: se muestra y se cobra exactamente lo que el backend determina.
-  const { data: quote, isLoading: loadingQuote, isError: quoteError } = useQuery({
-    queryKey: ['checkout-quote', plan.slug, billingCycle.slug],
-    queryFn: () => ApiService.post('/checkout/quote', {
-      plan_id: plan.slug,
-      billing_cycle: billingCycle.slug,
-      add_ons: [],
-    }).then((r: any) => r.data?.data),
-    retry: false,
-    staleTime: 0,
+  const { data: quote, isLoading: loadingQuote, isError: quoteError } = useCheckoutQuote({
+    plan_id: plan.slug,
+    billing_cycle: billingCycle.slug,
   });
 
   const subtotal = Number(quote?.subtotal ?? 0);

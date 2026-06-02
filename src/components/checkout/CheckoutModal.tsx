@@ -3,14 +3,14 @@ import * as Dialog from '@radix-ui/react-dialog';
 import { Elements } from '@stripe/react-stripe-js';
 import { X } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { stripePromise } from '../../lib/stripe';
-import { useCheckout } from '../../contexts/CheckoutContext';
-import { useAuthContext } from '../../contexts/AuthContext';
+import { stripePromise } from '@/lib/stripe';
+import { useCheckout } from '@/contexts/CheckoutContext';
+import { useAuthContext } from '@/contexts/AuthContext';
 import { AuthStep } from './steps/AuthStep';
 import { PlanStep } from './steps/PlanStep';
 import { PaymentStep } from './steps/PaymentStep';
 import { SuccessStep } from './steps/SuccessStep';
-import type { CheckoutBillingCycle } from '../../contexts/CheckoutContext';
+import type { CheckoutBillingCycle } from '@/contexts/CheckoutContext';
 
 type Step = 'auth' | 'plan' | 'payment' | 'success';
 

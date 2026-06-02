@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ArrowRight, ChevronDown, Mail, MessageCircle } from "lucide-react";
-import Container from "../common/Container";
-import { CONFIG } from "../../utils/constants/config";
-import WhatsAppService from "../../services/whatsapp/whatsappService";
+import Container from "@/components/common/Container";
+import { CONFIG } from "@/utils/constants/config";
+import WhatsAppService from "@/services/whatsapp/whatsappService";
 
 interface FaqItem {
   question: string;

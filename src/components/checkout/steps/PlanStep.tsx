@@ -1,12 +1,8 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import { Check, Sparkles, Loader2 } from 'lucide-react';
-import { useQuery } from '@tanstack/react-query';
-import { useBillingCycles } from '../../../hooks/useBillingCycles';
-import ApiService from '../../../lib/apiClient';
-import type { CheckoutPlan, CheckoutBillingCycle } from '../../../contexts/CheckoutContext';
-
-interface Egg { id: number; name: string; description: string; }
-interface GameNest { id: number; name: string; eggs: Egg[]; }
+import { useBillingCycles } from '@/hooks/useBillingCycles';
+import { useGameEggs } from '@/hooks/useGameEggs';
+import type { CheckoutPlan, CheckoutBillingCycle } from '@/contexts/CheckoutContext';
 
 interface Props {
   plan: CheckoutPlan;
@@ -58,22 +54,7 @@ export const PlanStep: React.FC<Props> = ({ plan, initialBillingCycle, onNext })
 
   // Fetch eggs only for game server plans
   const planId = (plan as any).uuid ?? plan.id;
-  const { data: gameNests = [], isLoading: loadingEggs } = useQuery<GameNest[]>({
-    queryKey: ['gameEggs', planId],
-    queryFn: () =>
-      ApiService.get(`/game-eggs?id=${planId}`).then((r: any) => {
-        const raw = r.data?.data ?? r.data ?? [];
-        return Array.isArray(raw)
-          ? raw.map((n: any) => ({
-              id: n.nest_id ?? n.id,
-              name: n.nest ?? n.name,
-              eggs: n.games ?? n.eggs ?? [],
-            }))
-          : [];
-      }),
-    enabled: isGameServer,
-    retry: false,
-  });
+  const { data: gameNests = [], isLoading: loadingEggs } = useGameEggs(planId, isGameServer);
 
   useEffect(() => {
     if (gameNests.length > 0 && activeNestId === null) {

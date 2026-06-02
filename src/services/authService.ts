@@ -1,4 +1,4 @@
-import ApiService from '../lib/apiClient';
+import ApiService from '@/lib/apiClient';
 
 export interface AuthUser {
   id: number;
