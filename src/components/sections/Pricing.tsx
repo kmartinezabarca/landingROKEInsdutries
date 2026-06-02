@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React from "react";
 import { motion } from "framer-motion";
 import { Check, ArrowRight } from "lucide-react";
 import { Link } from "react-router-dom";
@@ -7,14 +7,10 @@ import { AlertCircle } from "lucide-react";
 import TiltArticle from "@/components/common/TiltArticle";
 import { PlanGridSkeleton } from "@/components/common/Skeletons";
 import { ROUTES } from "@/utils/constants/config";
-import { useServicePlans } from "@/hooks/useServicePlans";
-import { useBillingCycles } from "@/hooks/useBillingCycles";
+import { useServiceCatalog } from "@/hooks/useServiceCatalog";
 import { useCheckout } from "@/contexts/CheckoutContext";
-import { useCategories } from "@/hooks/useCategories";
 import {
-  getAvailableCategories,
   getPlanPrice,
-  getPlansForCategory,
   sortPlanFeatures,
 } from "@/utils/serviceCatalog";
 
@@ -26,61 +22,20 @@ interface EnterprisePlan {
 }
 
 const Pricing: React.FC = () => {
-  const { data: categories } = useCategories();
-  const { data: servicePlans, isLoading, isError } = useServicePlans();
-  const { data: billingCycles } = useBillingCycles();
-  const [activeCategorySlug, setActiveCategorySlug] = useState<string | null>(null);
-  const [activeBillingCycleSlug, setActiveBillingCycleSlug] = useState<string>("monthly");
   const { openCheckout } = useCheckout();
-
-  const availableCategories = useMemo(
-    () => getAvailableCategories(categories, servicePlans),
-    [categories, servicePlans]
-  );
-
-  useEffect(() => {
-    if (!availableCategories.length) return;
-    const hasSelected = availableCategories.some((c) => c.slug === activeCategorySlug);
-    if (!hasSelected) setActiveCategorySlug(availableCategories[0].slug || null);
-  }, [availableCategories, activeCategorySlug]);
-
-  const currentCategory = useMemo(
-    () => availableCategories.find((c) => c.slug === activeCategorySlug),
-    [availableCategories, activeCategorySlug]
-  );
-
-  const filteredPlans = useMemo(
-    () => getPlansForCategory(servicePlans, activeCategorySlug),
-    [servicePlans, activeCategorySlug]
-  );
-
-  const availableBillingCycles = useMemo(() => {
-    if (!billingCycles?.length) return [];
-    const slugs = new Set(
-      filteredPlans.flatMap((p) =>
-        (p.pricing || []).map((e: any) => e.billingCycle?.slug || e.billing_cycle?.slug)
-      )
-    );
-    return billingCycles
-      .filter((c: any) => c.is_active !== false && (slugs.size === 0 || slugs.has(c.slug)))
-      .sort((a: any, b: any) => (Number(a.sort_order ?? 999)) - (Number(b.sort_order ?? 999)));
-  }, [billingCycles, filteredPlans]);
-
-  useEffect(() => {
-    if (!availableBillingCycles.length) return;
-    const hasSelected = availableBillingCycles.some((c: any) => c.slug === activeBillingCycleSlug);
-    if (!hasSelected) {
-      const preferred =
-        availableBillingCycles.find((c: any) => c.slug === "monthly") ||
-        availableBillingCycles[0];
-      setActiveBillingCycleSlug(preferred.slug ?? "");
-    }
-  }, [availableBillingCycles, activeBillingCycleSlug]);
-
-  const currentBillingCycle = useMemo(
-    () => availableBillingCycles.find((c: any) => c.slug === activeBillingCycleSlug),
-    [availableBillingCycles, activeBillingCycleSlug]
-  );
+  const {
+    isLoading,
+    isError,
+    activeCategorySlug,
+    setActiveCategorySlug,
+    activeBillingCycleSlug,
+    setActiveBillingCycleSlug,
+    availableCategories,
+    filteredPlans,
+    availableBillingCycles,
+    currentBillingCycle,
+    currentCategory,
+  } = useServiceCatalog();
 
   const enterprisePlans: EnterprisePlan[] = [
     { name: "Automatización Empresarial", price: "2,999", period: "MXN", description: "Implementación inicial desde este monto" },
