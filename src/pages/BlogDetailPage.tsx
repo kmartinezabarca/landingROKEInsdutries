@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+import React from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import {
@@ -7,126 +7,27 @@ import {
   AlertCircle, Loader2, ChevronRight, Eye,
   Calendar
 } from 'lucide-react';
-import { getBlogPostBySlug, getBlogPosts } from '@/services/blogService';
-
-const DEFAULT_IMAGE = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 600'%3E%3Crect fill='%23f0f0f0' width='1200' height='600'/%3E%3Ctext x='50%25' y='50%25' font-size='72' fill='%23999' text-anchor='middle' dominant-baseline='middle' font-family='Arial, sans-serif' font-weight='bold'%3EROKE Industries%3C/text%3E%3C/svg%3E";
-
-interface ArticleCategory { name: string; uuid?: string }
-interface Article {
-  title: string; excerpt?: string; content: string; image?: string;
-  publishedAt?: string; readTime?: number; likes?: number; slug: string;
-  category?: ArticleCategory; authorName?: string; author?: { name: string };
-  views?: number;
-}
-interface RelatedArticle {
-  uuid: string; slug: string; title: string; excerpt?: string; image?: string;
-  readTime?: number; category?: ArticleCategory; authorName?: string; author?: { name: string };
-}
-interface TocItem { id: string; text: string; level: number }
-
-function formatDate(dateString?: string): string {
-  if (!dateString) return '';
-  try {
-    const d = new Date(dateString);
-    const day = String(d.getDate()).padStart(2, '0');
-    const mon = d.toLocaleDateString('es-ES', { month: 'short' }).toUpperCase().replace('.', '');
-    const yr = d.getFullYear();
-    return `${day} · ${mon} · ${yr}`;
-  } catch { return dateString; }
-}
-
-function getInitials(name: string): string {
-  return name.split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase();
-}
-
-function extractToc(html: string): TocItem[] {
-  const div = document.createElement('div');
-  div.innerHTML = html;
-  const items: TocItem[] = [];
-  div.querySelectorAll('h2, h3').forEach((el, i) => {
-    const id = el.id || `section-${i}`;
-    el.id = id;
-    items.push({ id, text: el.textContent || '', level: el.tagName === 'H2' ? 2 : 3 });
-  });
-  return items;
-}
+import { useArticle } from '@/hooks/useArticle';
+import { formatDate, getInitials, DEFAULT_IMAGE } from '@/pages/blog/blogUtils';
+import RelatedCard from '@/pages/blog/RelatedCard';
 
 const BlogDetailPage: React.FC = () => {
   const { slug } = useParams<{ slug: string }>();
-  const [article, setArticle]               = useState<Article | null>(null);
-  const [relatedArticles, setRelatedArticles] = useState<RelatedArticle[]>([]);
-  const [liked, setLiked]                   = useState(false);
-  const [likes, setLikes]                   = useState(0);
-  const [copied, setCopied]                 = useState(false);
-  const [loading, setLoading]               = useState(true);
-  const [error, setError]                   = useState<string | null>(null);
-  const [progress, setProgress]             = useState(0);
-  const [activeSection, setActiveSection]   = useState('');
-  const [toc, setToc]                       = useState<TocItem[]>([]);
-  const contentRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const loadArticle = async () => {
-      if (!slug) return;
-      try {
-        setLoading(true); setError(null);
-        const response = await getBlogPostBySlug<Article>(slug);
-        const post = response.data;
-        setArticle(post);
-        setLikes(post.likes || 0);
-        const allPostsResponse = await getBlogPosts<RelatedArticle[]>();
-        const allPosts = allPostsResponse.data || [];
-        setRelatedArticles(
-          allPosts.filter((p) => p.category?.uuid === post.category?.uuid && p.slug !== slug).slice(0, 3)
-        );
-      } catch {
-        setError('No se pudo cargar el artículo. Por favor, intenta más tarde.');
-      } finally { setLoading(false); }
-    };
-    if (slug) loadArticle();
-  }, [slug]);
-
-  // Extract TOC after content renders
-  useEffect(() => {
-    if (article?.content) {
-      const items = extractToc(article.content);
-      setToc(items);
-    }
-  }, [article?.content]);
-
-  // Reading progress + TOC active section
-  const handleScroll = useCallback(() => {
-    const el = document.documentElement;
-    const scrollTop = el.scrollTop || document.body.scrollTop;
-    const scrollHeight = el.scrollHeight - el.clientHeight;
-    setProgress(scrollHeight > 0 ? (scrollTop / scrollHeight) * 100 : 0);
-
-    if (toc.length > 0) {
-      const offset = 120;
-      let active = toc[0].id;
-      for (const item of toc) {
-        const el = document.getElementById(item.id);
-        if (el && el.offsetTop <= scrollTop + offset) active = item.id;
-      }
-      setActiveSection(active);
-    }
-  }, [toc]);
-
-  useEffect(() => {
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, [handleScroll]);
-
-  const handleCopyLink = () => {
-    navigator.clipboard.writeText(window.location.href);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
-  };
-
-  const handleLike = () => {
-    setLiked(prev => !prev);
-    setLikes(prev => liked ? prev - 1 : prev + 1);
-  };
+  const {
+    article,
+    relatedArticles,
+    liked,
+    likes,
+    copied,
+    loading,
+    error,
+    progress,
+    activeSection,
+    toc,
+    contentRef,
+    handleCopyLink,
+    handleLike,
+  } = useArticle(slug);
 
   /* ── Loading ── */
   if (loading) {
@@ -614,68 +515,6 @@ const BlogDetailPage: React.FC = () => {
       )}
 
     </div>
-  );
-};
-
-/* ── Related card sub-component ── */
-const RelatedCard: React.FC<{ rel: RelatedArticle; relAuthor: string; idx: number; total: number }> = ({ rel, relAuthor, idx }) => {
-  const [hovered, setHovered] = useState(false);
-  return (
-    <Link key={rel.uuid} to={`/blog/${rel.slug}`}
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => setHovered(false)}
-      style={{
-        display: 'block', textDecoration: 'none',
-        borderLeft: idx > 0 ? '1px solid var(--roke-border-strong)' : 'none',
-        background: hovered ? 'var(--roke-surface-2)' : 'transparent',
-        transition: 'background 0.15s',
-        overflow: 'hidden',
-      }}
-    >
-      {/* Image */}
-      <div style={{ aspectRatio: '16/10', overflow: 'hidden', background: 'var(--roke-surface-2)' }}>
-        <img src={rel.image || DEFAULT_IMAGE} alt={rel.title}
-          onError={e => { (e.target as HTMLImageElement).src = DEFAULT_IMAGE; }}
-          style={{
-            width: '100%', height: '100%', objectFit: 'cover',
-            transform: hovered ? 'scale(1.04)' : 'scale(1)',
-            transition: 'transform 0.5s ease',
-          }} />
-      </div>
-
-      {/* Content */}
-      <div style={{ padding: '24px 28px 28px' }}>
-        {rel.category && (
-          <div style={{
-            fontSize: 10, fontFamily: '"JetBrains Mono", monospace',
-            color: 'var(--roke-text-dimmer)', letterSpacing: '0.12em',
-            textTransform: 'uppercase', marginBottom: 10,
-          }}>
-            {rel.category.name}
-          </div>
-        )}
-        <h4 style={{
-          fontFamily: '"Montserrat", sans-serif', fontSize: 16,
-          fontWeight: 700, color: 'var(--roke-text)', lineHeight: 1.3,
-          letterSpacing: '-0.015em', marginBottom: 10,
-          display: '-webkit-box', WebkitLineClamp: 2,
-          WebkitBoxOrient: 'vertical', overflow: 'hidden',
-        }}>
-          {rel.title}
-        </h4>
-        <div style={{
-          display: 'flex', alignItems: 'center', gap: 12,
-          fontSize: 11, fontFamily: '"JetBrains Mono", monospace',
-          color: 'var(--roke-text-dimmer)',
-        }}>
-          <span style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
-            <Clock className="w-3 h-3" /> {rel.readTime || 5} min
-          </span>
-          <span style={{ color: 'var(--roke-border-stronger)' }}>·</span>
-          <span>{relAuthor}</span>
-        </div>
-      </div>
-    </Link>
   );
 };
 
