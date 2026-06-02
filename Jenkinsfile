@@ -24,6 +24,7 @@ def notify(status, extra="") {
         "color": ${color},
         "fields": [
           {"name":"Proyecto","value":"${env.JOB_NAME}","inline":true},
+          {"name":"Versión","value":"${env.NEW_VERSION ?: 'N/A'}","inline":true},
           {"name":"Build","value":"#${env.BUILD_NUMBER}","inline":true},
           {"name":"Env","value":"${params.DEPLOY_ENV}","inline":true},
           {"name":"Branch","value":"${env.GIT_BRANCH ?: 'N/A'}","inline":true},
@@ -88,6 +89,11 @@ pipeline {
         booleanParam(name: 'RUN_LINT', defaultValue: true)
         booleanParam(name: 'RUN_FORMAT_CHECK', defaultValue: false)
         booleanParam(name: 'SKIP_TESTS', defaultValue: true)
+        // ── Versionado automático (Conventional Commits) ──
+        booleanParam(name: 'AUTO_VERSION', defaultValue: true,
+            description: 'Calcular la versión automáticamente a partir de los commits (feat/fix/BREAKING).')
+        string(name: 'GIT_CREDENTIALS_ID', defaultValue: 'github-credentials',
+            description: 'ID del credencial (usuario + token) de GitHub en Jenkins para publicar el tag de versión en producción.')
     }
 
     stages {
@@ -135,6 +141,30 @@ pipeline {
         }
     }
 }
+
+        stage('Versionado automatico') {
+            when { expression { params.DEPLOY_ENV != 'none' && params.AUTO_VERSION } }
+            steps {
+                script {
+                    // Necesitamos los tags para calcular el incremento semántico
+                    sh 'git fetch --tags --force || true'
+
+                    // produccion -> versión estable (X.Y.Z)
+                    // dev        -> pre-release (X.Y.Z-dev.<build>+<sha>)
+                    def channel = params.DEPLOY_ENV == 'production' ? 'stable' : 'dev'
+
+                    env.NEW_VERSION = sh(
+                        script: "sh scripts/auto-version.sh ${channel} ${env.BUILD_NUMBER}",
+                        returnStdout: true
+                    ).trim()
+
+                    echo "Versión calculada (${channel}): ${env.NEW_VERSION}"
+
+                    // Escribir en package.json para que Vite la inyecte en el build
+                    sh 'sh scripts/apply-version.sh "$NEW_VERSION"'
+                }
+            }
+        }
 
         stage('Load Environment') {
             when { expression { params.DEPLOY_ENV != 'none' } }
@@ -277,6 +307,23 @@ REMOTE
                 sh """
                     echo "\$(date) | ${BUILD_NUMBER} | ${params.DEPLOY_ENV} | SUCCESS" >> /opt/apps/landing/deploy.log
                 """
+
+                // ── Publicar release: commit del bump + tag semántico en GitHub ──
+                // Solo en producción y solo si el deploy completo fue exitoso.
+                if (params.DEPLOY_ENV == 'production' && params.AUTO_VERSION && env.NEW_VERSION?.trim()) {
+                    try {
+                        withCredentials([usernamePassword(
+                            credentialsId: params.GIT_CREDENTIALS_ID,
+                            usernameVariable: 'GIT_USER',
+                            passwordVariable: 'GIT_TOKEN'
+                        )]) {
+                            sh 'sh scripts/release-tag.sh "$NEW_VERSION" master'
+                        }
+                    } catch (err) {
+                        notify("WARNING", "Deploy OK pero no se pudo publicar el tag v${env.NEW_VERSION}: ${err.message}")
+                    }
+                }
+
                 notify("SUCCESS")
                 def durationSec = currentBuild.duration / 1000
                 if (durationSec > 120) {
