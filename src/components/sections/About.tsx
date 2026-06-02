@@ -147,7 +147,7 @@ const About: React.FC = () => {
           </h3>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {milestones.map((milestone, index) => {
-              const Icon = milestone.icon;
+              const Icon = milestone.icon as React.FC<{ className?: string }>;
               return (
               <motion.div
                 key={milestone.year}
@@ -192,7 +192,7 @@ const About: React.FC = () => {
           </h3>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {values.map((value, index) => {
-              const Icon = value.icon;
+              const Icon = value.icon as React.FC<{ className?: string }>;
               return (
                 <motion.div
                   key={value.title}

@@ -1,4 +1,4 @@
-type CategoryLike = {
+export type CategoryLike = {
   id?: number | string;
   slug?: string;
   name?: string;
@@ -10,13 +10,17 @@ type CategoryLike = {
   sort_order?: number;
 };
 
-type BillingCycleLike = {
+export type BillingCycleLike = {
+  id?: number | string;
+  name?: string;
   slug?: string;
   discountPercentage?: number | string;
   discount_percentage?: number | string;
+  is_active?: boolean;
+  sort_order?: number;
 };
 
-type FeatureLike =
+export type FeatureLike =
   | string
   | {
       feature?: string;
@@ -25,13 +29,13 @@ type FeatureLike =
       sort_order?: number;
     };
 
-type PricingLike = {
+export type PricingLike = {
   price?: number | string;
   billingCycle?: { slug?: string };
   billing_cycle?: { slug?: string };
 };
 
-type PlanLike = {
+export type PlanLike = {
   id?: number | string;
   name?: string;
   slug?: string;

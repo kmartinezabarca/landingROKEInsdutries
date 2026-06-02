@@ -25,8 +25,11 @@ const BlogPage: React.FC = () => {
     const load = async () => {
       try {
         setLoading(true); setError(null);
-        const [catRes, postsRes] = await Promise.all([getBlogCategories(), getBlogPosts()]);
-        setCategories(["Todos", ...(catRes.data || []).map((c: { name: string }) => c.name)]);
+        const [catRes, postsRes] = await Promise.all([
+          getBlogCategories<{ name: string }[]>(),
+          getBlogPosts<BlogPost[]>(),
+        ]);
+        setCategories(["Todos", ...(catRes.data || []).map((c) => c.name)]);
         setBlogPosts(postsRes.data || []);
       } catch {
         setError("No se pudieron cargar los artículos. Por favor, intenta más tarde.");

@@ -1,4 +1,5 @@
 import ApiService from '@/lib/apiClient';
+import type { ApiResponse } from '@/types/api';
 
 interface BlogParams {
   search?: string;
@@ -10,10 +11,12 @@ interface BlogParams {
 /**
  * Obtiene todos los posts del blog con filtros opcionales
  */
-export const getBlogPosts = async (params: BlogParams = {}): Promise<unknown> => {
+export const getBlogPosts = async <T = unknown>(
+  params: BlogParams = {}
+): Promise<ApiResponse<T>> => {
   try {
     const response = await ApiService.get('/blog/posts', { params });
-    return response.data;
+    return response.data as ApiResponse<T>;
   } catch (error) {
     console.error('Error fetching blog posts:', error);
     throw error;
@@ -23,10 +26,12 @@ export const getBlogPosts = async (params: BlogParams = {}): Promise<unknown> =>
 /**
  * Obtiene un post específico por slug
  */
-export const getBlogPostBySlug = async (slug: string): Promise<unknown> => {
+export const getBlogPostBySlug = async <T = unknown>(
+  slug: string
+): Promise<ApiResponse<T>> => {
   try {
     const response = await ApiService.get(`/blog/posts/${slug}`);
-    return response.data;
+    return response.data as ApiResponse<T>;
   } catch (error) {
     console.error(`Error fetching blog post with slug ${slug}:`, error);
     throw error;
@@ -36,10 +41,10 @@ export const getBlogPostBySlug = async (slug: string): Promise<unknown> => {
 /**
  * Obtiene todas las categorías del blog
  */
-export const getBlogCategories = async (): Promise<unknown> => {
+export const getBlogCategories = async <T = unknown>(): Promise<ApiResponse<T>> => {
   try {
     const response = await ApiService.get('/blog/categories');
-    return response.data;
+    return response.data as ApiResponse<T>;
   } catch (error) {
     console.error('Error fetching blog categories:', error);
     throw error;

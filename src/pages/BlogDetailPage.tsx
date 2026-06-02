@@ -67,16 +67,17 @@ const BlogDetailPage: React.FC = () => {
 
   useEffect(() => {
     const loadArticle = async () => {
+      if (!slug) return;
       try {
         setLoading(true); setError(null);
-        const response = await getBlogPostBySlug(slug);
+        const response = await getBlogPostBySlug<Article>(slug);
         const post = response.data;
         setArticle(post);
         setLikes(post.likes || 0);
-        const allPostsResponse = await getBlogPosts();
+        const allPostsResponse = await getBlogPosts<RelatedArticle[]>();
         const allPosts = allPostsResponse.data || [];
         setRelatedArticles(
-          allPosts.filter((p: RelatedArticle) => p.category?.uuid === post.category?.uuid && p.slug !== slug).slice(0, 3)
+          allPosts.filter((p) => p.category?.uuid === post.category?.uuid && p.slug !== slug).slice(0, 3)
         );
       } catch {
         setError('No se pudo cargar el artículo. Por favor, intenta más tarde.');

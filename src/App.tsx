@@ -95,7 +95,7 @@ const App: React.FC = () => {
           <VersionBadge />
         </div>
         <CheckoutModal />
-        <Toaster richColors position="top-right" closeButton />
+        <Toaster />
       </Router>
     </ThemeProvider>
     </CheckoutProvider>

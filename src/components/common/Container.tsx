@@ -17,7 +17,7 @@ const Container: React.FC<ContainerProps> = ({
   as = 'div',
   ...props
 }) => {
-  const Component = as;
+  const Component: React.ElementType = as;
 
   const sizeClasses: Record<ContainerSize, string> = {
     sm: 'max-w-3xl',
@@ -26,17 +26,13 @@ const Container: React.FC<ContainerProps> = ({
     full: 'max-w-full',
   };
 
-  return (
-    <Component
-      className={cn(
-        'mx-auto px-4 sm:px-6 lg:px-8',
-        sizeClasses[size],
-        className
-      )}
-      {...props}
-    >
-      {children}
-    </Component>
+  return React.createElement(
+    Component,
+    {
+      className: cn('mx-auto px-4 sm:px-6 lg:px-8', sizeClasses[size], className),
+      ...props,
+    },
+    children
   );
 };
 

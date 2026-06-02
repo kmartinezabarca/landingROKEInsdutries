@@ -39,7 +39,7 @@ const starVariants = {
     opacity: 1,
     scale: 1,
     rotate: 0,
-    transition: { duration: 0.3, delay: i * 0.07, ease: [0.34, 1.56, 0.64, 1] },
+    transition: { duration: 0.3, delay: i * 0.07, ease: [0.34, 1.56, 0.64, 1] as [number, number, number, number] },
   }),
 };
 

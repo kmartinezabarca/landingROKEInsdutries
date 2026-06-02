@@ -92,7 +92,7 @@ const AboutPage: React.FC = () => {
         <div className="max-w-[1296px] mx-auto px-6 md:px-14">
           <div className="grid grid-cols-2 md:grid-cols-4 border-b border-[var(--roke-border-strong)]">
             {stats.map((stat, index) => {
-              const Icon = stat.icon;
+              const Icon = stat.icon as React.FC<{ className?: string }>;
               return (
                 <motion.div
                   key={stat.label}
@@ -174,7 +174,7 @@ const AboutPage: React.FC = () => {
           {/* Values sub-grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 border border-[var(--roke-border-strong)]">
             {values.map((value, index) => {
-              const Icon = value.icon;
+              const Icon = value.icon as React.FC<{ className?: string }>;
               return (
                 <motion.div
                   key={value.title}
@@ -227,7 +227,7 @@ const AboutPage: React.FC = () => {
 
           <div className="grid grid-cols-1 md:grid-cols-2 border border-[var(--roke-border-strong)]">
             {timeline.map((item, index) => {
-              const Icon = item.icon;
+              const Icon = item.icon as React.FC<{ className?: string }>;
               return (
                 <motion.div
                   key={item.year}

@@ -73,7 +73,7 @@ const Pricing: React.FC = () => {
       const preferred =
         availableBillingCycles.find((c: any) => c.slug === "monthly") ||
         availableBillingCycles[0];
-      setActiveBillingCycleSlug(preferred.slug);
+      setActiveBillingCycleSlug(preferred.slug ?? "");
     }
   }, [availableBillingCycles, activeBillingCycleSlug]);
 

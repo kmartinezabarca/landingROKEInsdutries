@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { CardElement, useStripe, useElements } from '@stripe/react-stripe-js';
 import { Loader2, ShieldCheck, CreditCard, Plus, ChevronDown, Receipt } from 'lucide-react';
-import { sileo as toast } from 'sileo';
+import { toast } from '@/lib/toast';
 import { isStripeConfigured } from '@/lib/stripe';
 import contractService from '@/services/contractService';
 import type { InvoiceData } from '@/services/contractService';

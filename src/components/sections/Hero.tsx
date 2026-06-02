@@ -233,7 +233,7 @@ const Hero: React.FC = () => {
           className="roke-hero-benefits mt-14 grid grid-cols-1 border-t border-[var(--roke-border-strong)] md:grid-cols-3 lg:absolute lg:inset-x-0 lg:bottom-0 lg:mt-0"
         >
           {quickBenefits.map((benefit, index) => {
-            const Icon = benefit.icon;
+            const Icon = benefit.icon as React.FC<{ className?: string }>;
             return (
               <div
                 key={benefit.title}

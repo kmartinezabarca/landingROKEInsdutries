@@ -115,7 +115,7 @@ const ContactPage: React.FC = () => {
         <div className="max-w-[1296px] mx-auto px-6 md:px-14">
           <div className="grid grid-cols-2 md:grid-cols-4 border-b border-[var(--roke-border-strong)]">
             {contactInfo.map((info, index) => {
-              const Icon = info.icon;
+              const Icon = info.icon as React.FC<{ className?: string }>;
               return (
                 <motion.div
                   key={info.title}
