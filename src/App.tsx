@@ -13,6 +13,7 @@ import { googleClientId, isGoogleAuthConfigured } from './lib/oauth';
 import Navigation from './components/layout/Navigation';
 import Footer from './components/layout/Footer';
 import FloatingButton from './components/common/FloatingButton';
+import VersionBadge from './components/common/VersionBadge';
 import WhatsAppService from './services/whatsapp/whatsappService';
 
 const queryClient = new QueryClient({ defaultOptions: { queries: { staleTime: 5 * 60 * 1000 } } });
@@ -89,6 +90,9 @@ const App: React.FC = () => {
           >
             <Phone className="w-6 h-6" />
           </FloatingButton>
+
+          {/* Always-visible app version — shown on every screen */}
+          <VersionBadge />
         </div>
         <CheckoutModal />
         <Toaster richColors position="top-right" closeButton />
