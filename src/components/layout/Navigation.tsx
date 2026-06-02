@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Menu, X, MessageCircle } from 'lucide-react';
 import { CONFIG, ROUTES } from '@/utils/constants/config';
 import ThemeToggle from './ThemeToggle';
+import { useTheme } from '@/contexts/ThemeContext';
 import { cn } from '@/lib/utils';
 import { useCategories } from '@/hooks/useCategories';
 import { useServicePlans } from '@/hooks/useServicePlans';
@@ -18,6 +19,7 @@ interface NavigationItem {
 const Navigation: React.FC = () => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const location = useLocation();
+  const { isDark } = useTheme();
   const { data: categories } = useCategories();
   const { data: servicePlans } = useServicePlans();
 
@@ -51,7 +53,7 @@ const Navigation: React.FC = () => {
               className="flex items-center gap-3"
             >
               <img
-                src="/ROKEIndustriesFusionLogo.png"
+                src={isDark ? '/roke_white.png' : '/roke_black.png'}
                 alt="ROKE Industries"
                 className="h-8 w-8 object-contain"
               />

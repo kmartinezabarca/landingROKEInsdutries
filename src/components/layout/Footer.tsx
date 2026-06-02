@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { Mail, Phone, MapPin, MessageCircle } from 'lucide-react';
 import { FaXTwitter, FaLinkedin, FaGithub, FaDiscord } from 'react-icons/fa6';
 import { CONFIG, ROUTES } from '@/utils/constants/config';
+import { useTheme } from '@/contexts/ThemeContext';
 import WhatsAppService from '@/services/whatsapp/whatsappService';
 
 /* ── inline style helpers — use CSS vars so dark mode works ── */
@@ -14,6 +15,7 @@ const mutedBg  = 'var(--muted)';
 
 const Footer: React.FC = () => {
   const currentYear = new Date().getFullYear();
+  const { isDark } = useTheme();
 
   const productLinks = [
     { name: 'Web Hosting',        href: ROUTES.HOSTING },
@@ -57,7 +59,7 @@ const Footer: React.FC = () => {
           <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
             {/* Logo */}
             <Link to={ROUTES.HOME} style={{ display: 'flex', alignItems: 'center', gap: '12px', textDecoration: 'none' }}>
-              <img src="/roke_black.png" alt="ROKE Industries"
+              <img src={isDark ? '/roke_white.png' : '/roke_black.png'} alt="ROKE Industries"
                 style={{ height: '32px', width: '32px', objectFit: 'contain' }} />
               <div style={{ display: 'flex', flexDirection: 'column', lineHeight: 1 }}>
                 <span style={{ fontWeight: 700, fontSize: '15px', letterSpacing: '0.02em', color: fg }}>
