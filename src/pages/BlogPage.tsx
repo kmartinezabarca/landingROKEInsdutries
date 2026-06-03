@@ -6,8 +6,14 @@ import { useBlogList } from "@/hooks/useBlogList";
 import FeaturedCard from "@/pages/blog/FeaturedCard";
 import PostCard from "@/pages/blog/PostCard";
 import NewsletterBand from "@/pages/blog/NewsletterBand";
+import { useSeo } from "@/components/common/Seo";
 
 const BlogPage: React.FC = () => {
+  useSeo({
+    title: "Blog",
+    description: "Artículos sobre hosting, servidores gaming, DevOps, seguridad e infraestructura. Guías y novedades del equipo de ROKE Industries.",
+    path: "/blog",
+  });
   const { blogPosts, categories, loading, error } = useBlogList();
   const [selectedCategory, setSelectedCategory] = useState<string>("Todos");
   const [searchQuery, setSearchQuery]           = useState<string>("");

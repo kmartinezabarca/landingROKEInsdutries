@@ -11,12 +11,17 @@ import {
 import { CONFIG, ROUTES } from "@/utils/constants/config";
 import WhatsAppService from "@/services/whatsapp/whatsappService";
 import { PlanGridSkeleton } from "@/components/common/Skeletons";
+import { useSeo } from "@/components/common/Seo";
 
-/* ── SVG icons ───────────────────────────────────────── */
 /* ══════════════════════════════════════════════════════
    ServicesPage
 ══════════════════════════════════════════════════════ */
 const ServicesPage: React.FC = () => {
+  useSeo({
+    title: "Servicios",
+    description: "Infraestructura y hosting, game servers, desarrollo & consultoría y ROKE Labs (hardware/IoT). Soluciones tecnológicas para empresas.",
+    path: "/services",
+  });
   const { openCheckout } = useCheckout();
   const {
     isLoading,

@@ -10,6 +10,7 @@ import {
 import { CONFIG } from "@/utils/constants/config";
 import WhatsAppService from "@/services/whatsapp/whatsappService";
 import { PlanGridSkeleton } from "@/components/common/Skeletons";
+import { useSeo } from "@/components/common/Seo";
 
 /* ── FAQ data ────────────────────────────────────────── */
 const faqs = [
@@ -43,6 +44,11 @@ const faqs = [
    HostingPage
 ══════════════════════════════════════════════════════ */
 const HostingPage: React.FC = () => {
+  useSeo({
+    title: "Hosting y Servidores",
+    description: "Web hosting, VPS administrados y game servers con uptime 99.9%, panel de control y soporte humano en español. Planes desde $99 MXN/mes.",
+    path: "/hosting",
+  });
   const [openFaq, setOpenFaq] = useState<number | null>(null);
   const { openCheckout } = useCheckout();
   const {

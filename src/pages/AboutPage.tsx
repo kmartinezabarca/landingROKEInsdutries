@@ -6,6 +6,7 @@ import {
   MapPin, Mail, Phone, HardHat, Server, Wrench, Rocket,
 } from "lucide-react";
 import { CONFIG } from "@/utils/constants/config";
+import { useSeo } from "@/components/common/Seo";
 
 interface Stat { number: string; label: string; icon: React.ElementType }
 interface TimelineItem { year: string; title: string; description: string; icon: React.ElementType }
@@ -13,6 +14,11 @@ interface Value { icon: React.ElementType; title: string; description: string }
 interface TeamMember { name: string; position: string; image: string; description: string; linkedin: string; twitter: string }
 
 const AboutPage: React.FC = () => {
+  useSeo({
+    title: "Nosotros",
+    description: "Conoce a ROKE Industries: infraestructura digital, hosting y soluciones IoT/Cloud para empresas que no pueden permitirse caer.",
+    path: "/about",
+  });
   const stats: Stat[] = [
     { number: "500+", label: "Clientes Satisfechos", icon: Users },
     { number: "99.9%", label: "Uptime Garantizado",  icon: Shield },

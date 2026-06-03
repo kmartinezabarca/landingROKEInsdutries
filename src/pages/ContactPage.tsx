@@ -5,6 +5,7 @@ import WhatsAppService from '@/services/whatsapp/whatsappService';
 import { submitContactRequest } from '@/services/contactService';
 import Turnstile, { type TurnstileHandle } from '@/components/common/Turnstile';
 import { useTheme } from '@/contexts/ThemeContext';
+import { useSeo } from '@/components/common/Seo';
 import { CONFIG } from '@/utils/constants/config';
 
 interface FormData { name: string; email: string; phone: string; company: string; service: string; message: string }
@@ -19,6 +20,11 @@ const ContactPage: React.FC = () => {
   const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
   const turnstileRef = useRef<TurnstileHandle>(null);
   const { isDark } = useTheme();
+  useSeo({
+    title: 'Contacto',
+    description: 'Hablemos de tu proyecto. Contacta a ROKE Industries por formulario o WhatsApp — respuesta en menos de 24 horas.',
+    path: '/contact',
+  });
 
   const services: string[] = ['Hosting Web', 'Servidores Gaming', 'Cloud Hosting', 'Desarrollo Web', 'Seguridad Web', 'Consultoría Técnica', 'Migración de Sitios', 'Otro'];
 

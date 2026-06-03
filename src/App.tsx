@@ -8,12 +8,15 @@ import { Toaster } from './components/ui/sileo-toaster';
 import { ThemeProvider } from './contexts/ThemeContext';
 import { AuthProvider } from './contexts/AuthContext';
 import { CheckoutProvider } from './contexts/CheckoutContext';
+import { ConsentProvider } from './contexts/ConsentContext';
 import { CheckoutModal } from './components/checkout/CheckoutModal';
 import { googleClientId, isGoogleAuthConfigured } from './lib/oauth';
 import Navigation from './components/layout/Navigation';
 import Footer from './components/layout/Footer';
 import FloatingButton from './components/common/FloatingButton';
 import VersionBadge from './components/common/VersionBadge';
+import Analytics from './components/common/Analytics';
+import CookieConsent from './components/common/CookieConsent';
 import WhatsAppService from './services/whatsapp/whatsappService';
 
 const queryClient = new QueryClient({ defaultOptions: { queries: { staleTime: 5 * 60 * 1000 } } });
@@ -48,7 +51,9 @@ const App: React.FC = () => {
     <AuthProvider>
     <CheckoutProvider>
     <ThemeProvider>
+    <ConsentProvider>
       <Router>
+        <Analytics />
         <div className="home-modern min-h-screen bg-background text-foreground">
           <Navigation />
 
@@ -95,8 +100,10 @@ const App: React.FC = () => {
           <VersionBadge />
         </div>
         <CheckoutModal />
+        <CookieConsent />
         <Toaster />
       </Router>
+    </ConsentProvider>
     </ThemeProvider>
     </CheckoutProvider>
     </AuthProvider>

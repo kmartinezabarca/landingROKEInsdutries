@@ -10,6 +10,7 @@ import {
 import { useArticle } from '@/hooks/useArticle';
 import { formatDate, getInitials, DEFAULT_IMAGE } from '@/pages/blog/blogUtils';
 import RelatedCard from '@/pages/blog/RelatedCard';
+import { useSeo } from '@/components/common/Seo';
 
 const BlogDetailPage: React.FC = () => {
   const { slug } = useParams<{ slug: string }>();
@@ -28,6 +29,13 @@ const BlogDetailPage: React.FC = () => {
     handleCopyLink,
     handleLike,
   } = useArticle(slug);
+
+  useSeo({
+    title: article?.title,
+    description: article?.excerpt,
+    path: `/blog/${slug ?? ''}`,
+    image: article?.image,
+  });
 
   /* ── Loading ── */
   if (loading) {

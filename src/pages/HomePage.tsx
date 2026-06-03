@@ -8,8 +8,13 @@ import Urgency from '@/components/sections/Urgency';
 import FAQ from '@/components/sections/FAQ';
 import FinalCTA from '@/components/sections/FinalCTA';
 import { ScrollProgressBar } from '@/components/ui/scroll-motion';
+import { useSeo } from '@/components/common/Seo';
 
 const HomePage: React.FC = () => {
+  useSeo({
+    description: 'Hosting web, servidores gaming y soluciones cloud/IA con uptime 99.9% y soporte 24/7 en español. Despliegue en menos de 24 horas.',
+    path: '/',
+  });
   return (
     <div className="home-modern">
       <ScrollProgressBar />
