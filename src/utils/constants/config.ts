@@ -1,7 +1,7 @@
 interface AppConfig {
   COMPANY_NAME: string;
   CONTACT: { PHONE: string; EMAIL: string; WHATSAPP: string; ADDRESS: string };
-  SOCIAL: { TWITTER: string; LINKEDIN: string; GITHUB: string; DISCORD: string };
+  SOCIAL: { FACEBOOK: string; INSTAGRAM: string; TWITTER: string; LINKEDIN: string; YOUTUBE: string };
   WHATSAPP_MESSAGE: string;
 }
 
@@ -15,10 +15,11 @@ export const CONFIG: AppConfig = {
     ADDRESS: import.meta.env.VITE_ADDRESS || '123 Tech Street, City, Country',
   },
   SOCIAL: {
+    FACEBOOK: import.meta.env.VITE_FACEBOOK_URL || '',
+    INSTAGRAM: import.meta.env.VITE_INSTAGRAM_URL || '',
     TWITTER: import.meta.env.VITE_TWITTER_URL || '',
     LINKEDIN: import.meta.env.VITE_LINKEDIN_URL || '',
-    GITHUB: import.meta.env.VITE_GITHUB_URL || '',
-    DISCORD: import.meta.env.VITE_DISCORD_URL || '',
+    YOUTUBE: import.meta.env.VITE_YOUTUBE_URL || '',
   },
   WHATSAPP_MESSAGE: import.meta.env.VITE_WHATSAPP_MESSAGE ||
     'Hola, me interesa conocer más sobre los servicios de ROKE Industries. ¿Podrían proporcionarme información detallada?',

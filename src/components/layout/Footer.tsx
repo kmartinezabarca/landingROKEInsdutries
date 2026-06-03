@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Mail, Phone, MapPin, MessageCircle } from 'lucide-react';
-import { FaXTwitter, FaLinkedin, FaGithub, FaDiscord } from 'react-icons/fa6';
+import { FaFacebook, FaInstagram, FaXTwitter, FaLinkedin, FaYoutube } from 'react-icons/fa6';
 import { CONFIG, ROUTES } from '@/utils/constants/config';
 import { useTheme } from '@/contexts/ThemeContext';
 import WhatsAppService from '@/services/whatsapp/whatsappService';
@@ -33,13 +33,14 @@ const Footer: React.FC = () => {
     { name: 'Contacto',       href: ROUTES.CONTACT },
   ];
 
-  // Social buttons always shown — use configured URL or '#' as fallback
+  // Solo se muestran las redes que tienen URL configurada en el .env
   const socialLinks = [
-    { name: 'X / Twitter', icon: FaXTwitter, href: CONFIG.SOCIAL.TWITTER  || '#' },
-    { name: 'LinkedIn',     icon: FaLinkedin, href: CONFIG.SOCIAL.LINKEDIN || '#' },
-    { name: 'GitHub',       icon: FaGithub,   href: CONFIG.SOCIAL.GITHUB   || '#' },
-    { name: 'Discord',      icon: FaDiscord,  href: CONFIG.SOCIAL.DISCORD  || '#' },
-  ];
+    { name: 'Facebook',    icon: FaFacebook,  href: CONFIG.SOCIAL.FACEBOOK  },
+    { name: 'Instagram',   icon: FaInstagram, href: CONFIG.SOCIAL.INSTAGRAM },
+    { name: 'X / Twitter', icon: FaXTwitter,  href: CONFIG.SOCIAL.TWITTER   },
+    { name: 'LinkedIn',    icon: FaLinkedin,  href: CONFIG.SOCIAL.LINKEDIN  },
+    { name: 'YouTube',     icon: FaYoutube,   href: CONFIG.SOCIAL.YOUTUBE   },
+  ].filter(s => s.href);
 
   const linkStyle: React.CSSProperties = {
     fontSize: '14px', color: fg, textDecoration: 'none',
