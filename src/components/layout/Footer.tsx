@@ -37,8 +37,8 @@ const Footer: React.FC = () => {
   const socialLinks = [
     { name: 'X / Twitter', icon: FaXTwitter, href: CONFIG.SOCIAL.TWITTER  || '#' },
     { name: 'LinkedIn',     icon: FaLinkedin, href: CONFIG.SOCIAL.LINKEDIN || '#' },
-    { name: 'GitHub',       icon: FaGithub,   href: (CONFIG.SOCIAL as any).GITHUB   || '#' },
-    { name: 'Discord',      icon: FaDiscord,  href: (CONFIG.SOCIAL as any).DISCORD  || '#' },
+    { name: 'GitHub',       icon: FaGithub,   href: CONFIG.SOCIAL.GITHUB   || '#' },
+    { name: 'Discord',      icon: FaDiscord,  href: CONFIG.SOCIAL.DISCORD  || '#' },
   ];
 
   const linkStyle: React.CSSProperties = {
