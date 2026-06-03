@@ -265,6 +265,8 @@ pipeline {
                     // Sincronizar build al Mac Mini
                     sh """
                         rsync -az --delete \
+                            --exclude='.env.dev' \
+                            --exclude='.env' \
                             -e "ssh -i \$SSH_KEY -o StrictHostKeyChecking=no" \
                             dist/ \
                             ${DEV_USER}@${DEV_HOST}:${DEV_PATH}/
@@ -346,7 +348,7 @@ REMOTE
         }
 
         cleanup {
-            // sh 'rm -f .env 2>/dev/null || true'
+            sh 'rm -f .env 2>/dev/null || true'
             cleanWs()
         }
     }
