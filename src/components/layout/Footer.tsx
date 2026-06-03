@@ -4,6 +4,7 @@ import { Mail, Phone, MapPin, MessageCircle } from 'lucide-react';
 import { FaFacebook, FaInstagram, FaXTwitter, FaLinkedin, FaYoutube } from 'react-icons/fa6';
 import { CONFIG, ROUTES } from '@/utils/constants/config';
 import { useTheme } from '@/contexts/ThemeContext';
+import { VERSION_LABEL } from '@/utils/constants/version';
 import WhatsAppService from '@/services/whatsapp/whatsappService';
 
 /* ── inline style helpers — use CSS vars so dark mode works ── */
@@ -187,6 +188,7 @@ const Footer: React.FC = () => {
         <div className="roke-footer-bottom">
           <p style={{ fontFamily: 'monospace', fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.18em', color: muted, margin: 0 }}>
             © {currentYear} ROKE Industries · Todos los derechos reservados
+            <span style={{ opacity: 0.7 }}> · {VERSION_LABEL}</span>
           </p>
           <div className="roke-footer-legal">
             {[

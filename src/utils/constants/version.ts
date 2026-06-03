@@ -5,8 +5,7 @@
  *   It can be overridden with the VITE_APP_VERSION env var if needed.
  * - BUILD_DATE is stamped automatically every time the bundle is built.
  *
- * Used by the always-visible <VersionBadge /> so every screen shows the
- * current release, e.g.  "V1.0.0 · BUILD 02 JUN 2026".
+ * Shown in the footer (present on every page), e.g. "V1.0.0 · BUILD 02 JUN 2026".
  */
 
 const rawVersion =

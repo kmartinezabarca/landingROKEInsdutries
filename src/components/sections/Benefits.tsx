@@ -102,18 +102,23 @@ const Benefits: React.FC = () => {
                 <div
                   style={{
                     fontFamily: '"Montserrat", system-ui, sans-serif',
-                    fontSize: 36,
+                    fontSize: stat.num.length >= 5 ? 24 : stat.num.length >= 3 ? 30 : 36,
                     fontWeight: 700,
                     letterSpacing: "-0.04em",
                     color: "var(--roke-text)",
                     lineHeight: 0.95,
                     fontVariantNumeric: "tabular-nums",
+                    display: "flex",
+                    alignItems: "baseline",
+                    justifyContent: "center",
+                    whiteSpace: "nowrap",
+                    maxWidth: 84,
                   }}
                 >
                   <CountUp to={parseFloat(stat.num)} decimals={stat.num.includes(".") ? 2 : 0} />
                   <span
                     style={{
-                      fontSize: 18,
+                      fontSize: stat.num.length >= 5 ? 13 : 16,
                       color: "var(--roke-text-dim)",
                       fontWeight: 500,
                       marginLeft: 1,

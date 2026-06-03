@@ -14,7 +14,6 @@ import { googleClientId, isGoogleAuthConfigured } from './lib/oauth';
 import Navigation from './components/layout/Navigation';
 import Footer from './components/layout/Footer';
 import FloatingButton from './components/common/FloatingButton';
-import VersionBadge from './components/common/VersionBadge';
 import Analytics from './components/common/Analytics';
 import CookieConsent from './components/common/CookieConsent';
 import WhatsAppService from './services/whatsapp/whatsappService';
@@ -95,9 +94,6 @@ const App: React.FC = () => {
           >
             <Phone className="w-6 h-6" />
           </FloatingButton>
-
-          {/* Always-visible app version — shown on every screen */}
-          <VersionBadge />
         </div>
         <CheckoutModal />
         <CookieConsent />
