@@ -1,16 +1,34 @@
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import { Mail } from "lucide-react";
+import Turnstile, { type TurnstileHandle } from "@/components/common/Turnstile";
+import { subscribeNewsletter } from "@/services/newsletterService";
+import { useTheme } from "@/contexts/ThemeContext";
+import { toast } from "@/lib/toast";
 
 const NewsletterBand: React.FC = () => {
   const [email, setEmail] = useState('');
   const [sent, setSent] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [token, setToken] = useState<string | null>(null);
+  const turnstileRef = useRef<TurnstileHandle>(null);
+  const { isDark } = useTheme();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!email) return;
-    setSent(true);
-    setEmail('');
-    setTimeout(() => setSent(false), 4000);
+    if (!email || !token) return;
+    setLoading(true);
+    try {
+      await subscribeNewsletter(email, token);
+      setSent(true);
+      setEmail('');
+      setTimeout(() => setSent(false), 4000);
+    } catch {
+      toast.error('No se pudo completar la suscripción. Intenta de nuevo.');
+    } finally {
+      setLoading(false);
+      setToken(null);
+      turnstileRef.current?.reset();
+    }
   };
 
   return (
@@ -65,12 +83,21 @@ const NewsletterBand: React.FC = () => {
           />
           <button
             type="submit"
-            className="flex items-center gap-2 font-semibold text-[13.5px] tracking-[0.02em] cursor-pointer border-none"
+            disabled={loading || !token}
+            className="flex items-center gap-2 font-semibold text-[13.5px] tracking-[0.02em] cursor-pointer border-none disabled:opacity-60 disabled:cursor-not-allowed"
             style={{ padding: '14px 22px', background: 'var(--roke-primary-bg)', color: 'var(--roke-primary-fg)', fontFamily: 'inherit' }}
           >
-            {sent ? '¡Enviado!' : <><Mail className="w-3.5 h-3.5" /> Suscribirme</>}
+            {sent ? '¡Enviado!' : loading ? 'Enviando…' : <><Mail className="w-3.5 h-3.5" /> Suscribirme</>}
           </button>
         </div>
+
+        <Turnstile
+          ref={turnstileRef}
+          theme={isDark ? 'dark' : 'light'}
+          onVerify={setToken}
+          onExpire={() => setToken(null)}
+          onError={() => setToken(null)}
+        />
         <span
           className="font-mono text-[10.5px] tracking-[0.04em]"
           style={{ color: 'var(--roke-text-dimmer)' }}

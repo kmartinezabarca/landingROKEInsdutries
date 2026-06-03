@@ -1,7 +1,10 @@
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { motion } from 'framer-motion';
 import { Mail, Phone, MapPin, Clock, Send, MessageCircle, CheckCircle, AlertCircle } from 'lucide-react';
 import WhatsAppService from '@/services/whatsapp/whatsappService';
+import { submitContactRequest } from '@/services/contactService';
+import Turnstile, { type TurnstileHandle } from '@/components/common/Turnstile';
+import { useTheme } from '@/contexts/ThemeContext';
 import { CONFIG } from '@/utils/constants/config';
 
 interface FormData { name: string; email: string; phone: string; company: string; service: string; message: string }
@@ -13,6 +16,9 @@ const ContactPage: React.FC = () => {
   const [formData, setFormData] = useState<FormData>({ name: '', email: '', phone: '', company: '', service: '', message: '' });
   const [formStatus, setFormStatus] = useState<FormStatus>('idle');
   const [errors, setErrors] = useState<FormErrors>({});
+  const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
+  const turnstileRef = useRef<TurnstileHandle>(null);
+  const { isDark } = useTheme();
 
   const services: string[] = ['Hosting Web', 'Servidores Gaming', 'Cloud Hosting', 'Desarrollo Web', 'Seguridad Web', 'Consultoría Técnica', 'Migración de Sitios', 'Otro'];
 
@@ -45,13 +51,32 @@ const ContactPage: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>): Promise<void> => {
     e.preventDefault();
     if (!validateForm()) return;
+    if (!turnstileToken) {
+      setErrors(prev => ({ ...prev, message: prev.message }));
+      setFormStatus('error');
+      return;
+    }
     setFormStatus('loading');
     try {
-      await new Promise<void>(resolve => setTimeout(resolve, 2000));
+      await submitContactRequest(
+        {
+          name: formData.name,
+          email: formData.email,
+          phone: formData.phone,
+          company: formData.company,
+          service: formData.service,
+          message: formData.message,
+        },
+        turnstileToken,
+      );
       setFormStatus('success');
       setFormData({ name: '', email: '', phone: '', company: '', service: '', message: '' });
     } catch {
       setFormStatus('error');
+    } finally {
+      // El token de Turnstile es de un solo uso: resetear para el próximo envío.
+      setTurnstileToken(null);
+      turnstileRef.current?.reset();
     }
   };
 
@@ -251,8 +276,18 @@ const ContactPage: React.FC = () => {
                   {errors.message && <p className="px-4 pb-3 text-red-500 text-[12px]">{errors.message}</p>}
                 </div>
 
-                <div className="flex flex-col sm:flex-row gap-0 pt-6">
-                  <button type="submit" disabled={formStatus === 'loading'}
+                <div className="pt-6">
+                  <Turnstile
+                    ref={turnstileRef}
+                    theme={isDark ? 'dark' : 'light'}
+                    onVerify={setTurnstileToken}
+                    onExpire={() => setTurnstileToken(null)}
+                    onError={() => setTurnstileToken(null)}
+                  />
+                </div>
+
+                <div className="flex flex-col sm:flex-row gap-0 pt-4">
+                  <button type="submit" disabled={formStatus === 'loading' || !turnstileToken}
                     className="flex-1 flex items-center justify-center gap-2 py-4 bg-[var(--roke-text)] text-[var(--roke-bg)] font-semibold text-[14px] hover:-translate-y-px hover:shadow-lg transition-all disabled:opacity-60">
                     {formStatus === 'loading' ? (
                       <><div className="w-4 h-4 border-2 border-[var(--roke-bg)]/30 border-t-[var(--roke-bg)] rounded-full animate-spin" />Enviando...</>
