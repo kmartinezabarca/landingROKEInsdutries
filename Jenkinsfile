@@ -346,7 +346,7 @@ REMOTE
         }
 
         cleanup {
-            sh 'rm -f .env 2>/dev/null || true'
+            // sh 'rm -f .env 2>/dev/null || true'
             cleanWs()
         }
     }
