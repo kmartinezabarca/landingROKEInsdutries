@@ -9,7 +9,7 @@ interface AppConfig {
 }
 
 export const CONFIG: AppConfig = {
-  COMPANY_NAME: import.meta.env.VITE_COMPANY_NAME || 'Roke Industries',
+  COMPANY_NAME: import.meta.env.VITE_COMPANY_NAME || 'ROKE Industries',
   COMPANY_TAGLINE: import.meta.env.VITE_COMPANY_TAGLINE || 'Soluciones tecnológicas profesionales',
   LOGO_URL: import.meta.env.VITE_LOGO_URL || '/assets/logo.png',
   COLORS: {
@@ -31,7 +31,7 @@ export const CONFIG: AppConfig = {
     YOUTUBE: import.meta.env.VITE_YOUTUBE_URL || '',
   },
   WHATSAPP_MESSAGE: import.meta.env.VITE_WHATSAPP_MESSAGE ||
-    'Hola, me interesa conocer más sobre los servicios de Roke Industries. ¿Podrían proporcionarme información detallada?',
+    'Hola, me interesa conocer más sobre los servicios de ROKE Industries. ¿Podrían proporcionarme información detallada?',
 };
 
 export const ROUTES = {

@@ -471,7 +471,7 @@ const BlogDetailPage: React.FC = () => {
                   letterSpacing: '-0.03em', color: 'var(--roke-text)',
                   lineHeight: 1.05, margin: 0,
                 }}>
-                  Más de <span style={{ color: 'var(--roke-text-dimmer)' }}>Roke.</span>
+                  Más de <span style={{ color: 'var(--roke-text-dimmer)' }}>ROKE.</span>
                 </h3>
               </div>
               <Link to="/blog" style={{

@@ -61,7 +61,7 @@ const BlogPage: React.FC = () => {
               <div className="w-8 h-px" style={{ background: 'var(--roke-text-dimmer)' }} />
               <span className="font-mono text-[11px] tracking-[0.16em] uppercase flex items-center gap-2"
                 style={{ color: 'var(--roke-text-dimmer)' }}>
-                BLOG / Roke Industries
+                BLOG / ROKE Industries
                 <span className="inline-block w-1.5 h-1.5" style={{ background: 'var(--roke-text)' }} />
               </span>
             </div>
