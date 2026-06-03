@@ -9,7 +9,8 @@ interface AppConfig {
 }
 
 export const CONFIG: AppConfig = {
-  COMPANY_NAME: import.meta.env.VITE_COMPANY_NAME || 'ROKE Industries',
+  // "ROKE" siempre en mayúsculas, sin importar lo que traiga el .env del servidor.
+  COMPANY_NAME: (import.meta.env.VITE_COMPANY_NAME || 'ROKE Industries').replace(/roke/gi, 'ROKE'),
   COMPANY_TAGLINE: import.meta.env.VITE_COMPANY_TAGLINE || 'Soluciones tecnológicas profesionales',
   LOGO_URL: import.meta.env.VITE_LOGO_URL || '/assets/logo.png',
   COLORS: {
