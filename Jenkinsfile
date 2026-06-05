@@ -12,7 +12,6 @@ def notify(status, extra="") {
 
     def color = colorMap[status] ?: 3447003
     def url = params.DEPLOY_ENV == 'production' ? env.PROD_URL : env.DEV_URL
-
     def isProd = params.DEPLOY_ENV == 'production'
     def mention = (status in ["FAILURE","CRITICAL"] && isProd) ? "<@&TU_ROLE_ID>" : ""
 
@@ -67,7 +66,7 @@ pipeline {
         PROD_PATH     = '/opt/apps/landing'
         ENV_PROD_PATH = '/opt/apps/landing/.env.production'
 
-        // ── DEV (Mac Mini — remoto vía Tailscale) ─────────────
+        // ── Development (Mac Mini — remoto vía Tailscale) ──────
         DEV_URL       = 'https://rokeindustries.dev'
         DEV_HOST      = '100.72.162.112'
         DEV_USER      = 'rokedev'
@@ -85,15 +84,14 @@ pipeline {
     }
 
     parameters {
-        choice(name: 'DEPLOY_ENV', choices: ['none', 'dev', 'production'])
+        choice(name: 'DEPLOY_ENV', choices: ['none', 'development', 'production'])
         booleanParam(name: 'RUN_LINT', defaultValue: true)
         booleanParam(name: 'RUN_FORMAT_CHECK', defaultValue: false)
         booleanParam(name: 'SKIP_TESTS', defaultValue: true)
-        // ── Versionado automático (Conventional Commits) ──
         booleanParam(name: 'AUTO_VERSION', defaultValue: true,
             description: 'Calcular la versión automáticamente a partir de los commits (feat/fix/BREAKING).')
         string(name: 'GIT_CREDENTIALS_ID', defaultValue: 'github-credentials',
-            description: 'ID del credencial (usuario + token) de GitHub en Jenkins para publicar el tag de versión en producción.')
+            description: 'ID del credencial de GitHub en Jenkins para publicar el tag de versión en producción.')
     }
 
     stages {
@@ -119,48 +117,40 @@ pipeline {
         }
 
         stage('Validar branch') {
-    when { expression { params.DEPLOY_ENV != 'none' } }
-    steps {
-        script {
-            def branch = env.GIT_BRANCH?.replaceAll('origin/', '').trim()
-                      ?: env.BRANCH_NAME?.trim()
-                      ?: sh(returnStdout: true,
-                            script: "git name-rev --name-only HEAD | sed 's|remotes/origin/||'").trim()
+            when { expression { params.DEPLOY_ENV != 'none' } }
+            steps {
+                script {
+                    def branch = env.GIT_BRANCH?.replaceAll('origin/', '').trim()
+                              ?: env.BRANCH_NAME?.trim()
+                              ?: sh(returnStdout: true,
+                                    script: "git name-rev --name-only HEAD | sed 's|remotes/origin/||'").trim()
 
-            echo "Branch detectado: ${branch}"
-            echo "Env seleccionado: ${params.DEPLOY_ENV}"
+                    echo "Branch detectado: ${branch}"
+                    echo "Env seleccionado: ${params.DEPLOY_ENV}"
 
-            if (params.DEPLOY_ENV == 'production' && branch != 'master') {
-                error("Produccion solo desde master. Branch actual: ${branch}")
+                    if (params.DEPLOY_ENV == 'production' && branch != 'master') {
+                        error("Produccion solo desde master. Branch actual: ${branch}")
+                    }
+                    if (params.DEPLOY_ENV == 'development' && branch != 'develop') {
+                        error("Development solo desde develop. Branch actual: ${branch}")
+                    }
+
+                    echo "Validacion OK — Branch: ${branch} | Env: ${params.DEPLOY_ENV}"
+                }
             }
-            if (params.DEPLOY_ENV == 'dev' && branch != 'develop') {
-                error("DEV solo desde develop. Branch actual: ${branch}")
-            }
-
-            echo "Validacion OK — Branch: ${branch} | Env: ${params.DEPLOY_ENV}"
         }
-    }
-}
 
         stage('Versionado automatico') {
             when { expression { params.DEPLOY_ENV != 'none' && params.AUTO_VERSION } }
             steps {
                 script {
-                    // Necesitamos los tags para calcular el incremento semántico
                     sh 'git fetch --tags --force || true'
-
-                    // produccion -> versión estable (X.Y.Z)
-                    // dev        -> pre-release (X.Y.Z-dev.<build>+<sha>)
                     def channel = params.DEPLOY_ENV == 'production' ? 'stable' : 'dev'
-
                     env.NEW_VERSION = sh(
                         script: "sh scripts/auto-version.sh ${channel} ${env.BUILD_NUMBER}",
                         returnStdout: true
                     ).trim()
-
                     echo "Versión calculada (${channel}): ${env.NEW_VERSION}"
-
-                    // Escribir en package.json para que Vite la inyecte en el build
                     sh 'sh scripts/apply-version.sh "$NEW_VERSION"'
                 }
             }
@@ -174,7 +164,6 @@ pipeline {
                         sh "cp ${ENV_PROD_PATH} .env"
                         sh "echo '.env cargado desde: ${ENV_PROD_PATH}'"
                     } else {
-                        // DEV — jalar .env desde el Mac Mini
                         withCredentials([sshUserPrivateKey(
                             credentialsId: 'mac-mini-deploy-key',
                             keyFileVariable: 'SSH_KEY'
@@ -216,8 +205,8 @@ pipeline {
         stage('Build') {
             steps {
                 script {
-                    def buildCmd = params.DEPLOY_ENV == 'dev'
-                        ? 'pnpm run build:staging'
+                    def buildCmd = params.DEPLOY_ENV == 'development'
+                        ? 'pnpm run build:development'
                         : 'pnpm run build'
 
                     sh """
@@ -247,22 +236,18 @@ pipeline {
             }
         }
 
-        // ── Deploy DEV → Mac Mini (remoto via SSH) ─────────────────────
-        stage('Deploy DEV') {
-            when { expression { params.DEPLOY_ENV == 'dev' } }
+        stage('Deploy Development') {
+            when { expression { params.DEPLOY_ENV == 'development' } }
             steps {
                 withCredentials([sshUserPrivateKey(
                     credentialsId: 'mac-mini-deploy-key',
                     keyFileVariable: 'SSH_KEY'
                 )]) {
-                    // Crear directorio si no existe
                     sh """
                         ssh -i \$SSH_KEY -o StrictHostKeyChecking=no \
                             ${DEV_USER}@${DEV_HOST} \
                             "mkdir -p ${DEV_PATH}"
                     """
-
-                    // Sincronizar build al Mac Mini
                     sh """
                         rsync -az --delete \
                             --exclude='.env.dev' \
@@ -271,13 +256,11 @@ pipeline {
                             dist/ \
                             ${DEV_USER}@${DEV_HOST}:${DEV_PATH}/
                     """
-
-                    // Verificar y recargar Nginx
                     sh """
                         ssh -i \$SSH_KEY -o StrictHostKeyChecking=no \
                             ${DEV_USER}@${DEV_HOST} bash << 'REMOTE'
                                 set -e
-                                test -f ${DEV_PATH}/index.html && echo "Deploy DEV exitoso"
+                                test -f ${DEV_PATH}/index.html && echo "Deploy Development exitoso"
                                 sudo systemctl reload nginx
 REMOTE
                     """
@@ -286,7 +269,6 @@ REMOTE
             }
         }
 
-        // ── Deploy PRODUCCIÓN → Dell (local) ───────────────────────────
         stage('Deploy Production') {
             when { expression { params.DEPLOY_ENV == 'production' } }
             steps {
@@ -309,9 +291,6 @@ REMOTE
                 sh """
                     echo "\$(date) | ${BUILD_NUMBER} | ${params.DEPLOY_ENV} | SUCCESS" >> /opt/apps/landing/deploy.log
                 """
-
-                // ── Publicar release: commit del bump + tag semántico en GitHub ──
-                // Solo en producción y solo si el deploy completo fue exitoso.
                 if (params.DEPLOY_ENV == 'production' && params.AUTO_VERSION && env.NEW_VERSION?.trim()) {
                     try {
                         withCredentials([usernamePassword(
@@ -325,7 +304,6 @@ REMOTE
                         notify("WARNING", "Deploy OK pero no se pudo publicar el tag v${env.NEW_VERSION}: ${err.message}")
                     }
                 }
-
                 notify("SUCCESS")
                 def durationSec = currentBuild.duration / 1000
                 if (durationSec > 120) {

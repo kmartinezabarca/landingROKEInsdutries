@@ -5,7 +5,17 @@
     "version": "1.0.0",
     "type": "module",
     "license": "UNLICENSED",
-    "author": "ROKE Industries",
+    "author": {
+        "name": "Kevin Aldair Martínez Abarca",
+        "email": "kevin.martinez@rokeindustries.com",
+        "url": "https://rokeindustries.com"
+    },
+    "contributors": [
+        {
+            "name": "ROKE Industries",
+            "url": "https://rokeindustries.com"
+        }
+    ],
     "packageManager": "pnpm@10.4.1",
     "engines": {
         "node": ">=22.0.0",
@@ -17,6 +27,7 @@
         "typecheck": "tsc --noEmit",
         "test:smoke": "vite-node scripts/smoke.tsx",
         "build": "tsc --noEmit && vite build",
+        "build:development": "tsc --noEmit && vite build --mode development",
         "build:staging": "tsc --noEmit && vite build --mode staging",
         "preview": "vite preview",
         "lint": "eslint src --max-warnings=20",
