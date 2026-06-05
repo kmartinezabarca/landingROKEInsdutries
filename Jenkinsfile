@@ -60,19 +60,15 @@ pipeline {
     }
 
     environment {
-        // ── Producción (Dell — local) ──────────────────────────
         PROD_URL      = 'https://rokeindustries.com'
         PROD_MX_URL   = 'https://rokeindustries.com.mx'
         PROD_PATH     = '/opt/apps/landing'
         ENV_PROD_PATH = '/opt/apps/landing/.env.production'
-
-        // ── Development (Mac Mini — remoto vía Tailscale) ──────
         DEV_URL       = 'https://rokeindustries.dev'
         DEV_HOST      = '100.72.162.112'
         DEV_USER      = 'rokedev'
         DEV_PATH      = '/opt/apps/landing-dev'
         ENV_DEV_PATH  = '/opt/apps/landing-dev/.env.dev'
-
         DISCORD_WEBHOOK = 'https://discord.com/api/webhooks/1501364059117715558/W_w1xbGHR_jifhNtdE9koiPjoaiXB2fYEJ62mAsMn9zSeOnQxLXasOWpPN9a-Is35Wsd'
     }
 
@@ -273,8 +269,6 @@ REMOTE
             when { expression { params.DEPLOY_ENV == 'production' } }
             steps {
                 sh """
-                    mkdir -p /opt/backups/landing
-                    cp -r ${PROD_PATH} /opt/backups/landing/landing_\$(date +%Y%m%d_%H%M%S) 2>/dev/null || true
                     rm -rf ${PROD_PATH}/assets
                     cp -rf dist/. ${PROD_PATH}/
                     test -f ${PROD_PATH}/index.html
