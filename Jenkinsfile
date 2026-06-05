@@ -278,7 +278,7 @@ REMOTE
                     rm -rf ${PROD_PATH}/assets
                     cp -rf dist/. ${PROD_PATH}/
                     test -f ${PROD_PATH}/index.html
-                    sudo /usr/bin/systemctl reload nginx
+                    /usr/local/bin/roke-reload-prod 2>/dev/null || true
                 """
                 echo "Disponible en: ${PROD_URL} y ${PROD_MX_URL}"
             }
