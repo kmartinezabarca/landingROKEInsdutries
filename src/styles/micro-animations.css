@@ -1,0 +1,135 @@
+/*
+ * Microinteracciones — clases utilitarias reutilizables.
+ * Todo va dentro de @media (prefers-reduced-motion: no-preference) para que
+ * quien pida menos movimiento no reciba ninguna animación de hover/press.
+ */
+@media (prefers-reduced-motion: no-preference) {
+
+  /* Elevación suave al hover (usar en elementos NO controlados por framer-motion,
+     porque framer escribe transform inline y ganaría sobre el :hover). */
+  .mi-lift {
+    transition: transform 0.25s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.25s ease;
+    will-change: transform;
+  }
+  .mi-lift:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 18px 42px -22px rgba(0, 0, 0, 0.45);
+  }
+
+  /* Feedback de pulsación. */
+  .mi-press { transition: transform 0.12s ease; }
+  .mi-press:active { transform: scale(0.97); }
+
+  /* Subrayado que crece desde la izquierda (links / nav). */
+  .mi-underline { position: relative; }
+  .mi-underline::after {
+    content: '';
+    position: absolute;
+    left: 0; right: 0; bottom: -3px;
+    height: 1.5px;
+    background: currentColor;
+    transform: scaleX(0);
+    transform-origin: left center;
+    transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .mi-underline:hover::after { transform: scaleX(1); }
+
+  /* Flecha que se desliza al hover (envuelve un botón/link con un <svg> dentro). */
+  .mi-arrow svg { transition: transform 0.22s cubic-bezier(0.22, 1, 0.36, 1); }
+  .mi-arrow:hover svg { transform: translateX(4px); }
+
+  /* Brillo diagonal (sheen) que barre al hover. No usa transform del elemento,
+     así que es compatible con framer-motion. */
+  .mi-sheen { position: relative; overflow: hidden; }
+  .mi-sheen::before {
+    content: '';
+    position: absolute;
+    top: 0; left: -130%;
+    width: 60%; height: 100%;
+    background: linear-gradient(100deg, transparent, rgba(255, 255, 255, 0.28), transparent);
+    transform: skewX(-18deg);
+    transition: left 0.6s ease;
+    pointer-events: none;
+    z-index: 1;
+  }
+  .mi-sheen:hover::before { left: 150%; }
+
+  /* Ícono que "salta" (overshoot) al hover. */
+  .mi-icon-pop svg { transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1); }
+  .mi-icon-pop:hover svg { transform: scale(1.14) rotate(-3deg); }
+
+  /* Glow de borde al hover (box-shadow, compatible con framer). */
+  .mi-glow { transition: box-shadow 0.3s ease, border-color 0.3s ease; }
+  .mi-glow:hover {
+    border-color: var(--roke-accent, #e8674c);
+    box-shadow: 0 0 0 1px var(--roke-accent, #e8674c), 0 16px 36px -18px color-mix(in srgb, var(--roke-accent, #e8674c) 60%, transparent);
+  }
+
+  /* Punto "latido" para estados en vivo. */
+  .mi-pulse { animation: miPulse 2s ease-in-out infinite; }
+  @keyframes miPulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.55; transform: scale(0.82); }
+  }
+
+  /* ── NUEVAS UTILIDADES ── */
+
+  /* Flotación suave continua — ideal para iconos y elementos decorativos. */
+  .mi-float { animation: miFloat 3.2s ease-in-out infinite; }
+  @keyframes miFloat {
+    0%, 100% { transform: translateY(0); }
+    50%       { transform: translateY(-6px); }
+  }
+
+  /* Respiración (escala pulsante) — para badges en vivo, indicadores de estado. */
+  .mi-breathe { animation: miBreathe 2.6s ease-in-out infinite; }
+  @keyframes miBreathe {
+    0%, 100% { transform: scale(1); opacity: 1; }
+    50%       { transform: scale(1.06); opacity: 0.72; }
+  }
+
+  /* CTA Pulse — anillo expansivo alrededor de un botón primario.
+     El elemento padre debe tener position: relative; isolation: isolate. */
+  .mi-cta-pulse {
+    position: relative;
+    isolation: isolate;
+  }
+  .mi-cta-pulse::after {
+    content: '';
+    position: absolute;
+    inset: -1px;
+    border-radius: inherit;
+    border: 1.5px solid currentColor;
+    opacity: 0;
+    animation: miCtaPulse 2.4s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+    pointer-events: none;
+  }
+  @keyframes miCtaPulse {
+    0%   { transform: scale(1);    opacity: 0.7; }
+    70%  { transform: scale(1.18); opacity: 0; }
+    100% { transform: scale(1.18); opacity: 0; }
+  }
+
+  /* Scan border — línea luminosa que recorre el borde superior. */
+  .mi-scan { position: relative; overflow: hidden; }
+  .mi-scan::after {
+    content: '';
+    position: absolute;
+    top: 0; left: -100%; right: auto;
+    width: 100%; height: 1.5px;
+    background: linear-gradient(90deg, transparent, var(--roke-accent, #e8674c), transparent);
+    animation: miScan 3s linear infinite;
+    pointer-events: none;
+  }
+  @keyframes miScan {
+    0%   { left: -100%; }
+    100% { left: 100%; }
+  }
+
+  /* Helpers de delay para stagger sin JS (úsalos junto a Framer o como fallback CSS). */
+  .mi-delay-1 { animation-delay: 0.06s !important; transition-delay: 0.06s !important; }
+  .mi-delay-2 { animation-delay: 0.12s !important; transition-delay: 0.12s !important; }
+  .mi-delay-3 { animation-delay: 0.18s !important; transition-delay: 0.18s !important; }
+  .mi-delay-4 { animation-delay: 0.24s !important; transition-delay: 0.24s !important; }
+  .mi-delay-5 { animation-delay: 0.30s !important; transition-delay: 0.30s !important; }
+}
