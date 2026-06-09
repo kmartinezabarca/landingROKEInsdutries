@@ -163,7 +163,7 @@ const FAQ: React.FC = () => {
               <button
                 type="button"
                 onClick={() => WhatsAppService.openWhatsApp("Hola ROKE Industries, tengo una pregunta sobre sus servicios.")}
-                className="mi-sheen mi-arrow inline-flex items-center justify-center gap-2 rounded-[4px] bg-foreground px-6 py-[14px] text-[14px] font-semibold text-background transition-all hover:-translate-y-px hover:shadow-lg"
+                className="mi-sheen mi-arrow mi-cta inline-flex items-center justify-center gap-2 rounded-[4px] bg-foreground px-6 py-[14px] text-[14px] font-semibold text-background"
               >
                 <MessageCircle className="h-4 w-4" />
                 Contactar por WhatsApp
@@ -171,7 +171,7 @@ const FAQ: React.FC = () => {
               </button>
               <a
                 href={`mailto:${CONFIG.CONTACT?.EMAIL || "contact@rokeindustries.com"}`}
-                className="mi-icon-pop inline-flex items-center justify-center gap-2 rounded-[4px] border border-border px-6 py-[14px] text-[14px] font-semibold text-foreground transition-all hover:border-foreground hover:bg-muted"
+                className="mi-icon-pop inline-flex items-center justify-center gap-2 rounded-[4px] border border-border px-6 py-[14px] text-[14px] font-semibold text-foreground transition-[transform,color,background-color,border-color] duration-200 ease-[cubic-bezier(0.23,1,0.32,1)] hover:border-foreground hover:bg-muted active:scale-[0.97]"
               >
                 <Mail className="h-4 w-4" />
                 Enviar Email

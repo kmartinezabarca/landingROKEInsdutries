@@ -358,7 +358,7 @@ const AboutPage: React.FC = () => {
             <div className="flex flex-col gap-4">
               <a
                 href={`mailto:careers@rokeindustries.com`}
-                className="inline-flex items-center justify-center gap-2 px-8 py-4 bg-background text-foreground font-semibold text-[15px] hover:-translate-y-px hover:shadow-lg transition-all"
+                className="inline-flex items-center justify-center gap-2 px-8 py-4 bg-background text-foreground font-semibold text-[15px] mi-cta"
               >
                 Enviar CV
               </a>

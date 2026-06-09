@@ -130,7 +130,7 @@ const BlogPage: React.FC = () => {
                 <button
                   key={cat}
                   onClick={() => setSelectedCategory(cat)}
-                  className="font-semibold text-[12.5px] px-4 py-2 tracking-[0.02em] transition-all duration-150 cursor-pointer whitespace-nowrap"
+                  className="font-semibold text-[12.5px] px-4 py-2 tracking-[0.02em] mi-tap cursor-pointer whitespace-nowrap"
                   style={{
                     background: selectedCategory === cat ? 'var(--roke-primary-bg)' : 'transparent',
                     color: selectedCategory === cat ? 'var(--roke-primary-fg)' : 'var(--roke-text-dim)',

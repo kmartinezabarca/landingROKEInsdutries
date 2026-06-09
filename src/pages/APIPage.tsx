@@ -108,7 +108,7 @@ const APIPage: React.FC = () => {
               <p className="text-[14px] text-muted-foreground leading-relaxed mb-6">
                 Genera tu clave API desde tu panel de control. Cada key otorga acceso completo a los endpoints según tu plan.
               </p>
-              <button className="inline-flex items-center gap-2 px-5 py-3 bg-foreground text-background text-[13px] font-semibold hover:-translate-y-px hover:shadow-lg transition-all">
+              <button className="inline-flex items-center gap-2 px-5 py-3 bg-foreground text-background text-[13px] font-semibold mi-cta">
                 <Key className="w-4 h-4" /> Generar API Key
               </button>
             </motion.div>
@@ -286,7 +286,7 @@ const APIPage: React.FC = () => {
               </p>
             </div>
             <div className="flex flex-col gap-3">
-              <button className="inline-flex items-center gap-2 px-7 py-4 bg-background text-foreground font-semibold text-[14px] hover:-translate-y-px hover:shadow-lg transition-all">
+              <button className="inline-flex items-center gap-2 px-7 py-4 bg-background text-foreground font-semibold text-[14px] mi-cta">
                 <BookOpen className="w-4 h-4" /> Documentación completa
               </button>
               <button className="inline-flex items-center gap-2 px-7 py-4 border border-background/30 text-background/80 hover:border-background hover:text-background font-semibold text-[14px] transition-colors">

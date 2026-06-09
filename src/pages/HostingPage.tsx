@@ -104,7 +104,7 @@ const HostingPage: React.FC = () => {
                 whileHover={{ y: -2, boxShadow: "0 12px 32px -8px rgba(0,0,0,0.25)" }}
                 whileTap={{ scale: 0.98 }}
                 onClick={() => document.getElementById("planes")?.scrollIntoView({ behavior: "smooth" })}
-                className="inline-flex items-center gap-2 px-6 py-3.5 font-semibold text-[14px] rounded-[4px] cursor-pointer transition-all"
+                className="inline-flex items-center gap-2 px-6 py-3.5 font-semibold text-[14px] rounded-[4px] cursor-pointer transition-colors"
                 style={{ background: "var(--roke-primary-bg)", color: "var(--roke-primary-fg)" }}
               >
                 Ver todos los planes
@@ -477,7 +477,7 @@ const HostingPage: React.FC = () => {
               </p>
               <button
                 onClick={() => WhatsAppService.openWhatsApp("Hola ROKE Industries, tengo una pregunta sobre sus planes de hosting.")}
-                className="inline-flex items-center gap-2 px-5 py-3 font-semibold text-[13px] rounded-[4px] border transition-all hover:bg-muted/30 cursor-pointer"
+                className="inline-flex items-center gap-2 px-5 py-3 font-semibold text-[13px] rounded-[4px] border mi-tap hover:bg-muted/30 cursor-pointer"
                 style={{ borderColor: "var(--roke-border-strong)", color: "var(--roke-text)" }}
               >
                 <MessageCircle className="w-4 h-4" />
@@ -579,7 +579,7 @@ const HostingPage: React.FC = () => {
                 whileHover={{ y: -2, boxShadow: "0 12px 32px -8px rgba(0,0,0,0.25)" }}
                 whileTap={{ scale: 0.98 }}
                 onClick={() => WhatsAppService.openWhatsApp("Hola ROKE Industries, necesito una solución de infraestructura personalizada.")}
-                className="inline-flex items-center justify-center gap-2 px-7 py-4 font-semibold text-[14px] rounded-[4px] cursor-pointer transition-all"
+                className="inline-flex items-center justify-center gap-2 px-7 py-4 font-semibold text-[14px] rounded-[4px] cursor-pointer transition-colors"
                 style={{ background: "var(--roke-primary-bg)", color: "var(--roke-primary-fg)" }}
               >
                 <MessageCircle className="w-4 h-4" />
@@ -588,7 +588,7 @@ const HostingPage: React.FC = () => {
               </motion.button>
               <a
                 href={`mailto:${CONFIG.CONTACT?.EMAIL || "contact@rokeindustries.com"}`}
-                className="inline-flex items-center justify-center gap-2 px-7 py-4 font-semibold text-[14px] rounded-[4px] border transition-all hover:bg-muted/30"
+                className="inline-flex items-center justify-center gap-2 px-7 py-4 font-semibold text-[14px] rounded-[4px] border mi-tap hover:bg-muted/30"
                 style={{ borderColor: "var(--roke-border-strong)", color: "var(--roke-text)" }}
               >
                 <Mail className="w-4 h-4" />

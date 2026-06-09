@@ -1,11 +1,11 @@
 import React, { Suspense, lazy } from "react";
-import { motion } from "framer-motion";
+import { motion, useReducedMotion, type Variants } from "framer-motion";
 import { ArrowRight, MessageCircle } from "lucide-react";
 import { Link } from "react-router-dom";
 import { ROUTES } from "@/utils/constants/config";
 import WhatsAppService from "@/services/whatsapp/whatsappService";
 import TiltCard from "@/components/common/TiltCard";
-import { CountUp } from "@/components/ui/scroll-motion";
+import { CountUp, EASE_OUT } from "@/components/ui/scroll-motion";
 
 const HeroScene = lazy(() => import("@/components/three/HeroScene"));
 
@@ -57,6 +57,30 @@ const RokeMark: React.FC<{ className?: string }> = ({ className }) => (
 );
 
 const Hero: React.FC = () => {
+  const reduce = useReducedMotion();
+
+  // Entrada escalonada del hero — cada elemento aparece con leve retardo sobre el
+  // anterior (cascada). Curva ease-out fuerte + blur para una sensación premium.
+  const container: Variants = {
+    hidden: {},
+    show: { transition: { staggerChildren: 0.09, delayChildren: 0.06 } },
+  };
+  const item: Variants = {
+    hidden: reduce ? { opacity: 0 } : { opacity: 0, y: 22, filter: "blur(8px)" },
+    show: {
+      opacity: 1,
+      y: 0,
+      filter: "blur(0px)",
+      transition: { duration: 0.7, ease: EASE_OUT },
+    },
+  };
+
+  // La banda de beneficios entra al final, en cascada, una vez asentado el hero.
+  const benefitsContainer: Variants = {
+    hidden: {},
+    show: { transition: { staggerChildren: 0.1, delayChildren: 0.45 } },
+  };
+
   const gridStyle: React.CSSProperties = {
     backgroundImage:
       "linear-gradient(to right, var(--roke-border) 1px, transparent 1px), linear-gradient(to bottom, var(--roke-border) 1px, transparent 1px)",
@@ -82,40 +106,46 @@ const Hero: React.FC = () => {
 
       <div className="relative z-10 mx-auto flex min-h-[842px] max-w-[1440px] flex-col px-6 pt-12 lg:block lg:px-0">
         <motion.div
-          initial={{ opacity: 0, y: 24 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
+          variants={container}
+          initial="hidden"
+          animate="show"
           className="lg:absolute lg:left-[68px] lg:top-[47px] lg:w-[620px]"
         >
-          <div className="mb-7 flex flex-wrap items-center gap-x-3.5 gap-y-2 font-mono text-[9px] uppercase leading-relaxed tracking-[0.22em] text-[var(--roke-text-dimmer)] sm:text-[10px] sm:tracking-[0.32em]">
+          <motion.div variants={item} className="mb-7 flex flex-wrap items-center gap-x-3.5 gap-y-2 font-mono text-[9px] uppercase leading-relaxed tracking-[0.22em] text-[var(--roke-text-dimmer)] sm:text-[10px] sm:tracking-[0.32em]">
             <div className="h-px w-8 bg-[var(--roke-text-dimmer)]" />
             <span>RKE / 01 · Soluciones empresariales</span>
             <span className="h-1.5 w-1.5 bg-[var(--roke-text)]" />
-          </div>
+          </motion.div>
 
-          <h1 className="mb-7 text-[40px] font-bold leading-[0.96] tracking-[-0.035em] text-[var(--roke-text)] sm:text-[56px] md:text-[76px]">
+          <motion.h1 variants={item} className="mb-7 text-[40px] font-bold leading-[0.96] tracking-[-0.035em] text-[var(--roke-text)] sm:text-[56px] md:text-[76px]">
             Infraestructura
             <br />
             digital que
             <br />
             <span className="relative inline-block">
-              <span className="absolute bottom-[6px] left-[-4px] right-[-4px] h-[10px] skew-x-[-12deg] bg-[var(--roke-slash)] opacity-50 sm:bottom-[8px] sm:h-[14px]" />
+              <motion.span
+                aria-hidden
+                className="absolute bottom-[6px] left-[-4px] right-[-4px] h-[10px] skew-x-[-12deg] bg-[var(--roke-slash)] opacity-50 sm:bottom-[8px] sm:h-[14px]"
+                initial={reduce ? { clipPath: "inset(0 0 0 0)" } : { clipPath: "inset(0 100% 0 0)" }}
+                animate={{ clipPath: "inset(0 0 0 0)" }}
+                transition={{ duration: 0.55, ease: EASE_OUT, delay: reduce ? 0 : 0.6 }}
+              />
               <span className="relative">impulsa</span>
             </span>
             <br />
             <span className="font-medium text-[var(--roke-text-dim)]">tu negocio.</span>
-          </h1>
+          </motion.h1>
 
-          <p className="mb-9 max-w-[520px] text-[17px] leading-[1.55] tracking-[-0.01em] text-[var(--roke-text-dim)]">
+          <motion.p variants={item} className="mb-9 max-w-[520px] text-[17px] leading-[1.55] tracking-[-0.01em] text-[var(--roke-text-dim)]">
             Desde hosting de alta disponibilidad y servidores de videojuegos
             hasta automatización con IoT y soluciones empresariales con IA.
             Soporte real, en español, 24 / 7.
-          </p>
+          </motion.p>
 
-          <div className="mb-9 flex flex-col gap-2.5 sm:flex-row">
+          <motion.div variants={item} className="mb-9 flex flex-col gap-2.5 sm:flex-row">
             <Link
               to={ROUTES.HOSTING}
-              className="mi-sheen mi-arrow inline-flex h-[50px] items-center justify-center gap-3 rounded-[4px] border border-[var(--roke-primary-bg)] bg-[var(--roke-primary-bg)] px-[27px] text-[14px] font-semibold text-[var(--roke-primary-fg)] transition-all hover:-translate-y-px hover:shadow-lg"
+              className="mi-sheen mi-arrow mi-cta inline-flex h-[50px] items-center justify-center gap-3 rounded-[4px] border border-[var(--roke-primary-bg)] bg-[var(--roke-primary-bg)] px-[27px] text-[14px] font-semibold text-[var(--roke-primary-fg)]"
             >
               Ver Planes y Precios
               <ArrowRight className="h-4 w-4" />
@@ -123,36 +153,36 @@ const Hero: React.FC = () => {
             <button
               type="button"
               onClick={() => WhatsAppService.openWhatsApp()}
-              className="mi-sheen mi-icon-pop inline-flex h-[50px] items-center justify-center gap-3 rounded-[4px] border border-[var(--roke-whatsapp)] bg-[var(--roke-whatsapp)] px-[27px] text-[14px] font-semibold text-[var(--roke-whatsapp-fg)] transition-all hover:-translate-y-px hover:brightness-95"
+              className="mi-sheen mi-icon-pop mi-cta inline-flex h-[50px] items-center justify-center gap-3 rounded-[4px] border border-[var(--roke-whatsapp)] bg-[var(--roke-whatsapp)] px-[27px] text-[14px] font-semibold text-[var(--roke-whatsapp-fg)] hover:brightness-95"
             >
               <MessageCircle className="h-4 w-4 fill-current" />
               WhatsApp
             </button>
-          </div>
+          </motion.div>
 
-          <div className="flex items-start gap-6">
+          <motion.div variants={item} className="flex items-start gap-6">
             {[
               { num: "99.97%", label: "UPTIME" },
               { num: "+120", label: "PROYECTOS" },
               { num: "24 / 7", label: "SOPORTE MX" },
-            ].map((item, index) => (
-              <React.Fragment key={item.label}>
+            ].map((stat, index) => (
+              <React.Fragment key={stat.label}>
                 {index > 0 && <div className="h-7 w-px bg-[var(--roke-border-strong)]" />}
                 <div className="flex flex-col gap-0.5 font-mono text-[10px] uppercase tracking-[0.22em] text-[var(--roke-text-dimmer)]">
                   <span className="font-sans text-[16px] font-medium leading-none tracking-[-0.02em] text-[var(--roke-text)]">
-                    {item.num}
+                    {stat.num}
                   </span>
-                  <span>{item.label}</span>
+                  <span>{stat.label}</span>
                 </div>
               </React.Fragment>
             ))}
-          </div>
+          </motion.div>
         </motion.div>
 
         <motion.div
-          initial={{ opacity: 0, y: 24 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.15 }}
+          initial={reduce ? { opacity: 0 } : { opacity: 0, y: 28, filter: "blur(10px)" }}
+          animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+          transition={{ duration: 0.85, delay: 0.3, ease: EASE_OUT }}
           className="mt-14 hidden lg:absolute lg:left-[767px] lg:top-[140px] lg:mt-0 lg:block lg:w-[592px]"
         >
           <TiltCard className="roke-hero-panel-wrap" max={6}>
@@ -227,20 +257,21 @@ const Hero: React.FC = () => {
         </motion.div>
 
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.3 }}
+          variants={benefitsContainer}
+          initial="hidden"
+          animate="show"
           className="roke-hero-benefits mt-14 grid grid-cols-1 border-t border-[var(--roke-border-strong)] md:grid-cols-3 lg:absolute lg:inset-x-0 lg:bottom-0 lg:mt-0"
         >
           {quickBenefits.map((benefit, index) => {
             const Icon = benefit.icon as React.FC<{ className?: string }>;
             return (
-              <div
+              <motion.div
                 key={benefit.title}
+                variants={item}
                 className="roke-hero-benefit"
               >
                 <span className="roke-hero-benefit-num">0{index + 1}</span>
-                <div className="roke-hero-benefit-icon roke-icon-box">
+                <div className="roke-hero-benefit-icon roke-icon-box mi-icon-pop">
                   <Icon className="h-5 w-5" />
                 </div>
                 <div>
@@ -251,7 +282,7 @@ const Hero: React.FC = () => {
                     {benefit.description}
                   </div>
                 </div>
-              </div>
+              </motion.div>
             );
           })}
         </motion.div>

@@ -294,7 +294,7 @@ const ContactPage: React.FC = () => {
 
                 <div className="flex flex-col sm:flex-row gap-0 pt-4">
                   <button type="submit" disabled={formStatus === 'loading' || !turnstileToken}
-                    className="flex-1 flex items-center justify-center gap-2 py-4 bg-[var(--roke-text)] text-[var(--roke-bg)] font-semibold text-[14px] hover:-translate-y-px hover:shadow-lg transition-all disabled:opacity-60">
+                    className="flex-1 flex items-center justify-center gap-2 py-4 bg-[var(--roke-text)] text-[var(--roke-bg)] font-semibold text-[14px] mi-cta disabled:opacity-60">
                     {formStatus === 'loading' ? (
                       <><div className="w-4 h-4 border-2 border-[var(--roke-bg)]/30 border-t-[var(--roke-bg)] rounded-full animate-spin" />Enviando...</>
                     ) : (

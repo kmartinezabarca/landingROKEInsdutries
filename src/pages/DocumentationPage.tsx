@@ -190,7 +190,7 @@ const DocumentationPage: React.FC = () => {
                           <span className="flex items-center gap-1.5"><User className="w-3.5 h-3.5" />Actualizado {doc.lastUpdated}</span>
                         </div>
                       </div>
-                      <ChevronRight className="w-5 h-5 text-muted-foreground group-hover:text-foreground group-hover:translate-x-0.5 transition-all flex-shrink-0 mt-1" />
+                      <ChevronRight className="w-5 h-5 text-muted-foreground group-hover:text-foreground group-hover:translate-x-0.5 transition-transform flex-shrink-0 mt-1" />
                     </motion.div>
                   ))}
                 </div>
@@ -226,7 +226,7 @@ const DocumentationPage: React.FC = () => {
               </p>
             </div>
             <div className="flex flex-col sm:flex-row md:flex-col gap-3">
-              <button className="px-7 py-3.5 bg-background text-foreground font-semibold text-[14px] hover:-translate-y-px hover:shadow-lg transition-all">
+              <button className="px-7 py-3.5 bg-background text-foreground font-semibold text-[14px] mi-cta">
                 Contactar Soporte
               </button>
               <button className="px-7 py-3.5 border border-background/30 text-background/80 hover:border-background hover:text-background font-semibold text-[14px] transition-colors">

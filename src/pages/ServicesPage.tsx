@@ -237,7 +237,7 @@ const ServicesPage: React.FC = () => {
                     onClick={() => handleServiceCTA(s.categoryKeyword)}
                     whileHover={{ y: -2 }}
                     whileTap={{ scale: 0.98 }}
-                    className="inline-flex items-center gap-2 px-5 py-3 font-semibold text-[13px] rounded-[4px] border transition-all whitespace-nowrap cursor-pointer"
+                    className="inline-flex items-center gap-2 px-5 py-3 font-semibold text-[13px] rounded-[4px] border transition-colors whitespace-nowrap cursor-pointer"
                     style={{ borderColor: "var(--roke-border-strong)", color: "var(--roke-text)", background: "transparent" }}
                     onMouseEnter={(e) => ((e.currentTarget as HTMLElement).style.background = "var(--roke-bg)")}
                     onMouseLeave={(e) => ((e.currentTarget as HTMLElement).style.background = "transparent")}
@@ -249,7 +249,7 @@ const ServicesPage: React.FC = () => {
                     href={s.href ?? ROUTES.CONTACT}
                     whileHover={{ y: -2 }}
                     whileTap={{ scale: 0.98 }}
-                    className="inline-flex items-center gap-2 px-5 py-3 font-semibold text-[13px] rounded-[4px] border transition-all whitespace-nowrap"
+                    className="inline-flex items-center gap-2 px-5 py-3 font-semibold text-[13px] rounded-[4px] border transition-colors whitespace-nowrap"
                     style={{ borderColor: "var(--roke-border-strong)", color: "var(--roke-text)", background: "transparent" }}
                     onMouseEnter={(e) => ((e.currentTarget as HTMLElement).style.background = "var(--roke-bg)")}
                     onMouseLeave={(e) => ((e.currentTarget as HTMLElement).style.background = "transparent")}
@@ -485,7 +485,7 @@ const ServicesPage: React.FC = () => {
               whileHover={{ y: -2, boxShadow: "0 12px 32px -8px rgba(0,0,0,0.2)" }}
               whileTap={{ scale: 0.98 }}
               onClick={() => WhatsAppService.openWhatsApp("Hola ROKE Industries, necesito una consultoría personalizada.")}
-              className="inline-flex items-center gap-2 px-6 py-3.5 font-semibold text-[14px] rounded-[4px] cursor-pointer transition-all"
+              className="inline-flex items-center gap-2 px-6 py-3.5 font-semibold text-[14px] rounded-[4px] cursor-pointer transition-colors"
               style={{ background: "var(--roke-primary-bg)", color: "var(--roke-primary-fg)" }}
             >
               <MessageCircle className="w-4 h-4" />
@@ -581,7 +581,7 @@ const ServicesPage: React.FC = () => {
                 whileHover={{ y: -2, boxShadow: "0 12px 32px -8px rgba(0,0,0,0.25)" }}
                 whileTap={{ scale: 0.98 }}
                 onClick={() => WhatsAppService.openWhatsApp("Hola ROKE Industries, quiero hablar con un experto sobre sus servicios.")}
-                className="inline-flex items-center justify-center gap-2 px-7 py-4 font-semibold text-[14px] rounded-[4px] cursor-pointer transition-all"
+                className="inline-flex items-center justify-center gap-2 px-7 py-4 font-semibold text-[14px] rounded-[4px] cursor-pointer transition-colors"
                 style={{ background: "var(--roke-primary-bg)", color: "var(--roke-primary-fg)" }}
               >
                 <MessageCircle className="w-4 h-4" />
@@ -590,7 +590,7 @@ const ServicesPage: React.FC = () => {
               </motion.button>
               <a
                 href={`mailto:${CONFIG.CONTACT?.EMAIL || "contact@rokeindustries.com"}`}
-                className="inline-flex items-center justify-center gap-2 px-7 py-4 font-semibold text-[14px] rounded-[4px] border transition-all hover:bg-muted/30"
+                className="inline-flex items-center justify-center gap-2 px-7 py-4 font-semibold text-[14px] rounded-[4px] border mi-tap hover:bg-muted/30"
                 style={{ borderColor: "var(--roke-border-strong)", color: "var(--roke-text)" }}
               >
                 <Mail className="w-4 h-4" />

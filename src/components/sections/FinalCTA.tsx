@@ -54,7 +54,7 @@ const FinalCTA: React.FC = () => {
               {/* Primary CTA — pulsing ring via mi-cta-pulse */}
               <Link
                 to={ROUTES.CONTACT}
-                className="mi-sheen mi-arrow mi-cta-pulse inline-flex items-center justify-center gap-3 rounded-[3px] bg-[#1b1e22] px-7 py-[15px] text-[14px] font-bold text-white transition-all hover:-translate-y-px hover:bg-[#101215] hover:shadow-lg"
+                className="mi-sheen mi-arrow mi-cta-pulse mi-cta inline-flex items-center justify-center gap-3 rounded-[3px] bg-[#1b1e22] px-7 py-[15px] text-[14px] font-bold text-white hover:bg-[#101215]"
               >
                 Cotizar Ahora
                 <ArrowRight className="h-4 w-4" />
@@ -62,7 +62,7 @@ const FinalCTA: React.FC = () => {
               <button
                 type="button"
                 onClick={() => WhatsAppService.openWhatsApp("Hola ROKE Industries, quiero cotizar un proyecto.")}
-                className="mi-sheen mi-icon-pop inline-flex items-center justify-center gap-3 rounded-[3px] bg-[#22d365] px-7 py-[15px] text-[14px] font-bold text-[#082415] transition-all hover:-translate-y-px hover:bg-[#1fc35d]"
+                className="mi-sheen mi-icon-pop mi-cta inline-flex items-center justify-center gap-3 rounded-[3px] bg-[#22d365] px-7 py-[15px] text-[14px] font-bold text-[#082415] hover:bg-[#1fc35d]"
               >
                 <MessageCircle className="h-4 w-4 fill-current" />
                 WhatsApp

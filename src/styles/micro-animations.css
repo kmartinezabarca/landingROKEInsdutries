@@ -3,12 +3,30 @@
  * Todo va dentro de @media (prefers-reduced-motion: no-preference) para que
  * quien pida menos movimiento no reciba ninguna animación de hover/press.
  */
+
+/*
+ * ── Motion tokens (sistema de easing) ──
+ * Curvas de aceleración compartidas. Las CSS nativas (ease, ease-in-out) son
+ * demasiado débiles para sentirse intencionales; estas tienen "punch".
+ *   --ease-out       → entradas/salidas: arranca rápido, se siente responsivo.
+ *   --ease-in-out    → movimiento/morph en pantalla: acelera y desacelera natural.
+ *   --ease-drawer    → curva tipo iOS (Ionic) para drawers/paneles.
+ *   --ease-overshoot → "pop" con sobreimpulso para íconos y badges juguetones.
+ * Regla: nunca usar ease-in para UI (arranca lento → se siente perezoso).
+ */
+:root {
+  --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+  --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
+  --ease-drawer: cubic-bezier(0.32, 0.72, 0, 1);
+  --ease-overshoot: cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
 @media (prefers-reduced-motion: no-preference) {
 
   /* Elevación suave al hover (usar en elementos NO controlados por framer-motion,
      porque framer escribe transform inline y ganaría sobre el :hover). */
   .mi-lift {
-    transition: transform 0.25s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.25s ease;
+    transition: transform 0.25s var(--ease-out), box-shadow 0.25s ease;
     will-change: transform;
   }
   .mi-lift:hover {
@@ -17,8 +35,63 @@
   }
 
   /* Feedback de pulsación. */
-  .mi-press { transition: transform 0.12s ease; }
+  .mi-press { transition: transform 0.14s var(--ease-out); }
   .mi-press:active { transform: scale(0.97); }
+
+  /* CTA premium — elevación al hover + pulsación, propiedades exactas (nunca `all`).
+     El hover sube y proyecta sombra; el :active "presiona" (scale 0.97) y aterriza.
+     Pensado para botones primarios del hero y secciones. */
+  .mi-cta {
+    transition:
+      transform 0.2s var(--ease-out),
+      box-shadow 0.2s var(--ease-out),
+      filter 0.2s var(--ease-out),
+      background-color 0.2s ease,
+      border-color 0.2s ease,
+      color 0.2s ease;
+    will-change: transform;
+  }
+  @media (hover: hover) and (pointer: fine) {
+    .mi-cta:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 18px 40px -18px rgba(0, 0, 0, 0.5);
+    }
+  }
+  .mi-cta:active {
+    transform: translateY(0) scale(0.97);
+    box-shadow: 0 6px 16px -10px rgba(0, 0, 0, 0.5);
+    transition-duration: 0.12s;
+  }
+
+  /* Pulsable genérico — feedback de presión + transiciones de color suaves, sin
+     elevación. Para chips, filtros, toggles y botones secundarios. Reemplaza a
+     `transition-all` en elementos pulsables que solo cambian color/borde. */
+  .mi-tap {
+    transition:
+      transform 0.16s var(--ease-out),
+      background-color 0.2s ease,
+      border-color 0.2s ease,
+      color 0.2s ease,
+      box-shadow 0.2s var(--ease-out);
+  }
+  .mi-tap:active { transform: scale(0.97); }
+
+  /* Spotlight de borde que sigue al cursor (requiere --mx / --my en %, set por JS o CSS).
+     Suave glow radial sobre la superficie; ideal para tarjetas premium. */
+  .mi-spotlight { position: relative; isolation: isolate; }
+  .mi-spotlight::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: radial-gradient(220px circle at var(--mx, 50%) var(--my, 0%),
+      color-mix(in oklab, var(--roke-accent, #e8674c) 16%, transparent), transparent 60%);
+    opacity: 0;
+    transition: opacity 0.3s var(--ease-out);
+    pointer-events: none;
+    z-index: 0;
+  }
+  .mi-spotlight:hover::before { opacity: 1; }
 
   /* Subrayado que crece desde la izquierda (links / nav). */
   .mi-underline { position: relative; }
@@ -30,12 +103,12 @@
     background: currentColor;
     transform: scaleX(0);
     transform-origin: left center;
-    transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+    transition: transform 0.3s var(--ease-out);
   }
   .mi-underline:hover::after { transform: scaleX(1); }
 
   /* Flecha que se desliza al hover (envuelve un botón/link con un <svg> dentro). */
-  .mi-arrow svg { transition: transform 0.22s cubic-bezier(0.22, 1, 0.36, 1); }
+  .mi-arrow svg { transition: transform 0.22s var(--ease-out); }
   .mi-arrow:hover svg { transform: translateX(4px); }
 
   /* Brillo diagonal (sheen) que barre al hover. No usa transform del elemento,
@@ -55,7 +128,7 @@
   .mi-sheen:hover::before { left: 150%; }
 
   /* Ícono que "salta" (overshoot) al hover. */
-  .mi-icon-pop svg { transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1); }
+  .mi-icon-pop svg { transition: transform 0.25s var(--ease-overshoot); }
   .mi-icon-pop:hover svg { transform: scale(1.14) rotate(-3deg); }
 
   /* Glow de borde al hover (box-shadow, compatible con framer). */

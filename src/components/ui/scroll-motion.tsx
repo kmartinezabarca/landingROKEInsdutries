@@ -23,7 +23,13 @@ import {
  * opacidad simple o sin movimiento.
  */
 
-const EASE = [0.22, 1, 0.36, 1] as const;
+/**
+ * Curvas compartidas con los tokens CSS (--ease-out / --ease-in-out de
+ * micro-animations.css). Mantener sincronizadas: una sola "voz" de movimiento.
+ */
+export const EASE_OUT = [0.23, 1, 0.32, 1] as const;
+export const EASE_IN_OUT = [0.77, 0, 0.175, 1] as const;
+const EASE = EASE_OUT;
 
 type Direction = 'up' | 'down' | 'left' | 'right' | 'none';
 
@@ -228,7 +234,7 @@ export function CountUp({
     }
     const controls = animate(0, to, {
       duration,
-      ease: [0.22, 1, 0.36, 1],
+      ease: EASE,
       onUpdate: (v) => setValue(v),
     });
     return () => controls.stop();

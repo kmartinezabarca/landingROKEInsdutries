@@ -100,7 +100,7 @@ const Navigation: React.FC = () => {
             <button
               type="button"
               onClick={() => WhatsAppService.quickContact()}
-              className="inline-flex items-center gap-2 px-[18px] py-2.5 text-[13px] font-semibold rounded-[4px] bg-foreground text-background transition-all hover:-translate-y-px hover:shadow-lg"
+              className="inline-flex items-center gap-2 px-[18px] py-2.5 text-[13px] font-semibold rounded-[4px] bg-foreground text-background mi-cta"
             >
               <MessageCircle className="w-3.5 h-3.5" />
               Cotiza Ahora

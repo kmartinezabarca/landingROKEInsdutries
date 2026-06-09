@@ -209,7 +209,7 @@ const PrivacyPolicyPage: React.FC = () => {
               </div>
             </div>
             <a href="mailto:privacy@rokeindustries.com"
-              className="inline-flex items-center px-8 py-4 bg-background text-foreground font-semibold text-[14px] hover:-translate-y-px hover:shadow-lg transition-all whitespace-nowrap">
+              className="inline-flex items-center px-8 py-4 bg-background text-foreground font-semibold text-[14px] mi-cta whitespace-nowrap">
               Contactar área de privacidad
             </a>
           </div>

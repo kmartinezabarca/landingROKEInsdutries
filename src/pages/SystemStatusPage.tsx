@@ -216,7 +216,7 @@ const SystemStatusPage: React.FC = () => {
               </p>
             </div>
             <div className="flex flex-col sm:flex-row md:flex-col gap-3">
-              <button className="px-7 py-3.5 bg-background text-foreground font-semibold text-[14px] hover:-translate-y-px hover:shadow-lg transition-all">
+              <button className="px-7 py-3.5 bg-background text-foreground font-semibold text-[14px] mi-cta">
                 Suscribirse por Email
               </button>
               <button className="px-7 py-3.5 border border-background/30 text-background/80 hover:border-background hover:text-background font-semibold text-[14px] transition-colors">

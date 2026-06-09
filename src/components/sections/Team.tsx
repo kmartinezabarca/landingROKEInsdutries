@@ -70,7 +70,7 @@ const Team: React.FC = () => {
               viewport={{ once: true }}
               className="h-full w-full max-w-sm" // Asegura que el contenedor ocupe toda la altura
             >
-              <Card className="mi-glow h-full flex flex-col group transition-all duration-300">
+              <Card className="mi-glow h-full flex flex-col group transition-[box-shadow,border-color] duration-300">
                 <CardContent className="p-8 text-center flex flex-col flex-grow">
                   <div className="relative mb-10">
                     <img
@@ -105,7 +105,7 @@ const Team: React.FC = () => {
                         target="_blank"
                         rel="noopener noreferrer"
                         className="w-11 h-11 bg-blue-500/10 text-blue-400 rounded-full flex items-center justify-center
-                           hover:bg-blue-500/20 hover:text-blue-300 transition-all duration-200
+                           hover:bg-blue-500/20 hover:text-blue-300 transition-[background-color,color,transform] duration-200
                            hover:scale-110"
                         aria-label={`LinkedIn de ${member.name}`}
                       >
@@ -120,7 +120,7 @@ const Team: React.FC = () => {
                         rel="noopener noreferrer"
                         className="w-11 h-11 bg-foreground/5 text-foreground/80 rounded-full flex items-center justify-center
                            hover:bg-foreground/10 hover:text-foreground
-                           transition-all duration-200 hover:scale-110"
+                           transition-[background-color,color,transform] duration-200 hover:scale-110"
                         aria-label={`Twitter de ${member.name}`}
                       >
                         <FaXTwitter className="w-5 h-5" />
