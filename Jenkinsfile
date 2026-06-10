@@ -199,6 +199,11 @@ pipeline {
                     when { expression { params.RUN_FORMAT_CHECK } }
                     steps { sh 'pnpm run format:check || true' }
                 }
+                // 🔒 Compuerta de seguridad: si hay vulnerabilidades high/critical
+                // en dependencias de PRODUCCION, el build falla ANTES de desplegar.
+                stage('Security Audit') {
+                    steps { sh 'pnpm audit --prod --audit-level high' }
+                }
             }
         }
 
