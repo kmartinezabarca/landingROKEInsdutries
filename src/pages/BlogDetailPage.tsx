@@ -10,6 +10,7 @@ import {
 import { useArticle } from '@/hooks/useArticle';
 import { formatDate, getInitials, DEFAULT_IMAGE } from '@/pages/blog/blogUtils';
 import RelatedCard from '@/pages/blog/RelatedCard';
+import BlogComments from '@/pages/blog/BlogComments';
 import { useSeo } from '@/components/common/Seo';
 
 const BlogDetailPage: React.FC = () => {
@@ -343,6 +344,9 @@ const BlogDetailPage: React.FC = () => {
                 </p>
               </div>
             </div>
+
+            {/* ── Comments ── */}
+            {slug && <BlogComments slug={slug} />}
           </motion.div>
 
           {/* ── Sidebar ── */}

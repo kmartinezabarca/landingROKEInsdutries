@@ -16,6 +16,7 @@ export interface Article {
   authorName?: string;
   author?: { name: string };
   views?: number;
+  commentsCount?: number;
 }
 
 export interface RelatedArticle {

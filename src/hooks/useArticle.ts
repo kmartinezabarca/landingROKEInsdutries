@@ -1,7 +1,27 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
-import { getBlogPostBySlug, getBlogPosts } from '@/services/blogService';
+import { getBlogPostBySlug, getBlogPosts, likeBlogPost, unlikeBlogPost } from '@/services/blogService';
 import { extractToc } from '@/pages/blog/blogUtils';
 import type { Article, RelatedArticle, TocItem } from '@/pages/blog/types';
+
+/** Clave en localStorage que recuerda qué posts likeó este navegador (sin login). */
+const LIKED_KEY = 'roke_blog_liked';
+
+const readLikedSet = (): Set<string> => {
+  try {
+    const raw = localStorage.getItem(LIKED_KEY);
+    return new Set(raw ? (JSON.parse(raw) as string[]) : []);
+  } catch {
+    return new Set();
+  }
+};
+
+const persistLikedSet = (set: Set<string>) => {
+  try {
+    localStorage.setItem(LIKED_KEY, JSON.stringify([...set]));
+  } catch {
+    /* noop */
+  }
+};
 
 /**
  * Carga un artículo del blog por slug y toda la lógica asociada de la vista:
@@ -31,6 +51,7 @@ export const useArticle = (slug?: string) => {
         const post = response.data;
         setArticle(post);
         setLikes(post.likes || 0);
+        setLiked(readLikedSet().has(slug));
         const allPostsResponse = await getBlogPosts<RelatedArticle[]>();
         const allPosts = allPostsResponse.data || [];
         setRelatedArticles(
@@ -81,10 +102,32 @@ export const useArticle = (slug?: string) => {
     setTimeout(() => setCopied(false), 2000);
   };
 
-  const handleLike = () => {
-    setLiked((prev) => !prev);
-    setLikes((prev) => (liked ? prev - 1 : prev + 1));
-  };
+  const handleLike = useCallback(async () => {
+    if (!slug) return;
+    const next = !liked;
+
+    // Optimista: actualiza UI de inmediato.
+    setLiked(next);
+    setLikes((prev) => Math.max(0, prev + (next ? 1 : -1)));
+
+    const likedSet = readLikedSet();
+    if (next) likedSet.add(slug);
+    else likedSet.delete(slug);
+    persistLikedSet(likedSet);
+
+    try {
+      const total = next ? await likeBlogPost(slug) : await unlikeBlogPost(slug);
+      setLikes(total);
+    } catch {
+      // Revertir si el backend falla.
+      setLiked(!next);
+      setLikes((prev) => Math.max(0, prev + (next ? -1 : 1)));
+      const revertSet = readLikedSet();
+      if (next) revertSet.delete(slug);
+      else revertSet.add(slug);
+      persistLikedSet(revertSet);
+    }
+  }, [slug, liked]);
 
   return {
     article,
