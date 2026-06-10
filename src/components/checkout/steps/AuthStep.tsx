@@ -5,9 +5,12 @@ import { z } from 'zod';
 import { Eye, EyeOff, Loader2 } from 'lucide-react';
 import { toast } from '@/lib/toast';
 import { useGoogleLogin } from '@react-oauth/google';
-import authService from '@/services/authService';
+import authService, { isGoogleSetupRequired } from '@/services/authService';
 import { useAuthContext } from '@/contexts/AuthContext';
 import { isGoogleAuthConfigured } from '@/lib/oauth';
+import UsernameInput from '@/components/checkout/UsernameInput';
+import type { UsernameStatus } from '@/hooks/useUsernameAvailability';
+import type { UsernamePreview } from './UsernameStep';
 
 const loginSchema = z.object({
   email:    z.string().email('Email inválido'),
@@ -29,9 +32,13 @@ const registerSchema = z.object({
 type LoginData    = z.infer<typeof loginSchema>;
 type RegisterData = z.infer<typeof registerSchema>;
 
-interface Props { onSuccess: () => void; }
+interface Props {
+  onSuccess: () => void;
+  /** El usuario quedó autenticado pero falta elegir username (o es Google nuevo). */
+  onNeedUsername?: (ctx: { setupToken?: string; preview?: UsernamePreview | null }) => void;
+}
 
-const GoogleLoginButton: React.FC<Props> = ({ onSuccess }) => {
+const GoogleLoginButton: React.FC<Props> = ({ onSuccess, onNeedUsername }) => {
   const [googleLoading, setGoogleLoading] = useState(false);
   const { setAuth } = useAuthContext();
 
@@ -43,13 +50,28 @@ const GoogleLoginButton: React.FC<Props> = ({ onSuccess }) => {
           headers: { Authorization: `Bearer ${tokenResponse.access_token}` },
         }).then(r => r.json());
 
-        const res  = await authService.loginWithGoogle(userInfo);
-        const body = (res.data as any);
+        // intent: 'register' permite que un usuario NUEVO continúe (el backend
+        // pide username); los usuarios existentes inician sesión igual.
+        const res  = await authService.loginWithGoogle(userInfo, 'register');
+        const body = res.data;
+
+        // Usuario nuevo de Google → hay que elegir username antes de crear cuenta.
+        if (isGoogleSetupRequired(body)) {
+          onNeedUsername?.({ setupToken: body.setup_token, preview: body.user_preview });
+          return;
+        }
+
         const token = body.access_token;
         const user  = body.user;
         if (!token) throw new Error('Sin token');
         setAuth(token, user);
         toast.success(`¡Bienvenido, ${user.first_name}!`);
+
+        // Cuenta antigua sin username → completarlo antes de continuar.
+        if (body.needs_username || user.needs_username) {
+          onNeedUsername?.({});
+          return;
+        }
         onSuccess();
       } catch (err: any) {
         const msg = err?.response?.data?.message ?? 'Error al iniciar con Google';
@@ -83,13 +105,15 @@ const GoogleLoginButton: React.FC<Props> = ({ onSuccess }) => {
   );
 };
 
-export const AuthStep: React.FC<Props> = ({ onSuccess }) => {
+export const AuthStep: React.FC<Props> = ({ onSuccess, onNeedUsername }) => {
   const [tab, setTab]           = useState<'login' | 'register'>('login');
   const [showPass, setShowPass]   = useState(false);
+  const [usernameStatus, setUsernameStatus] = useState<UsernameStatus>('idle');
   const { setAuth }             = useAuthContext();
 
   const loginForm = useForm<LoginData>({ resolver: zodResolver(loginSchema) });
   const regForm   = useForm<RegisterData>({ resolver: zodResolver(registerSchema) });
+  const usernameValue = regForm.watch('username') ?? '';
 
   const handleLogin = loginForm.handleSubmit(async (data) => {
     try {
@@ -100,6 +124,7 @@ export const AuthStep: React.FC<Props> = ({ onSuccess }) => {
       if (!token) throw new Error('Sin token');
       setAuth(token, user);
       toast.success(`¡Bienvenido, ${user.first_name}!`);
+      if (body.needs_username || user.needs_username) { onNeedUsername?.({}); return; }
       onSuccess();
     } catch (err: any) {
       const msg = err?.response?.data?.message || 'Credenciales incorrectas';
@@ -108,6 +133,10 @@ export const AuthStep: React.FC<Props> = ({ onSuccess }) => {
   });
 
   const handleRegister = regForm.handleSubmit(async (data) => {
+    if (usernameStatus === 'taken') {
+      toast.error('Ese nombre de usuario ya está en uso.');
+      return;
+    }
     try {
       const res = await authService.register(data);
       const body = (res.data as any);
@@ -143,7 +172,7 @@ export const AuthStep: React.FC<Props> = ({ onSuccess }) => {
       {isGoogleAuthConfigured && (
         <>
           {/* Google */}
-          <GoogleLoginButton onSuccess={onSuccess} />
+          <GoogleLoginButton onSuccess={onSuccess} onNeedUsername={onNeedUsername} />
 
           <div className="flex items-center gap-3">
             <div className="flex-1 h-px bg-border" />
@@ -224,17 +253,12 @@ export const AuthStep: React.FC<Props> = ({ onSuccess }) => {
             </div>
           </div>
 
-          <div>
-            <label className="block text-sm font-medium text-foreground mb-1.5">Nombre de usuario</label>
-            <input
-              {...regForm.register('username')}
-              placeholder="juan_garcia"
-              className="w-full px-4 py-2.5 rounded-xl border border-border bg-background text-foreground text-sm outline-none focus:ring-2 focus:ring-primary/40 transition"
-            />
-            {regForm.formState.errors.username && (
-              <p className="text-xs text-red-500 mt-1">{regForm.formState.errors.username.message}</p>
-            )}
-          </div>
+          <UsernameInput
+            value={usernameValue}
+            onChange={(v) => regForm.setValue('username', v, { shouldValidate: true })}
+            onStatusChange={setUsernameStatus}
+            error={regForm.formState.errors.username?.message}
+          />
 
           <div>
             <label className="block text-sm font-medium text-foreground mb-1.5">Email</label>
@@ -285,7 +309,7 @@ export const AuthStep: React.FC<Props> = ({ onSuccess }) => {
 
           <button
             type="submit"
-            disabled={regForm.formState.isSubmitting}
+            disabled={regForm.formState.isSubmitting || usernameStatus === 'taken' || usernameStatus === 'checking'}
             className="w-full py-2.5 rounded-xl bg-primary text-primary-foreground font-medium text-sm hover:bg-primary/90 transition disabled:opacity-60 flex items-center justify-center gap-2"
           >
             {regForm.formState.isSubmitting && <Loader2 className="w-4 h-4 animate-spin" />}

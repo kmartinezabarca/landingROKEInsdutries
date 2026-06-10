@@ -25,6 +25,10 @@ export const CONFIG: AppConfig = {
     'Hola, me interesa conocer más sobre los servicios de ROKE Industries. ¿Podrían proporcionarme información detallada?',
 };
 
+// Panel del cliente (app externa). Se puede sobreescribir con VITE_PANEL_URL.
+export const PANEL_URL = (import.meta.env.VITE_PANEL_URL || 'https://app.rokeindustries.com').replace(/\/$/, '');
+export const PANEL_LOGIN_URL = `${PANEL_URL}/login`;
+
 export const ROUTES = {
   HOME: '/',
   ABOUT: '/about',

@@ -7,19 +7,23 @@ import { stripePromise } from '@/lib/stripe';
 import { useCheckout } from '@/contexts/CheckoutContext';
 import { useAuthContext } from '@/contexts/AuthContext';
 import { AuthStep } from './steps/AuthStep';
+import { UsernameStep, type UsernamePreview } from './steps/UsernameStep';
 import { PlanStep } from './steps/PlanStep';
 import { PaymentStep } from './steps/PaymentStep';
 import { SuccessStep } from './steps/SuccessStep';
 import type { CheckoutBillingCycle } from '@/contexts/CheckoutContext';
 
-type Step = 'auth' | 'plan' | 'payment' | 'success';
+type Step = 'auth' | 'username' | 'plan' | 'payment' | 'success';
 
 const STEP_LABELS: Record<Step, string> = {
   auth:    'Cuenta',
+  username: 'Usuario',
   plan:    'Plan',
   payment: 'Pago',
   success: '¡Listo!',
 };
+// 'username' es un paso condicional (Google nuevo / cuenta sin usuario); no
+// aparece en el indicador para no confundir el flujo principal.
 const STEP_ORDER: Step[] = ['auth', 'plan', 'payment', 'success'];
 
 export const CheckoutModal: React.FC = () => {
@@ -34,6 +38,8 @@ export const CheckoutModal: React.FC = () => {
   const [chosenEggId, setChosenEggId] = useState<number | undefined>(undefined);
   const [invoiceNum, setInvoiceNum]  = useState('');
   const [total, setTotal]           = useState(0);
+  const [googleSetupToken, setGoogleSetupToken] = useState<string | undefined>(undefined);
+  const [googlePreview, setGooglePreview] = useState<UsernamePreview | null>(null);
 
   // Reset state each time the modal opens
   useEffect(() => {
@@ -44,9 +50,17 @@ export const CheckoutModal: React.FC = () => {
       setChosenEggId(undefined);
       setInvoiceNum('');
       setTotal(0);
+      setGoogleSetupToken(undefined);
+      setGooglePreview(null);
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isOpen]);
+
+  const goToUsername = (ctx: { setupToken?: string; preview?: UsernamePreview | null }) => {
+    setGoogleSetupToken(ctx.setupToken);
+    setGooglePreview(ctx.preview ?? null);
+    setStep('username');
+  };
 
   const visibleSteps = isAuthenticated
     ? STEP_ORDER.filter(s => s !== 'auth')
@@ -54,6 +68,7 @@ export const CheckoutModal: React.FC = () => {
 
   const stepTitle: Record<Step, string> = {
     auth:    'Identifícate para continuar',
+    username: 'Elige tu nombre de usuario',
     plan:    'Confirma tu plan',
     payment: 'Datos de pago',
     success: '¡Compra completada!',
@@ -88,7 +103,7 @@ export const CheckoutModal: React.FC = () => {
           </div>
 
           {/* Step indicator */}
-          {step !== 'success' && (
+          {step !== 'success' && step !== 'username' && (
             <div className="px-6 pt-4 pb-2 shrink-0">
               <div className="flex items-center gap-0">
                 {visibleSteps.filter(s => s !== 'success').map((s, i) => {
@@ -131,7 +146,18 @@ export const CheckoutModal: React.FC = () => {
                 transition={{ duration: 0.18 }}
               >
                 {step === 'auth' && (
-                  <AuthStep onSuccess={() => setStep('plan')} />
+                  <AuthStep
+                    onSuccess={() => setStep('plan')}
+                    onNeedUsername={goToUsername}
+                  />
+                )}
+
+                {step === 'username' && (
+                  <UsernameStep
+                    setupToken={googleSetupToken}
+                    preview={googlePreview}
+                    onComplete={() => setStep('plan')}
+                  />
                 )}
 
                 {step === 'plan' && plan && (

@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Menu, X, MessageCircle } from 'lucide-react';
-import { CONFIG, ROUTES } from '@/utils/constants/config';
+import { Menu, X, MessageCircle, LogIn } from 'lucide-react';
+import { CONFIG, ROUTES, PANEL_LOGIN_URL } from '@/utils/constants/config';
 import ThemeToggle from './ThemeToggle';
 import { useTheme } from '@/contexts/ThemeContext';
 import { cn } from '@/lib/utils';
@@ -97,6 +97,13 @@ const Navigation: React.FC = () => {
           {/* Desktop actions */}
           <div className="hidden md:flex items-center gap-2.5">
             <ThemeToggle />
+            <a
+              href={PANEL_LOGIN_URL}
+              className="inline-flex items-center gap-2 px-[14px] py-2.5 text-[13px] font-semibold rounded-[4px] border border-border text-foreground hover:bg-muted transition-colors"
+            >
+              <LogIn className="w-3.5 h-3.5" />
+              Acceder
+            </a>
             <button
               type="button"
               onClick={() => WhatsAppService.quickContact()}
@@ -146,7 +153,15 @@ const Navigation: React.FC = () => {
                     {item.name}
                   </Link>
                 ))}
-                <div className="px-3 pt-4 mt-4 border-t border-border">
+                <div className="px-3 pt-4 mt-4 border-t border-border space-y-2">
+                  <a
+                    href={PANEL_LOGIN_URL}
+                    onClick={() => setIsOpen(false)}
+                    className="flex items-center justify-center gap-2 w-full px-4 py-2.5 text-sm font-semibold rounded-[4px] border border-border text-foreground hover:bg-muted transition-colors"
+                  >
+                    <LogIn className="w-4 h-4" />
+                    Acceder a mi cuenta
+                  </a>
                   <button
                     type="button"
                     onClick={() => {

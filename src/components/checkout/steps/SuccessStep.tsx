@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { CheckCircle2, ExternalLink } from 'lucide-react';
+import { PANEL_URL } from '@/utils/constants/config';
 
-const PANEL_URL = 'https://app.rokeindustries.com';
 const COUNTDOWN = 8;
 
 interface Props {
