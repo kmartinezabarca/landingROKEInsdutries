@@ -8,11 +8,14 @@ interface AppConfig {
 export const CONFIG: AppConfig = {
   // "ROKE" siempre en mayúsculas, sin importar lo que traiga el .env del servidor.
   COMPANY_NAME: (import.meta.env.VITE_COMPANY_NAME || 'ROKE Industries').replace(/roke/gi, 'ROKE'),
+  // Sin datos de contacto falsos como fallback: si el .env no los define,
+  // mejor cadena vacía (la UI puede ocultarlos) que un teléfono/dirección
+  // ficticios visibles en producción. El email sí tiene un default real.
   CONTACT: {
-    PHONE: import.meta.env.VITE_PHONE || '+1234567890',
+    PHONE: import.meta.env.VITE_PHONE || '',
     EMAIL: import.meta.env.VITE_EMAIL || 'contact@rokeindustries.com',
-    WHATSAPP: import.meta.env.VITE_WHATSAPP || '+1234567890',
-    ADDRESS: import.meta.env.VITE_ADDRESS || '123 Tech Street, City, Country',
+    WHATSAPP: import.meta.env.VITE_WHATSAPP || '',
+    ADDRESS: import.meta.env.VITE_ADDRESS || '',
   },
   SOCIAL: {
     FACEBOOK: import.meta.env.VITE_FACEBOOK_URL || '',

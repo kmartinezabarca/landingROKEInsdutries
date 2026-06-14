@@ -1,0 +1,25 @@
+{
+  "name": "ROKE Industries",
+  "short_name": "ROKE",
+  "description": "Hosting, servidores gaming y soluciones tecnológicas con uptime 99.9% y soporte 24/7 en español.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#16181c",
+  "theme_color": "#16181c",
+  "lang": "es-MX",
+  "icons": [
+    {
+      "src": "/favicon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/favicon.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

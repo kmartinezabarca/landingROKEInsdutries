@@ -21,6 +21,26 @@ export default defineConfig({
       "@": path.resolve(__dirname, "./src"),
     },
   },
+  build: {
+    // El hero 3D (Three.js) ya va en su propio chunk async; subimos el umbral
+    // del aviso para no marcarlo como falso positivo.
+    chunkSizeWarningLimit: 950,
+    rollupOptions: {
+      output: {
+        // Separa los vendors pesados en chunks propios: cachean de forma
+        // independiente entre despliegues y aligeran el bundle de entrada.
+        manualChunks(id) {
+          if (!id.includes('node_modules')) return
+          if (/[\\/](three|postprocessing|@react-three)[\\/]/.test(id)) return 'three'
+          if (/[\\/](framer-motion|motion-dom|motion-utils)[\\/]/.test(id)) return 'motion'
+          if (/[\\/]@stripe[\\/]/.test(id)) return 'stripe'
+          if (/[\\/]@radix-ui[\\/]/.test(id)) return 'radix'
+          if (/[\\/]@tanstack[\\/]/.test(id)) return 'query'
+          if (/[\\/]react-router/.test(id)) return 'router'
+        },
+      },
+    },
+  },
   server: {
     host: true,
     port: process.env.PORT ? Number(process.env.PORT) : 5174,
